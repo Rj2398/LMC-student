@@ -251,7 +251,13 @@ const SingleChoiceOption = ({
 };
 
 const LessonDetail = () => {
-  const { lessionWiseDetails } = useSelector(({ lession }) => lession);
+  // const { lessionWiseDetails } = useSelector(({ lession }) => lession);
+
+  // console.log(
+  //   lessionWiseDetails,
+  //   "lesson wise detaisl comes from here *********"
+  // );
+  const [lessionWiseDetails, setLessonWiseDetails] = useState();
   const toastShownRef = useRef(false);
   const toastShowerrRef = useRef(false);
   const location = useLocation();
@@ -293,6 +299,7 @@ const LessonDetail = () => {
       // Renamed parameter to apiResponse
       const responseData = apiResponse.payload; // Using a new variable name
       console.log(responseData, "response ****");
+      setLessonWiseDetails(responseData);
 
       setSelectedData(responseData?.lesson?.contents);
     });
@@ -594,7 +601,11 @@ const LessonDetail = () => {
 
   useLayoutEffect(() => {
     if (lessonId) {
-      dispatch(getLessionDetailSlice({ lesson_id: lessonId }));
+      dispatch(getLessionDetailSlice({ lesson_id: lessonId })).then(
+        (response) => {
+          const data = response.payload;
+        }
+      );
     }
   }, [lessonId, dispatch]);
 
