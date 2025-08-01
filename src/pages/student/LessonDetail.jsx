@@ -603,19 +603,19 @@ const LessonDetail = () => {
       "lessionWiseDetails?.lesson?.contents is not an array or is missing. Using empty array for content."
     );
   }
-  if (sortedContents.length === 0) {
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        No lesson content available to display.
-      </div>
-    );
-  }
+  // if (sortedContents.length === 0) {
+  //   return (
+  //     <div
+  //       style={{
+  //         display: "flex",
+  //         justifyContent: "center",
+  //         alignItems: "center",
+  //       }}
+  //     >
+  //       No lesson content available to display.
+  //     </div>
+  //   );
+  // }
 
   return (
     <>
