@@ -563,22 +563,25 @@ const LessonDetail = () => {
     //   // console.log(data, "data comes form here***");
     //   if (data) {
     //     dispatch(completeLesson({ lesson_id: lessonId }));
-
+    //     // navigate(`/student/subject-detail?subjectId=${subjectId}`);
     //   }
     // });
-    dispatch(lessionSubmit(params)).then((response) => {
+
+      dispatch(lessionSubmit(params)).then((response) => {
       const data = response.payload;
       // console.log(data, "data comes form here***");
       if (data) {
         dispatch(completeLesson({ lesson_id: lessonId })).then((response) => {
           const data = response?.payload;
-
+ 
           if (data) {
             dispatch(getLessionSlice({ subject_id: subjectId }));
           }
         }); // Corrected: Added closing parenthesis for the .then() block
       }
     });
+    ha
+
     handleClosePopup();
   };
 
@@ -967,16 +970,10 @@ const LessonDetail = () => {
           <hr />
         </div>
         <div className="bottom-cta justify-content-end">
-          {/* <Link
-            to={`/student/lesson-detail?lessonId=${lessonId}&attemptId=${attemptId}&subjectId=${subjectId}`}
-            onClick={handleOpenPopup}
-            className="next-cta"
-       
-          >
-            Next Lesson <i className="fa-regular fa-arrow-right"></i>
-          </Link> */}
 
-          {simulateMatchingQuizAnswered ? (
+         
+ 
+{simulateMatchingQuizAnswered ? (
             // Render a disabled button with the same styling class
             <span
               className="next-cta disabled"
@@ -1005,6 +1002,14 @@ const LessonDetail = () => {
               Next Lesson <i className="fa-regular fa-arrow-right"></i>
             </Link>
           )}
+ 
+          {/* <Link
+            to={`/student/lesson-detail?lessonId=${lessonId}&attemptId=${attemptId}&subjectId=${subjectId}`}
+            onClick={handleOpenPopup}
+            className="next-cta"
+          >
+            Next Lesson <i className="fa-regular fa-arrow-right"></i>
+          </Link> */}
         </div>
       </div>
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllQuestion, getAttemptId, submitAnswer } from '../../redux/slices/student/subjectSlice';
 
@@ -8,7 +8,11 @@ const SummativeAssessment = () => {
   const navigate = useNavigate(); 
   const dispatch = useDispatch();
   const location = useLocation();
-  const subjectId = location.state?.subjectId || 18;
+  const { subject_id } = useParams();
+
+  const subjectId = location.state?.subjectId;
+  const subjectIdbyParams = subject_id
+
   const { allSubjectQuestion,subjectDetail, attemptId } = useSelector((state) => state.subject);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showQuitModal, setShowQuitModal] = useState(false);
@@ -60,10 +64,10 @@ const SummativeAssessment = () => {
     }));
 
 	dispatch(submitAnswer({attempt_id: attemptId,answers: formattedAnswers}));
-	
-	setTimeout(() => {
-      navigate('/student/subject-detail');
-    }, 1000);
+  
+  setTimeout(() => {
+    navigate(`/student/subject-detail?subjectId=${subjectIdbyParams || subjectId}`)
+  }, 1000);
 
   };
 

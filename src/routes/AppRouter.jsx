@@ -32,7 +32,8 @@ const AppRouter = () => (
 
           <Route path="/student/subject-detail" element={<SubjectDetail />} />
           <Route path="/student/lesson-detail" element={<LessonDetail />} />
-          <Route path="/student/summative-assessment" element={<SummativeAssessment />} />
+          {/* <Route path="/student/summative-assessment" element={<SummativeAssessment />} /> */}
+          <Route path="/student/summative-assessment/:subject_id" element={<SummativeAssessment />} />
           <Route path="/student/profile" element={<StudentProfile />} />
           <Route path="/student/progress-and-score" element={<StudentProgressAndScore />} />
         </Route>

@@ -82,7 +82,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = null
         state.isAuthenticated = false;
-        toast.error("Logout Successfully...");
+        toast.success("Logout Successfully...");
         localStorage.removeItem("pmsc");
         setTimeout(() => {
           window.location.href = "/";

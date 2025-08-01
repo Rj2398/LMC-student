@@ -99,7 +99,10 @@ const YourSubjects = () => {
 
                 {subject?.lesson_completion === 100 &&
                 subject?.summative_assessment === "Completed" ? (
-                  <Link to="#" className="completed-cta">
+                  <Link to="#" className="completed-cta" onClick={(e) => {
+                    e.preventDefault(); 
+                    handleNavigate(subject);
+                    }}>
                     <img
                       src="/images/dashboard/subjects/circle-tick.svg"
                       alt=""
