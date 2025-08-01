@@ -253,11 +253,13 @@ const SingleChoiceOption = ({
 const LessonDetail = () => {
   // const { lessionWiseDetails } = useSelector(({ lession }) => lession);
 
-  // console.log(
-  //   lessionWiseDetails,
-  //   "lesson wise detaisl comes from here *********"
-  // );
+  const lessionWiseDetailsFromStore = useSelector(
+    ({ lession }) => lession.lessionWiseDetails
+  );
+  const { retriveLessonResponse } = useSelector(({ lession }) => lession);
+
   const [lessionWiseDetails, setLessonWiseDetails] = useState();
+
   const toastShownRef = useRef(false);
   const toastShowerrRef = useRef(false);
   const location = useLocation();
@@ -265,13 +267,10 @@ const LessonDetail = () => {
   const navigate = useNavigate();
   var simulateMatchingQuizAnswered =
     location.state?.simulateMatchingQuizAnswered;
-  console.log(simulateMatchingQuizAnswered, "simlatsdflashdfasdfjks");
 
-  const [selectedData, setSelectedData] = useState([]);
-  console.log(
-    JSON.stringify(selectedData, null, 2),
-    "selected data comes ***************"
-  );
+  const [selectedData, setSelectedData] = useState();
+  // console.log(selectedData, "selected data comes fomh ere");
+
   const [searchParams] = useSearchParams();
   const lessonId = searchParams.get("lessonId");
   const attemptId = searchParams.get("attemptId");
@@ -294,28 +293,36 @@ const LessonDetail = () => {
     });
   }, [location]);
 
-  useEffect(() => {
-    dispatch(getLessionDetailSlice({ lesson_id: lessonId })).then(
-      (response) => {
-        const data = response.payload;
-        setLessonWiseDetails(data);
-      }
-    );
-  }, [lessonId, dispatch]);
+  // shake the data
 
   useEffect(() => {
-    dispatch(retriveLesson({ lesson_id: lessonId })).then((apiResponse) => {
-      // Renamed parameter to apiResponse
-      const responseData = apiResponse.payload; // Using a new variable name
-      console.log(responseData, "response ****");
-      setSelectedData(responseData?.lesson?.contents);
-    });
-  }, []);
+    setLessonWiseDetails(lessionWiseDetailsFromStore);
+  }, [lessionWiseDetailsFromStore]);
+
+  useEffect(() => {
+    setSelectedData(retriveLessonResponse);
+  }, [retriveLessonResponse]);
+  //
+  useEffect(() => {
+    if (lessonId) {
+      dispatch(getLessionDetailSlice({ lesson_id: lessonId }));
+    }
+  }, [lessonId]);
+
+  useEffect(() => {
+    dispatch(retriveLesson({ lesson_id: lessonId }));
+
+    // .then((apiResponse) => {
+    //   // Renamed parameter to apiResponse
+    //   const responseData = apiResponse.payload; // Using a new variable name
+    //   setSelectedData(responseData);
+    // });
+  }, [lessonId]);
 
   // Memoize sortedContents to avoid re-sorting on every render
   const sortedContents = useMemo(() => {
     const rawContents = simulateMatchingQuizAnswered
-      ? selectedData
+      ? selectedData?.lesson?.contents
       : lessionWiseDetails?.lesson?.contents;
     const contents = Array.isArray(rawContents) ? rawContents : [];
     return [...contents].sort(
@@ -363,11 +370,11 @@ const LessonDetail = () => {
       const currentRightSelection =
         currentQuizState?.currentRightSelection || null;
 
-      console.log(
-        JSON.stringify(currentLeftSelection),
-        "ASDFASDFASDFASDFASDFASFSADFSA",
-        JSON.stringify(currentRightSelection)
-      );
+      // console.log(
+      //   JSON.stringify(currentLeftSelection),
+      //   "ASDFASDFASDFASDFASDFASFSADFSA",
+      //   JSON.stringify(currentRightSelection)
+      // );
       if (currentLeftSelection !== null && currentRightSelection !== null) {
         const originalQuizContent = getQuizContentById(quizId);
         if (!originalQuizContent || !originalQuizContent.matching_pairs) return;
@@ -552,7 +559,7 @@ const LessonDetail = () => {
 
     dispatch(lessionSubmit(params)).then((response) => {
       const data = response.payload;
-      console.log(data, "data comes form here***");
+      // console.log(data, "data comes form here***");
       if (data) {
         dispatch(completeLesson({ lesson_id: lessonId }));
         // navigate(`/student/subject-detail?subjectId=${subjectId}`);
@@ -649,11 +656,11 @@ const LessonDetail = () => {
         <div className="less-details">
           <h1>{lessionWiseDetails?.lesson?.title}</h1>
           <div className="less-details-in">
-            {sortedContents.map((contentItem, index) => {
+            {sortedContents?.map((contentItem, index) => {
               const itemKey = `${contentItem.type || "unknown"}-${
                 contentItem.id || "noId"
               }-${contentItem.order || "noOrder"}-${index}`;
-              console.log(contentItem, "content item ********");
+              // console.log(contentItem, "content item ********");
               return (
                 <React.Fragment key={itemKey}>
                   {(() => {
@@ -741,7 +748,7 @@ const LessonDetail = () => {
                               currentLeftSelection: null,
                               currentRightSelection: null,
                             };
-                            console.log(quizState, "quiz state***********");
+                            // console.log(quizState, "quiz state***********");
                           } else {
                             // Default initial state for a new/unanswered matching quiz
                             quizState = {
@@ -939,7 +946,7 @@ const LessonDetail = () => {
                     }
                   })()}
                   {contentItem.type !== "pdf" &&
-                    index < sortedContents.length - 1 && <hr />}
+                    index < sortedContents?.length - 1 && <hr />}
                 </React.Fragment>
               );
             })}
@@ -979,7 +986,6 @@ const QuitPopup = ({
   attemptId,
   subjectId,
 }) => {
-  console.log(subjectId, "safjkashdfksdf");
   return (
     <Modal
       show={show}
