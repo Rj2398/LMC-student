@@ -21,10 +21,14 @@ const SubjectDetail = () => {
 
   const [showBaslineModal, setShowBaselineModal] = useState(false);
   const [showSubmittiveModal, setShowSubmittiveModal] = useState(false);
-
+  console.log(location.key, "lcoation ******");
+  // useEffect(() => {
+  //   dispatch(getLessionSlice({ subject_id: subjectId }));
+  // }, [dispatch, location?.pathname,subjectId]);
   useEffect(() => {
+    // This will run when the component mounts AND every time you navigate back to this screen
     dispatch(getLessionSlice({ subject_id: subjectId }));
-  }, [dispatch]);
+  }, [dispatch, location.key, subjectId]);
 
   const handleStartLesson = async (lessonId, subjectId, status) => {
     dispatch(

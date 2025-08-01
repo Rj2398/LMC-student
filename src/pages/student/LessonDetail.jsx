@@ -16,6 +16,7 @@ import toast from "react-hot-toast";
 import {
   completeLesson,
   getLessionDetailSlice,
+  getLessionSlice,
   lessionSubmit,
   retriveLesson,
 } from "../../redux/slices/student/lessionSlice";
@@ -257,7 +258,6 @@ const LessonDetail = () => {
     ({ lession }) => lession.lessionWiseDetails
   );
   const { retriveLessonResponse } = useSelector(({ lession }) => lession);
-  console.log(retriveLessonResponse, "retriveLessonResponse**********");
 
   const [lessionWiseDetails, setLessonWiseDetails] = useState();
 
@@ -267,9 +267,7 @@ const LessonDetail = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   var simulateMatchingQuizAnswered =
-    location?.state?.simulateMatchingQuizAnswered;
-
-  console.log(simulateMatchingQuizAnswered, "fashdfasjdflkjsdf");
+    location.state?.simulateMatchingQuizAnswered;
 
   const [selectedData, setSelectedData] = useState();
   // console.log(selectedData, "selected data comes fomh ere");
@@ -560,15 +558,27 @@ const LessonDetail = () => {
       answers: answersToSubmit,
     };
 
+    // dispatch(lessionSubmit(params)).then((response) => {
+    //   const data = response.payload;
+    //   // console.log(data, "data comes form here***");
+    //   if (data) {
+    //     dispatch(completeLesson({ lesson_id: lessonId }));
+
+    //   }
+    // });
     dispatch(lessionSubmit(params)).then((response) => {
       const data = response.payload;
       // console.log(data, "data comes form here***");
       if (data) {
-        dispatch(completeLesson({ lesson_id: lessonId }));
-        // navigate(`/student/subject-detail?subjectId=${subjectId}`);
+        dispatch(completeLesson({ lesson_id: lessonId })).then((response) => {
+          const data = response?.payload;
+
+          if (data) {
+            dispatch(getLessionSlice({ subject_id: subjectId }));
+          }
+        }); // Corrected: Added closing parenthesis for the .then() block
       }
     });
-
     handleClosePopup();
   };
 
@@ -957,13 +967,44 @@ const LessonDetail = () => {
           <hr />
         </div>
         <div className="bottom-cta justify-content-end">
-          <Link
+          {/* <Link
             to={`/student/lesson-detail?lessonId=${lessonId}&attemptId=${attemptId}&subjectId=${subjectId}`}
             onClick={handleOpenPopup}
             className="next-cta"
+       
           >
             Next Lesson <i className="fa-regular fa-arrow-right"></i>
-          </Link>
+          </Link> */}
+
+          {simulateMatchingQuizAnswered ? (
+            // Render a disabled button with the same styling class
+            <span
+              className="next-cta disabled"
+              disabled
+              style={{
+                backgroundColor: "#4126A8",
+                color: "white",
+                width: "160px",
+                height: "40px",
+                borderRadius: "10px",
+                justifyContent: "space-around",
+                alignItems: "center",
+                display: "flex",
+                opacity: 0.8,
+              }}
+            >
+              Next Lesson <i className="fa-regular fa-arrow-right"></i>
+            </span>
+          ) : (
+            // Render the active Link
+            <Link
+              to={`/student/lesson-detail?lessonId=${lessonId}&attemptId=${attemptId}&subjectId=${subjectId}`}
+              onClick={handleOpenPopup}
+              className="next-cta"
+            >
+              Next Lesson <i className="fa-regular fa-arrow-right"></i>
+            </Link>
+          )}
         </div>
       </div>
 

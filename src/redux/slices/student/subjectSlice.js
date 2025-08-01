@@ -61,6 +61,16 @@ export const subjectWiseProgress = createAsyncThunk("/student/subjectWiseProgres
     return rejectWithValue(error.response?.data || error.message);
   }
 });
+
+// based on getUserProgress
+export const subjectWiseQuizProgress = createAsyncThunk("/student/subjectWiseQuizProgress", async (formData, { rejectWithValue }) => {
+  try {
+    const response = await api.subjectWiseProgress(formData);
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(error.response?.data || error.message);
+  }
+});
  
 const subjectSlice = createSlice({
   name: "subjectSlice",
@@ -70,6 +80,7 @@ const subjectSlice = createSlice({
     subjectDetail: null,
     allSubjectQuestion: null,
     subjectWiseInfo: null,
+    subjectWiseQuizInfo: null,
     progressInfo:null,
     attemptId: null,
     loading: false,
@@ -156,6 +167,19 @@ const subjectSlice = createSlice({
         state.subjectWiseInfo = action.payload?.data;
       })
       .addCase(subjectWiseProgress.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "Failed to fetch client information";
+      }) 
+
+      .addCase(subjectWiseQuizProgress.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(subjectWiseQuizProgress.fulfilled, (state, action) => {
+        state.loading = false;
+        state.subjectWiseQuizInfo = action.payload?.data;
+      })
+      .addCase(subjectWiseQuizProgress.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload?.message || "Failed to fetch client information";
       }) 

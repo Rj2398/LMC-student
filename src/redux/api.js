@@ -1,5 +1,5 @@
-import axios from "axios";
-import toast from "react-hot-toast";
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
 export const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -11,9 +11,9 @@ API.interceptors.request.use(
     const token = user ? JSON.parse(user)?.token : null;
 
     if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`;
+      config.headers['Authorization'] = `Bearer ${token}`;
     } else {
-      delete config.headers["Authorization"];
+      delete config.headers['Authorization'];
     }
     return config;
   },
@@ -38,7 +38,7 @@ API.interceptors.response.use(
 );
 
 export const signIn = (formData) => API.post(`/login`, formData);
-export const logout = () => API.post(`/logout`, {});
+export const logout = () => API.post(`/logout`,{} );
 
 export const dashboardInfo = () => API.get(`/dashboard`, {});
 
@@ -48,21 +48,17 @@ export const getAllQuestion = (formData) => API.post(`/get-question`, formData);
 
 export const getAttemptId = (formData) => API.post(`/start-quiz`, formData);
 
-export const removeAttemptId = (formData) =>
-  API.post(`/delete-quiz-attempt`, formData);
+export const removeAttemptId = (formData) => API.post(`/delete-quiz-attempt`, formData);
 
 export const submitAnswer = (formData) => API.post(`/submit-answers`, formData);
 
-export const getUserProgress = (formData) =>
-  API.post(`/get-user-progress`, formData);
+export const getUserProgress = (formData) => API.post(`/get-user-progress`, formData);
 
-export const subjectWiseProgress = (formData) =>
-  API.post(`/subject-wise-performance`, formData);
+export const subjectWiseProgress = (formData) => API.post(`/subject-wise-performance`, formData);
 
 export const getProfile = () => API.get(`/view-profile`);
 
-export const updateProfile = (formData) =>
-  API.post(`/update-profile`, formData);
+export const updateProfile = (formData) => API.post(`/update-profile`, formData);
 
 // --------
 

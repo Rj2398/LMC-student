@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllSubject, getUserProgress, subjectWiseProgress } from '../../redux/slices/student/subjectSlice';
+import { getAllSubject, getUserProgress, subjectWiseProgress, subjectWiseQuizProgress,  } from '../../redux/slices/student/subjectSlice';
+import { Link, useNavigate } from 'react-router';
 
 const ProgressAndScore = () => {
 	const dispatch = useDispatch();
-	const { allSubject,progressInfo, subjectWiseInfo } = useSelector((state) => state.subject);
+	const navigate = useNavigate();
+	
+	const { allSubject,progressInfo, subjectWiseInfo, subjectWiseQuizInfo } = useSelector((state) => state.subject);
 	const [selectedSubject, setSelectedSubject] = useState("all")
+	const [selectedProgressSubject, setSelectedProgressSubject] = useState(null)
+	const [showLession, setShowLession] = useState(false) 
 
 	useEffect(() => {
 		dispatch(getAllSubject());
@@ -17,6 +22,18 @@ const ProgressAndScore = () => {
 			dispatch(subjectWiseProgress(selectedSubject === "all" ? {} : { subject_id: selectedSubject }));
 		}
 	},[selectedSubject])
+	
+	useEffect(() => {
+		if(selectedProgressSubject){
+			dispatch(subjectWiseQuizProgress({ subject_id: selectedProgressSubject }));
+		}
+	},[selectedProgressSubject])
+	
+	useEffect(() => {
+		if(allSubject){
+			setSelectedProgressSubject(allSubject?.[0]?.id)
+		}
+	},[allSubject])
 
 	const colors = [
 		{ base: "#C951E7", lesson: "#D573ED", summative: "#F1B7FF", label: "Life Dream" },
@@ -84,7 +101,7 @@ const ProgressAndScore = () => {
 						<div className="my-subjects">
 							<div className="my-subjects-head mb-4">
 								<h3>
-									<img src="/images/dashboard/chart-icon.svg" alt="" /> Subject-wise Performance
+									<img src="/images/dashboard/chart-icon.svg" alt="chart-icon" /> Subject-wise Performance
 								</h3>
 							</div>
 							<div className="chart-wrap">
@@ -148,20 +165,22 @@ const ProgressAndScore = () => {
 			</div>
 
 
-			{/* ---------------------- Chart ----------------------------------------- */}
+			{/* --------------------------------------------------------------- */}
+
 			<div className="my-subjects">
 				<div className="top-head">
 					<div className="top-head-in">
 						<h1 className="mb-0">Subject Wise Quiz Scores</h1>
 					</div>
-					<select name="subject" className="ms-auto">
-						<option value="1">Subject</option>
-						<option value="2">Life Dream</option>
-						<option value="3">Subject 2</option>
-						<option value="4">Subject 3</option>
+					<select name="subject" className="ms-auto" onChange={(e) => setSelectedProgressSubject(e.target.value)}>
+						{
+							allSubject?.map((item, index) => (
+								<option key={index} value={item.id}>{item.name}</option>
+							))
+						}
 					</select>
-					<a href="#" className="details-cta">
-						<img src="/images/view-icon.svg" alt="" />
+					<a style={{cursor:"pointer"}} className="details-cta" onClick={() => navigate(`/student/subject-detail?subjectId=${selectedProgressSubject}`)}>
+						<img src="/images/view-icon.svg" alt="view-icon" />
 						View Full Details
 					</a>
 				</div>
@@ -178,183 +197,73 @@ const ProgressAndScore = () => {
 							<td>---</td>
 							<td>
 								<div className="prog">
-									92%
+									{subjectWiseQuizInfo?.[0]?.baseline_score}%
 									<div className="progress">
-										<div className="progress-bar" style={{width: "92%"}} role="progressbar"
-											aria-label="Basic example" aria-valuenow="75" aria-valuemin="0"
+										<div className="progress-bar" style={{width: `${subjectWiseQuizInfo?.[0]?.baseline_score}%`}} role="progressbar"
+											aria-label="Basic example" aria-valuenow={subjectWiseQuizInfo?.[0]?.baseline_score} aria-valuemin="0"
 											aria-valuemax="100"></div>
 									</div>
 								</div>
 							</td>
 							<td>
-								<div className="status">Completed</div>
+								<div className="status">{subjectWiseQuizInfo?.[0]?.baseline_status || "Incomplete"}</div>
 							</td>
 						</tr>
 						<tr>
 							<td>Lesson Quiz</td>
 							<td>All Lessons
-								<button type="button" className="lessons-btn">
+								{subjectWiseQuizInfo?.[0]?.lesson_wise?.length > 0 && <button type="button" className="lessons-btn" onClick={() => setShowLession(!showLession)}>
 									<i className="fa-regular fa-angle-down"></i>
-								</button>
+								</button>}
 							</td>
 							<td>
 								&nbsp;
 							</td>
 							<td>
-								<div className="status">Completed</div>
+								<div className="status">{subjectWiseQuizInfo?.[0]?.lesson_overall_status || "Incomlete"}</div>
 							</td>
 						</tr>
-						<tr className="lessons-list" style={{display: "none"}}>
-							<td>&nbsp;</td>
-							<td>Lesson 1</td>
-							<td>
-								<div className="prog">
-									92%
-									<div className="progress">
-										<div className="progress-bar" style={{width: "92%"}} role="progressbar"
-											aria-label="Basic example" aria-valuenow="75" aria-valuemin="0"
-											aria-valuemax="100"></div>
-									</div>
-								</div>
-							</td>
-							<td>
-								<div className="status">Completed</div>
-							</td>
-						</tr>
-						<tr className="lessons-list" style={{display: "none"}}>
-							<td>&nbsp;</td>
-							<td>Lesson 2</td>
-							<td>
-								<div className="prog">
-									92%
-									<div className="progress">
-										<div className="progress-bar" style={{width: "92%"}} role="progressbar"
-											aria-label="Basic example" aria-valuenow="75" aria-valuemin="0"
-											aria-valuemax="100"></div>
-									</div>
-								</div>
-							</td>
-							<td>
-								<div className="status review">Review</div>
-							</td>
-						</tr>
-						<tr className="lessons-list" style={{display: "none"}}>
-							<td>&nbsp;</td>
-							<td>Lesson 3</td>
-							<td>
-								<div className="prog">
-									92%
-									<div className="progress">
-										<div className="progress-bar" style={{width: "92%"}} role="progressbar"
-											aria-label="Basic example" aria-valuenow="75" aria-valuemin="0"
-											aria-valuemax="100"></div>
-									</div>
-								</div>
-							</td>
-							<td>
-								<div className="status">Completed</div>
-							</td>
-						</tr>
-						<tr className="lessons-list" style={{display: "none"}}>
-							<td>&nbsp;</td>
-							<td>Lesson 4</td>
-							<td>
-								<div className="prog">
-									92%
-									<div className="progress">
-										<div className="progress-bar" style={{width: "92%"}} role="progressbar"
-											aria-label="Basic example" aria-valuenow="75" aria-valuemin="0"
-											aria-valuemax="100"></div>
-									</div>
-								</div>
-							</td>
-							<td>
-								<div className="status">Completed</div>
-							</td>
-						</tr>
-						<tr className="lessons-list" style={{display: "none"}}>
-							<td>&nbsp;</td>
-							<td>Lesson 5</td>
-							<td>
-								<div className="prog">
-									92%
-									<div className="progress">
-										<div className="progress-bar" style={{width: "92%"}} role="progressbar"
-											aria-label="Basic example" aria-valuenow="75" aria-valuemin="0"
-											aria-valuemax="100"></div>
-									</div>
-								</div>
-							</td>
-							<td>
-								<div className="status">Completed</div>
-							</td>
-						</tr>
-						<tr className="lessons-list" style={{display: "none"}}>
-							<td>&nbsp;</td>
-							<td>Lesson 6</td>
-							<td>
-								<div className="prog">
-									92%
-									<div className="progress">
-										<div className="progress-bar" style={{width: "92%"}} role="progressbar"
-											aria-label="Basic example" aria-valuenow="75" aria-valuemin="0"
-											aria-valuemax="100"></div>
-									</div>
-								</div>
-							</td>
-							<td>
-								<div className="status">Completed</div>
-							</td>
-						</tr>
-						<tr className="lessons-list" style={{display: "none"}}>
-							<td>&nbsp;</td>
-							<td>Lesson 7</td>
-							<td>
-								<div className="prog">
-									92%
-									<div className="progress">
-										<div className="progress-bar" style={{width: "92%"}} role="progressbar"
-											aria-label="Basic example" aria-valuenow="75" aria-valuemin="0"
-											aria-valuemax="100"></div>
-									</div>
-								</div>
-							</td>
-							<td>
-								<div className="status">Completed</div>
-							</td>
-						</tr>
-						<tr className="lessons-list" style={{display: "none"}}>
-							<td>&nbsp;</td>
-							<td>Lesson 8</td>
-							<td>
-								<div className="prog">
-									92%
-									<div className="progress">
-										<div className="progress-bar" style={{width: "92%"}} role="progressbar"
-											aria-label="Basic example" aria-valuenow="75" aria-valuemin="0"
-											aria-valuemax="100"></div>
-									</div>
-								</div>
-							</td>
-							<td>
-								<div className="status">Completed</div>
-							</td>
-						</tr>
+						{showLession && <>
+						{
+							subjectWiseQuizInfo?.[0]?.lesson_wise?.map((item, index) => (
+
+								<tr className="lessons-list" key={index} style={{display: showLession ? "" : "none"}}>
+									<td>&nbsp;</td>
+									<td>{item?.lesson_name}</td>
+									<td>
+										<div className="prog">
+											{item?.percentage}%
+											<div className="progress">
+												<div className="progress-bar" style={{width: `${item?.percentage}%`}} role="progressbar"
+													aria-label="Basic example" aria-valuenow={item?.percentage} aria-valuemin="0"
+													aria-valuemax="100"></div>
+											</div>
+										</div>
+									</td>
+									<td>
+										<div className="status">{item?.status || "Incomplete"}</div>
+									</td>
+								</tr>
+							))
+
+						}
+						</>}
+						
 						<tr>
 							<td>Summative</td>
 							<td>---</td>
 							<td>
 								<div className="prog">
-									92%
+									{subjectWiseQuizInfo?.[0]?.summative_score}%
 									<div className="progress">
-										<div className="progress-bar" style={{width: "92%"}} role="progressbar"
-											aria-label="Basic example" aria-valuenow="75" aria-valuemin="0"
+										<div className="progress-bar" style={{width: `${subjectWiseQuizInfo?.[0]?.summative_score}`}} role="progressbar"
+											aria-label="Basic example" aria-valuenow={subjectWiseQuizInfo?.[0]?.summative_score} aria-valuemin="0"
 											aria-valuemax="100"></div>
 									</div>
 								</div>
 							</td>
 							<td>
-								<div className="status">Completed</div>
+								<div className="status">{subjectWiseQuizInfo?.[0]?.summative_status || "Incomplete"}</div>
 							</td>
 						</tr>
 					</table>
