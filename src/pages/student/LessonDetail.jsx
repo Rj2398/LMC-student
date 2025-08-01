@@ -295,12 +295,19 @@ const LessonDetail = () => {
   }, [location]);
 
   useEffect(() => {
+    dispatch(getLessionDetailSlice({ lesson_id: lessonId })).then(
+      (response) => {
+        const data = response.payload;
+        setLessonWiseDetails(data);
+      }
+    );
+  }, [lessonId, dispatch]);
+
+  useEffect(() => {
     dispatch(retriveLesson({ lesson_id: lessonId })).then((apiResponse) => {
       // Renamed parameter to apiResponse
       const responseData = apiResponse.payload; // Using a new variable name
       console.log(responseData, "response ****");
-      setLessonWiseDetails(responseData);
-
       setSelectedData(responseData?.lesson?.contents);
     });
   }, []);
@@ -599,15 +606,17 @@ const LessonDetail = () => {
     }
   };
 
-  useLayoutEffect(() => {
-    if (lessonId) {
-      dispatch(getLessionDetailSlice({ lesson_id: lessonId })).then(
-        (response) => {
-          const data = response.payload;
-        }
-      );
-    }
-  }, [lessonId, dispatch]);
+  // useEffect(() => {
+  //   if (lessonId) {
+  //     dispatch(getLessionDetailSlice({ lesson_id: lessonId })).then(
+  //       (response) => {
+  //         const data = response.payload;
+
+  //         setLessonWiseDetails(data);
+  //       }
+  //     );
+  //   }
+  // }, [lessonId, dispatch]);
 
   if (!Array.isArray(lessionWiseDetails?.lesson?.contents)) {
     console.warn(
