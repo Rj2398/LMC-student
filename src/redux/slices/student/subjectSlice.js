@@ -85,9 +85,13 @@ const subjectSlice = createSlice({
     attemptId: null,
     loading: false,
     error: null,
-
+    currentSubject: null,
   },
-  reducers: {},
+  reducers: {
+    setCurrentSubject: (state, action) => {
+      state.currentSubject = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getAllSubject.pending, (state) => {
@@ -187,4 +191,5 @@ const subjectSlice = createSlice({
   },
 });
 
+export const { setCurrentSubject } = subjectSlice.actions;
 export default subjectSlice.reducer;

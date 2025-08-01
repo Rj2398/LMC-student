@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router";
 
 const Navbar = ({setShowSidebar}) => {
   const location = useLocation();
   const navigate = useNavigate();
   const pathname = location.pathname;
+  const { currentSubject } = useSelector((state) => state.subject)
   const [headerTitle, setHeaderTitle] = useState("")
 
   useEffect(() => {
@@ -36,10 +38,7 @@ const Navbar = ({setShowSidebar}) => {
       </div> */}
       
       <div className="nav-toggle" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-       <div
-        onClick={() => setShowSidebar((prev) => !prev)}
-        
-      >
+       <div onClick={() => setShowSidebar((prev) => !prev)} >
         <div className="bx bx-menu">
           <img src="/images/sidebar-collapse.svg" alt="menu" />
         </div>
@@ -54,7 +53,7 @@ const Navbar = ({setShowSidebar}) => {
               Dashboard
             </span>
             <span style={{ color: "#6B7280" }}>{">"}</span>
-            <span style={{ color: "#000",}}>Life Dream</span>
+            <span style={{ color: "#000",}}>{currentSubject && currentSubject || "Life Dream"}</span>
           </div>
         ) : (
           <span>{headerTitle}</span>

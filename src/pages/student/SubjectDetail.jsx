@@ -7,6 +7,7 @@ import {
   startLession,
   startQuiz,
 } from "../../redux/slices/student/lessionSlice";
+import { setCurrentSubject } from "../../redux/slices/student/subjectSlice";
 
 const SubjectDetail = () => {
   const dispatch = useDispatch();
@@ -25,6 +26,12 @@ const SubjectDetail = () => {
   useEffect(() => {
     dispatch(getLessionSlice({ subject_id: subjectId }));
   }, [dispatch, location.key, subjectId]);
+
+  useEffect(() => {
+    if(storeAllLession) {
+      dispatch(setCurrentSubject(storeAllLession?.storeAllLession?.subject?.Subject))
+    }
+  },[storeAllLession])
 
   const handleStartLesson = async (lessonId, subjectId, status) => {
     dispatch(
@@ -51,6 +58,7 @@ const SubjectDetail = () => {
       }
     });
   };
+
   return (
     <>
       <div className="sub-detail-wrap">
@@ -58,7 +66,10 @@ const SubjectDetail = () => {
           <h1 className="mb-2">
             {storeAllLession?.storeAllLession?.subject?.Subject}
             <span>
-              <b>{storeAllLession?.storeAllLession?.subject?.percentage}%</b>
+              <b>
+                {storeAllLession?.storeAllLession?.subject?.percentage}
+                %
+              </b>
             </span>
           </h1>
           <div className="sub-pro">
@@ -74,16 +85,16 @@ const SubjectDetail = () => {
             <ul className="w-100">
               <li>
                 <img src="/images/subject-detail/lessons.svg" alt="" />
-                {storeAllLession?.storeAllLession?.subject?.total_lessons}{" "}
-                lessons
+                {storeAllLession?.storeAllLession?.subject?.total_lessons}
+                {" "} lessons
               </li>
               <li>
                 <img src="/images/subject-detail/quizzes.svg" alt="" />
                 {
                   storeAllLession?.storeAllLession?.subject
                     ?.total_lesson_quizzes
-                }{" "}
-                Quizzes
+                }
+                {" "} Quizzes
               </li>
               <li className="me-3">
                 <span>Overall Progress</span>
@@ -285,10 +296,9 @@ const SubjectDetail = () => {
               <h2
                 style={{ cursor: "pointer" }}
                 onClick={() =>
-                  storeAllLession?.storeAllLession?.summative_test?.status !=
-                    "locked" &&
-                  storeAllLession?.storeAllLession?.summative_test?.status !=
-                    "completed" &&
+                  (storeAllLession?.storeAllLession?.summative_test?.status !=
+                    "locked" && storeAllLession?.storeAllLession?.summative_test?.status !=
+                    "completed") &&
                   navigate(`/student/summative-assessment/${subjectId}`, {
                     state: { subjectId: subjectId },
                   })
