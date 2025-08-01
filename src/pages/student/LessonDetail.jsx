@@ -257,6 +257,7 @@ const LessonDetail = () => {
     ({ lession }) => lession.lessionWiseDetails
   );
   const { retriveLessonResponse } = useSelector(({ lession }) => lession);
+  console.log(retriveLessonResponse, "retriveLessonResponse**********");
 
   const [lessionWiseDetails, setLessonWiseDetails] = useState();
 
@@ -266,7 +267,9 @@ const LessonDetail = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   var simulateMatchingQuizAnswered =
-    location.state?.simulateMatchingQuizAnswered;
+    location?.state?.simulateMatchingQuizAnswered;
+
+  console.log(simulateMatchingQuizAnswered, "fashdfasjdflkjsdf");
 
   const [selectedData, setSelectedData] = useState();
   // console.log(selectedData, "selected data comes fomh ere");
