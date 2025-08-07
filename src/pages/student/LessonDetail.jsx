@@ -3153,7 +3153,7 @@ const MatchingLeftOption = ({
 
   const getBackgroundColor = () => {
     if (isCorrect) return "#16A34A"; // Correct feedback (green)
-    if (isIncorrect) return "#B00020"; // Incorrect feedback (red)
+    if (isIncorrect) return "#16A34A"; // Incorrect feedback (red)
     if (isRecolored) return "#1B0866"; // Final correct color
     if (isCurrentlySelected) return "#4126A8"; // Currently selected (purple)
     if (isAlreadySelected) return "#4126A8";
@@ -3177,6 +3177,63 @@ const MatchingLeftOption = ({
   const isTemporarilyDisabled = isCorrect || isIncorrect;
 
   return (
+    // <div
+    //   style={{
+    //     display: "flex",
+    //     alignItems: "center",
+    //     marginBottom: "10px",
+    //     padding: "10px",
+    //     borderRadius: "8px",
+    //     cursor: isTemporarilyDisabled ? "not-allowed" : "pointer",
+    //     backgroundColor: getBackgroundColor(),
+    //     color: getColor(),
+    //     border: `1px solid ${
+    //       isRecolored
+    //         ? "#1B0866" // Final correct color border
+    //         : isCorrect
+    //         ? "#16A34A"
+    //         : isIncorrect
+    //         ? "#B00020"
+    //         : "#e0e0e0"
+    //     }`,
+    //     transition:
+    //       "background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease",
+    //   }}
+    //   onMouseEnter={() =>
+    //     !isTemporarilyDisabled && !isCurrentlySelected && setIsHovered(true)
+    //   }
+    //   onMouseLeave={() =>
+    //     !isTemporarilyDisabled && !isCurrentlySelected && setIsHovered(false)
+    //   }
+    //   onClick={() =>
+    //     !isTemporarilyDisabled && handleMatchingLeftRadioChange(quizId, pair.id)
+    //   }
+    // >
+    //   <input
+    //     type="radio"
+    //     id={`left-${pair.id}-${quizId}`}
+    //     name={`quiz-${quizId}-left`}
+    //     value={pair.id}
+    //     checked={isCurrentlySelected}
+    //     onChange={() =>
+    //       !isTemporarilyDisabled &&
+    //       handleMatchingLeftRadioChange(quizId, pair.id)
+    //     }
+    //     disabled={isTemporarilyDisabled || isAlreadySelected}
+    //     style={{ marginRight: "10px", transform: "scale(1.2)" }}
+    //   />
+    //   <label
+    //     htmlFor={`left-${pair.id}-${quizId}`}
+    //     style={{
+    //       flex: 1,
+    //       cursor: isTemporarilyDisabled ? "not-allowed" : "pointer",
+    //       fontWeight: "normal",
+    //     }}
+    //   >
+    //     {pair.left_item}
+    //   </label>
+    // </div>
+
     <div
       style={{
         display: "flex",
@@ -3184,12 +3241,15 @@ const MatchingLeftOption = ({
         marginBottom: "10px",
         padding: "10px",
         borderRadius: "8px",
-        cursor: isTemporarilyDisabled ? "not-allowed" : "pointer",
+        cursor:
+          isTemporarilyDisabled || isAlreadySelected
+            ? "not-allowed"
+            : "pointer", // Update cursor style
         backgroundColor: getBackgroundColor(),
         color: getColor(),
         border: `1px solid ${
           isRecolored
-            ? "#1B0866" // Final correct color border
+            ? "#1B0866"
             : isCorrect
             ? "#16A34A"
             : isIncorrect
@@ -3199,14 +3259,21 @@ const MatchingLeftOption = ({
         transition:
           "background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease",
       }}
-      onMouseEnter={() =>
-        !isTemporarilyDisabled && !isCurrentlySelected && setIsHovered(true)
+      onMouseEnter={
+        () =>
+          !(isTemporarilyDisabled || isAlreadySelected) &&
+          !isCurrentlySelected &&
+          setIsHovered(true) // Add condition
       }
-      onMouseLeave={() =>
-        !isTemporarilyDisabled && !isCurrentlySelected && setIsHovered(false)
+      onMouseLeave={
+        () =>
+          !(isTemporarilyDisabled || isAlreadySelected) &&
+          !isCurrentlySelected &&
+          setIsHovered(false) // Add condition
       }
       onClick={() =>
-        !isTemporarilyDisabled && handleMatchingLeftRadioChange(quizId, pair.id)
+        !(isTemporarilyDisabled || isAlreadySelected) && // Add condition
+        handleMatchingLeftRadioChange(quizId, pair.id)
       }
     >
       <input
@@ -3216,17 +3283,20 @@ const MatchingLeftOption = ({
         value={pair.id}
         checked={isCurrentlySelected}
         onChange={() =>
-          !isTemporarilyDisabled &&
+          !(isTemporarilyDisabled || isAlreadySelected) && // Add condition
           handleMatchingLeftRadioChange(quizId, pair.id)
         }
-        disabled={isTemporarilyDisabled}
+        disabled={isTemporarilyDisabled || isAlreadySelected} // Add condition
         style={{ marginRight: "10px", transform: "scale(1.2)" }}
       />
       <label
         htmlFor={`left-${pair.id}-${quizId}`}
         style={{
           flex: 1,
-          cursor: isTemporarilyDisabled ? "not-allowed" : "pointer",
+          cursor:
+            isTemporarilyDisabled || isAlreadySelected
+              ? "not-allowed"
+              : "pointer", // Update cursor style
           fontWeight: "normal",
         }}
       >
@@ -3252,7 +3322,7 @@ const MatchingRightOption = ({
 
   const getBackgroundColor = () => {
     if (isCorrect) return "#16A34A";
-    if (isIncorrect) return "#B00020";
+    if (isIncorrect) return "#EF4343";
     if (isRecolored) return "#1B0866";
     if (isCurrentlySelected) return "#4126A8";
     if (isAlreadySelected) return "#4126A8";
@@ -3276,6 +3346,65 @@ const MatchingRightOption = ({
   const isTemporarilyDisabled = isCorrect || isIncorrect;
 
   return (
+    // <div
+    //   key={`right-${rightOption}-${quizId}-${idx}`}
+    //   style={{
+    //     display: "flex",
+    //     alignItems: "center",
+    //     marginBottom: "10px",
+    //     padding: "10px",
+    //     borderRadius: "8px",
+    //     cursor: isTemporarilyDisabled ? "not-allowed" : "pointer",
+    //     backgroundColor: getBackgroundColor(),
+    //     color: getColor(),
+    //     border: `1px solid ${
+    //       isRecolored
+    //         ? "#1B0866"
+    //         : isCorrect
+    //         ? "#16A34A"
+    //         : isIncorrect
+    //         ? "#B00020"
+    //         : "#e0e0e0"
+    //     }`,
+    //     transition:
+    //       "background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease",
+    //   }}
+    //   onMouseEnter={() =>
+    //     !isTemporarilyDisabled && !isCurrentlySelected && setIsHovered(true)
+    //   }
+    //   onMouseLeave={() =>
+    //     !isTemporarilyDisabled && !isCurrentlySelected && setIsHovered(false)
+    //   }
+    //   onClick={() =>
+    //     !isTemporarilyDisabled &&
+    //     handleMatchingRightRadioChange(quizId, rightOption)
+    //   }
+    // >
+    //   <input
+    //     type="radio"
+    //     id={`right-${rightOption}-${quizId}-${idx}`}
+    //     name={`quiz-${quizId}-right`}
+    //     value={rightOption}
+    //     checked={isCurrentlySelected}
+    //     onChange={() =>
+    //       !isTemporarilyDisabled &&
+    //       handleMatchingRightRadioChange(quizId, rightOption)
+    //     }
+    //     disabled={isTemporarilyDisabled}
+    //     style={{ marginRight: "10px", transform: "scale(1.2)" }}
+    //   />
+    //   <label
+    //     htmlFor={`right-${rightOption}-${quizId}-${idx}`}
+    //     style={{
+    //       flex: 1,
+    //       cursor: isTemporarilyDisabled ? "not-allowed" : "pointer",
+    //       fontWeight: "normal",
+    //     }}
+    //   >
+    //     {rightOption}
+    //   </label>
+    // </div>
+
     <div
       key={`right-${rightOption}-${quizId}-${idx}`}
       style={{
@@ -3284,7 +3413,10 @@ const MatchingRightOption = ({
         marginBottom: "10px",
         padding: "10px",
         borderRadius: "8px",
-        cursor: isTemporarilyDisabled ? "not-allowed" : "pointer",
+        cursor:
+          isTemporarilyDisabled || isAlreadySelected
+            ? "not-allowed"
+            : "pointer", // Update cursor style
         backgroundColor: getBackgroundColor(),
         color: getColor(),
         border: `1px solid ${
@@ -3299,14 +3431,20 @@ const MatchingRightOption = ({
         transition:
           "background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease",
       }}
-      onMouseEnter={() =>
-        !isTemporarilyDisabled && !isCurrentlySelected && setIsHovered(true)
+      onMouseEnter={
+        () =>
+          !(isTemporarilyDisabled || isAlreadySelected) &&
+          !isCurrentlySelected &&
+          setIsHovered(true) // Add condition
       }
-      onMouseLeave={() =>
-        !isTemporarilyDisabled && !isCurrentlySelected && setIsHovered(false)
+      onMouseLeave={
+        () =>
+          !(isTemporarilyDisabled || isAlreadySelected) &&
+          !isCurrentlySelected &&
+          setIsHovered(false) // Add condition
       }
       onClick={() =>
-        !isTemporarilyDisabled &&
+        !(isTemporarilyDisabled || isAlreadySelected) && // Add condition
         handleMatchingRightRadioChange(quizId, rightOption)
       }
     >
@@ -3317,17 +3455,20 @@ const MatchingRightOption = ({
         value={rightOption}
         checked={isCurrentlySelected}
         onChange={() =>
-          !isTemporarilyDisabled &&
+          !(isTemporarilyDisabled || isAlreadySelected) && // Add condition
           handleMatchingRightRadioChange(quizId, rightOption)
         }
-        disabled={isTemporarilyDisabled}
+        disabled={isTemporarilyDisabled || isAlreadySelected} // Add condition
         style={{ marginRight: "10px", transform: "scale(1.2)" }}
       />
       <label
         htmlFor={`right-${rightOption}-${quizId}-${idx}`}
         style={{
           flex: 1,
-          cursor: isTemporarilyDisabled ? "not-allowed" : "pointer",
+          cursor:
+            isTemporarilyDisabled || isAlreadySelected
+              ? "not-allowed"
+              : "pointer", // Update cursor style
           fontWeight: "normal",
         }}
       >
@@ -3440,6 +3581,12 @@ const LessonDetail = () => {
       window.history.pushState(null, document.title, window.location.href);
     });
   }, [location]);
+
+  //
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location?.pathname]);
 
   useEffect(() => {
     setLessonWiseDetails(lessionWiseDetailsFromStore);
