@@ -61,29 +61,38 @@ export const getProfile = () => API.get(`/view-profile`);
 export const updateProfile = (formData) => API.post(`/update-profile`, formData);
 
 // --------
+export const getAllLession = (formData) => API.post(`/get-subject-lessons`, formData);
 
-// get_all_lession
-export const getAllLession = (formData) =>
-  API.post(`/get-subject-lessons`, formData);
-//
-export const getLessionDetails = (formData) =>
-  API.post(`/lessons-content`, formData);
+export const getLessionDetails = (formData) => API.post(`/lessons-content`, formData);
 
-// start lession
 export const startLession = (formData) => API.post(`/start-lesson`, formData);
 
-//start quiz
 export const startQuiz = (formData) => API.post(`/start-quiz`, formData);
 
-// submit lession
 
-export const lessionSubmit = (formData) =>
-  API.post(`/submit-answers`, formData);
+export const lessionSubmit = (formData) => API.post(`/submit-answers`, formData);
 
-// complete lesson
-export const completeLesson = (formData) =>
-  API.post(`/complete-lesson`, formData);
-// get retrive previos lesson data
+export const completeLesson = (formData) => API.post(`/complete-lesson`, formData);
 
-export const retriveLesson = (formData) =>
-  API.post(`/lessons-review`, formData);
+export const retriveLesson = (formData) => API.post(`/lessons-review`, formData);
+
+
+// ------------------------------------- Teacher Panel Api -------------------------------------------------
+
+export const getSubjectLevel = () => API.get(`/subject-level`, {});
+
+export const getSubjectsByLevel = (formData) => API.post(`/teacher-dashboard`, formData);
+
+export const getTeacherSubDashboard = (formData) => API.post(`/teacher-sub-dashboard`, formData);
+
+export const getClassDetailBySubject = (formData) => API.post(`/class-details`, formData);
+
+export const getSubjectList = (formData) => API.post(`/get-subject`, formData);
+
+export const getSubjectInfo = (formData) => API.post(`/subject-details`, formData);
+
+export const getTeacherLessionDetail = (formData) => API.post(`/view-lesson-details`, formData);
+
+export const getBaselineSummitiveQuiz = (formData) => API.post(`/baseline-and-summative-questions`, formData);
+
+export const studentProfilePerformance = (formData) => API.post(`/student-performance`, formData);

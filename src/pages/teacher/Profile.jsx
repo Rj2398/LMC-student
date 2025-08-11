@@ -102,10 +102,10 @@ const Profile = () => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="student_id">Student ID</label>
+                <label htmlFor="student_id">Teacher ID</label>
                 <input
                   type="text"
-                  placeholder="Student ID"
+                  placeholder="Teacher ID"
                   value={profileData?.student_id || ""}
                   disabled
                 />
@@ -120,11 +120,11 @@ const Profile = () => {
                 />
               </div>
               <div className="form-group">
-                {/* <input                                              //acc. to bug student cannot edit their profile.
+                <input
                   type="submit"
                   value={isEditing ? "Update" : "Edit Profile"}
                   onClick={handleEdit}
-                /> */}
+                />
               </div>
             </form>
           </div>

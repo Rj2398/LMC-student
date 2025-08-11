@@ -10,14 +10,14 @@ const Navbar = ({setShowSidebar}) => {
   const [headerTitle, setHeaderTitle] = useState("")
 
   useEffect(() => {
-    if(pathname == "/student/dashboard"){
-      setHeaderTitle("Student Dashboard")
+    if(pathname == "/teacher/dashboard"){
+      setHeaderTitle("Teacher Dashboard")
       
     }
-    else if (pathname == "/student/progress-and-score"){
+    else if (pathname == "/teacher/progress-and-score"){
       setHeaderTitle("Progress & Score")
     }
-    else if (pathname == "/student/profile") {
+    else if (pathname == "/teacher/profile") {
       setHeaderTitle("Profile")
     }
     // else if(pathname == "/student/subject-detail"){
@@ -64,7 +64,7 @@ const Navbar = ({setShowSidebar}) => {
           <img src="/images/notification.svg" alt="" />
         </a> */}
       </div>
-      <div className="admin-icon" style={{cursor: "pointer"}} onClick={() => navigate("/student/profile")}>
+      <div className="admin-icon">
         <img src="/images/user.svg" alt="" />
       </div>
     </nav>

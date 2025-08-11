@@ -4,18 +4,17 @@ const Sidebar = ({showSidebar}) => {
 	const location = useLocation();
 
 	const menuItems = [
-		{ name: 'Dashboard', path: '/student/dashboard', icon: '/images/menu/1.svg' },
-		// { name: 'Subjects', path: '/student/subjects', icon: '/images/menu/2.svg' },
-		{ name: 'Progress and Score', path: '/student/progress-and-score', icon: '/images/menu/3.svg' },
-		{ name: 'Profile', path: '/student/profile', icon: '/images/menu/4.svg' }
+		{ name: 'Dashboard', path: '/teacher/dashboard', icon: '/images/menu/1.svg' },
+		{ name: 'MWL Library', path: '/teacher/mwl-library', icon: '/images/menu/5.svg' },
+		{ name: 'Progress and Score', path: '/teacher/progress-and-score', icon: '/images/menu/3.svg' },
+		{ name: 'Profile', path: '/teacher/profile', icon: '/images/menu/4.svg' }
 	];
 
-	// const isActive = (path) => location.pathname === path;
-	const isActive = (path) => location.pathname === path || (path === '/student/dashboard' && location.pathname.startsWith('/student/subject-detail'));
+	const isActive = (path) => location.pathname === path;
 
 	return (
 		<section id="sidebar" className={`${showSidebar ? '' : ' hide'}`}>
-			<Link to="/student/dashboard" className="brand">
+			<Link to="/teacher/dashboard" className="brand">
 				<img src="/images/logo.svg" alt="Brand Logo" />
 				<img src="/images/coll-logo.svg" alt="" className="collapsed"></img>
 			</Link>

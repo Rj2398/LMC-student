@@ -57,9 +57,7 @@ export const startQuiz = createAsyncThunk(
 );
 
 //submit lesson
-export const lessionSubmit = createAsyncThunk(
-  "/student/complete-lesson",
-  async (formData, { rejectWithValue }) => {
+export const lessionSubmit = createAsyncThunk("/student/complete-lesson",async (formData, { rejectWithValue }) => {
     try {
       const response = await api.lessionSubmit(formData);
       return response.data;
@@ -179,8 +177,7 @@ const lessionSlice = createSlice({
       })
       .addCase(lessionSubmit.rejected, (state, action) => {
         state.loading = false;
-        state.error =
-          action.payload?.message || "Failed to fetch client information";
+        state.error = action.payload?.message || "Failed to fetch client information";
       })
 
       //complete lesson

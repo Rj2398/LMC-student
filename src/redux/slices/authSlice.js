@@ -72,8 +72,9 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = null
         state.isAuthenticated = false;
-        toast.error("Logout Successfully...");
+        toast.success("Logout Successfully...");
         localStorage.removeItem("pmsc");
+        localStorage.removeItem("classLevel");
         setTimeout(() => {
           window.location.href = "/";
         }, 1000);
@@ -84,6 +85,8 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
         toast.success("Logout Successfully...");
         localStorage.removeItem("pmsc");
+        localStorage.removeItem("classLevel");
+
         setTimeout(() => {
           window.location.href = "/";
         }, 1000);

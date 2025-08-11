@@ -1,0 +1,138 @@
+{
+  "subjectData": [
+    {
+      "title": "Life Dream",
+      "lessons": 8,
+      "students": 25,
+      "completionRate": 0,
+      "completionCount": "0 / 480",
+      "quizScore": "0%",
+      "baselineAssessment": "0/25",
+      "summativeAssessment": "0/25",
+      "lastActive": "2 hours ago",
+      "progressWidth": "0%",
+      "link": "/teacher/class-detail"
+    },
+    {
+      "title": "Self-Awareness",
+      "lessons": 8,
+      "students": 25,
+      "completionRate": 70,
+      "completionCount": "340 / 480",
+      "quizScore": "84.2%",
+      "baselineAssessment": "8/25",
+      "summativeAssessment": "3/25",
+      "lastActive": "2 hours ago",
+      "progressWidth": "70%",
+      "link": "/teacher/class-detail"
+    },
+    {
+      "title": "Cognitive Construction",
+      "lessons": 8,
+      "students": 25,
+      "completionRate": 68,
+      "completionCount": "320 / 480",
+      "quizScore": "84.2%",
+      "baselineAssessment": "8/25",
+      "summativeAssessment": "3/25",
+      "lastActive": "2 hours ago",
+      "progressWidth": "68%",
+      "link": "/teacher/class-detail"
+    },
+    {
+      "title": "Coping",
+      "lessons": 8,
+      "students": 25,
+      "completionRate": 70,
+      "completionCount": "340 / 480",
+      "quizScore": "84.2%",
+      "baselineAssessment": "8/25",
+      "summativeAssessment": "3/25",
+      "lastActive": "2 hours ago",
+      "progressWidth": "68%",
+      "link": "/teacher/class-detail"
+    },
+    {
+      "title": "Interpersonal Relationships",
+      "lessons": 8,
+      "students": 25,
+      "completionRate": 100,
+      "completionCount": "480 / 480",
+      "quizScore": "84.2%",
+      "baselineAssessment": "25/25",
+      "summativeAssessment": "25/25",
+      "lastActive": "2 hours ago",
+      "progressWidth": "100%",
+      "link": "/teacher/class-detail"
+    }
+  ],
+
+  "courseData":[
+    {
+      "id" : 1,
+      "title": "Life Dream"
+    },
+    {
+      "id" : 2,
+      "title": "Self-Awareness"
+    },
+    {
+      "id" : 3,
+      "title": "Cognitive Construction"
+    },
+    {
+      "id" : 4,
+      "title": "Coping"
+    },
+    {
+      "id" : 5,
+      "title": "Interpersonal Relationships"
+    }
+  ],
+
+  "subjectListData":[
+    {
+      "id" : 11,
+      "title": "Lession 1"
+    },
+    {
+      "id" : 12,
+      "title": "Lession 2"
+    },
+    {
+      "id" : 13,
+      "title": "Lession 3"
+    },
+    {
+      "id" : 14,
+      "title": "Lession 4"
+    },
+    {
+      "id" : 15,
+      "title": "Lession 5"
+    }
+  ],
+
+  "StudentListData":[
+    {
+      "id" : 51,
+      "title": "Randy Baptista"
+    },
+    {
+      "id" : 52,
+      "title": "Martin Aminoff"
+    },
+    {
+      "id" : 53,
+      "title": "Talan Baptista"
+    },
+    {
+      "id" : 54,
+      "title": "James Siphron"
+    },
+    {
+      "id" : 55,
+      "title": "John Deo"
+    }
+  ]
+}

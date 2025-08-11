@@ -2909,7 +2909,7 @@
                         o = o || a
                     }
                     if (o) return o !== u[0] && u.unshift(o), n[o]
-                }(v, T, n)), !i && -1 < S.inArray("script", v.dataTypes) && S.inArray("json", v.dataTypes) < 0 && (v.converters["text script"] = function() {}), s = function(e, t, n, r) {
+                }(v, T, n)), !i && -1 < S.inArray("script", v.dataTypes) && S.inArray("../json", v.dataTypes) < 0 && (v.converters["text script"] = function() {}), s = function(e, t, n, r) {
                     var i, o, a, s, u, l = {},
                         c = e.dataTypes.slice();
                     if (c[1])
@@ -2945,7 +2945,7 @@
             return T
         },
         getJSON: function(e, t, n) {
-            return S.get(e, t, n, "json")
+            return S.get(e, t, n, "../json")
         },
         getScript: function(e, t) {
             return S.get(e, void 0, t, "script")
@@ -3092,11 +3092,11 @@
             var e = zt.pop() || S.expando + "_" + wt.guid++;
             return this[e] = !0, e
         }
-    }), S.ajaxPrefilter("json jsonp", function(e, t, n) {
+    }), S.ajaxPrefilter("../json jsonp", function(e, t, n) {
         var r, i, o, a = !1 !== e.jsonp && (Ut.test(e.url) ? "url" : "string" == typeof e.data && 0 === (e.contentType || "").indexOf("application/x-www-form-urlencoded") && Ut.test(e.data) && "data");
-        if (a || "jsonp" === e.dataTypes[0]) return r = e.jsonpCallback = m(e.jsonpCallback) ? e.jsonpCallback() : e.jsonpCallback, a ? e[a] = e[a].replace(Ut, "$1" + r) : !1 !== e.jsonp && (e.url += (Tt.test(e.url) ? "&" : "?") + e.jsonp + "=" + r), e.converters["script json"] = function() {
+        if (a || "../jsonp" === e.dataTypes[0]) return r = e.jsonpCallback = m(e.jsonpCallback) ? e.jsonpCallback() : e.jsonpCallback, a ? e[a] = e[a].replace(Ut, "$1" + r) : !1 !== e.jsonp && (e.url += (Tt.test(e.url) ? "&" : "?") + e.jsonp + "=" + r), e.converters["script json"] = function() {
             return o || S.error(r + " was not called"), o[0]
-        }, e.dataTypes[0] = "json", i = C[r], C[r] = function() {
+        }, e.dataTypes[0] = "../json", i = C[r], C[r] = function() {
             o = arguments
         }, n.always(function() {
             void 0 === i ? S(C).removeProp(r) : C[r] = i, e[r] && (e.jsonpCallback = t.jsonpCallback, zt.push(r)), o && m(i) && i(o[0]), o = i = void 0
