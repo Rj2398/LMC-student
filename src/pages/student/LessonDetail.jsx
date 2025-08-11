@@ -1,17 +1,27 @@
-
-import React, { useEffect, useState, useCallback, useMemo, useRef, } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import PdfViewer from "./PdfViewer";
 
-
-import PauseIcon from "../../assets/icons/videoIcon.png"
+import PauseIcon from "../../assets/icons/videoIcon.png";
 
 import toast from "react-hot-toast";
 
-import { completeLesson, getLessionDetailSlice, getLessionSlice, lessionSubmit, retriveLesson, } from "../../redux/slices/student/lessionSlice";
+import {
+  completeLesson,
+  getLessionDetailSlice,
+  getLessionSlice,
+  lessionSubmit,
+  retriveLesson,
+} from "../../redux/slices/student/lessionSlice";
 
 // --- Utility function to cyclically shift an array ---
 function cyclicallyShiftArray(array) {
@@ -47,7 +57,13 @@ const MatchingLeftOption = ({
 
   const getColor = () => {
     if (isIncorrect) return "#fff";
-    if ( isHovered || isCurrentlySelected || isCorrect || isRecolored || isAlreadySelected )
+    if (
+      isHovered ||
+      isCurrentlySelected ||
+      isCorrect ||
+      isRecolored ||
+      isAlreadySelected
+    )
       return "#fff";
     return "#333";
   };
@@ -310,12 +326,9 @@ const LessonDetail = () => {
   );
   const { retriveLessonResponse } = useSelector(({ lession }) => lession);
 
-
-
-  
   const [isPlaying, setIsPlaying] = useState(false);
   const videoRef = useRef(null);
- 
+
   const [lessionWiseDetails, setLessonWiseDetails] = useState();
 
   const toastShownRef = useRef(false);
@@ -762,7 +775,7 @@ const LessonDetail = () => {
                               />
                               Your browser does not support the video tag.
                             </video>
- 
+
                             {/* Conditionally render the pause icon overlay */}
                             {!isPlaying && (
                               <img
@@ -773,12 +786,12 @@ const LessonDetail = () => {
                                   top: "50%",
                                   left: "50%",
                                   transform: "translate(-50%, -50%)",
-                                  width: "50px", // Reduced size
-                                  height: "50px", // Reduced size
+                                  width: "80px", // Reduced size
+                                  height: "80px", // Reduced size
                                   cursor: "pointer",
                                   // You might need a transparent background to see the video behind it
-                                  backgroundColor: "rgba(0, 0, 0, 0.5)",
-                                  borderRadius: "50%",
+                                  // backgroundColor: "rgba(0, 0, 0, 0.5)",
+                                  // borderRadius: "50%",
                                   padding: "10px",
                                 }}
                                 onClick={handleVideoClick}
@@ -787,18 +800,25 @@ const LessonDetail = () => {
                           </div>
                         );
 
-
-                        case "pdf":
-                          return (
-                            <div className="lesson-content-item pdf-content" style={{width:"40%"}}>
-                              {contentItem.file_name ? (
-                                <PdfViewer pdfUrl={contentItem.file_name} pdfName={contentItem.title || "Document.pdf"} />
-                              ) : (
-                                <p>PDF content available but no PDF link provided.</p>
-                              )}
-                              {contentItem.desc && <p>{contentItem.desc}</p>}
-                            </div>
-                          );
+                      case "pdf":
+                        return (
+                          <div
+                            className="lesson-content-item pdf-content"
+                            style={{ width: "40%" }}
+                          >
+                            {contentItem.file_name ? (
+                              <PdfViewer
+                                pdfUrl={contentItem.file_name}
+                                pdfName={contentItem.title || "Document.pdf"}
+                              />
+                            ) : (
+                              <p>
+                                PDF content available but no PDF link provided.
+                              </p>
+                            )}
+                            {contentItem.desc && <p>{contentItem.desc}</p>}
+                          </div>
+                        );
 
                       case "image":
                         return (
@@ -1163,26 +1183,6 @@ const QuitPopup = ({
     </Modal>
   );
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import React, {
 //   useEffect,
@@ -4868,7 +4868,7 @@ const QuitPopup = ({
 //       if (data) {
 //         dispatch(completeLesson({ lesson_id: lessonId })).then((response) => {
 //           const data = response?.payload;
- 
+
 //           if (data) {
 //             dispatch(getLessionSlice({ subject_id: subjectId }));
 //           }
@@ -5265,8 +5265,6 @@ const QuitPopup = ({
 //         </div>
 //         <div className="bottom-cta justify-content-end">
 
-         
- 
 // {simulateMatchingQuizAnswered ? (
 //             // Render a disabled button with the same styling class
 //             <span
@@ -5296,7 +5294,7 @@ const QuitPopup = ({
 //               Next Lesson <i className="fa-regular fa-arrow-right"></i>
 //             </Link>
 //           )}
- 
+
 //           {/* <Link
 //             to={`/student/lesson-detail?lessonId=${lessonId}&attemptId=${attemptId}&subjectId=${subjectId}`}
 //             onClick={handleOpenPopup}
