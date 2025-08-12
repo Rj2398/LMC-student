@@ -48,13 +48,16 @@ const SubjectDetail = () => {
 
       if (converedResponse) {
         // sessionStorage.setItem("hasNavigatedToMyComponent", "true");
+        if (status == "completed") {
+          sessionStorage.setItem("isCompleted", "true");
+        }
         navigate(
           `/student/lesson-detail?lessonId=${lessonId}&attemptId=${converedResponse}&subjectId=${subjectId}`,
           {
             state: {
               simulateMatchingQuizAnswered:
                 status == "completed" ? true : false,
-              isReload: false,
+              // isReload: false,
             },
           }
         );

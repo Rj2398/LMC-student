@@ -341,12 +341,19 @@ const LessonDetail = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  var simulateMatchingQuizAnswered =
-    location.state?.simulateMatchingQuizAnswered;
+  // var simulateMatchingQuizAnswered =
+  //   location.state?.simulateMatchingQuizAnswered;
   //
 
-  const isReload = location.state?.isReload;
-  console.log(isReload, "IIIIIIIIIIII");
+  const isCompletedFromSession = sessionStorage.getItem("isCompleted");
+
+  // If sessionStorage has a value, use it. Otherwise, fall back to location.state.
+  var simulateMatchingQuizAnswered = isCompletedFromSession
+    ? isCompletedFromSession === "true"
+    : location.state?.simulateMatchingQuizAnswered;
+
+  // const isReload = location.state?.isReload;
+  console.log(simulateMatchingQuizAnswered, "IIIIIIIIIIII");
   const [selectedData, setSelectedData] = useState();
 
   const [searchParams] = useSearchParams();
@@ -373,13 +380,13 @@ const LessonDetail = () => {
   //
 
   //reload to back
-  useEffect(() => {
-    // Check if `isReload` is false, which is the condition for a redirect in your case.
-    if (isReload === undefined) {
-      // Redirect to the previous page
-      navigate(`/student/subject-detail?subjectId=${subjectId}`);
-    }
-  }, [navigate, isReload, subjectId]);
+  // useEffect(() => {
+  //   // Check if `isReload` is false, which is the condition for a redirect in your case.
+  //   if (isReload === undefined) {
+  //     // Redirect to the previous page
+  //     navigate(`/student/subject-detail?subjectId=${subjectId}`);
+  //   }
+  // }, [navigate, isReload, subjectId]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -687,7 +694,7 @@ const LessonDetail = () => {
     }
 
     if (!allMatchingQuizzesCompleted) {
-      toast.error(validationMessage);
+      // toast.error(validationMessage);
     } else {
       setShowModal(true);
     }
@@ -713,7 +720,12 @@ const LessonDetail = () => {
     <>
       <div className="baseline-ass-wrp">
         <div className="back-btn mb-3">
-          <Link to={`/student/subject-detail?subjectId=${subjectId}`}>
+          <Link
+            to={`/student/subject-detail?subjectId=${subjectId}`}
+            onClick={() => {
+              sessionStorage.removeItem("isCompleted");
+            }}
+          >
             <img src="/images/baseline-assessment/back-icon.svg" alt="icon" />{" "}
             Back to the Subject
           </Link>
