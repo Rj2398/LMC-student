@@ -267,8 +267,6 @@ const SingleChoiceOption = ({
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
-  console.log(isAlreadySelected, "is alredy slecteddd*****");
-
   return (
     <div
       key={`option-${option.id}-${quizId}-${optionIndex}`}
@@ -345,7 +343,10 @@ const LessonDetail = () => {
   const navigate = useNavigate();
   var simulateMatchingQuizAnswered =
     location.state?.simulateMatchingQuizAnswered;
+  //
 
+  const isReload = location.state?.isReload;
+  console.log(isReload, "IIIIIIIIIIII");
   const [selectedData, setSelectedData] = useState();
 
   const [searchParams] = useSearchParams();
@@ -358,7 +359,6 @@ const LessonDetail = () => {
   const [quizAnswers, setQuizAnswers] = useState({});
   const [correctMatchState, setCorrectMatchState] = useState({}); // New state for temporary correct feedback
 
-  console.log(correctMatchState, "correct matching state***");
   const [incorrectMatchState, setIncorrectMatchState] = useState({}); // New state for temporary incorrect feedback
 
   const handleClosePopup = () => setShowModal(false);
@@ -371,6 +371,15 @@ const LessonDetail = () => {
   }, [location]);
 
   //
+
+  //reload to back
+  useEffect(() => {
+    // Check if `isReload` is false, which is the condition for a redirect in your case.
+    if (isReload === undefined) {
+      // Redirect to the previous page
+      navigate(`/student/subject-detail?subjectId=${subjectId}`);
+    }
+  }, [navigate, isReload, subjectId]);
 
   useEffect(() => {
     window.scrollTo(0, 0);

@@ -25,13 +25,15 @@ const SubjectDetail = () => {
 
   useEffect(() => {
     dispatch(getLessionSlice({ subject_id: subjectId }));
-  }, [dispatch, location.key, subjectId]);
+  }, [dispatch, subjectId]);
 
   useEffect(() => {
     if (storeAllLession) {
-      dispatch(setCurrentSubject(storeAllLession?.storeAllLession?.subject?.Subject))
+      dispatch(
+        setCurrentSubject(storeAllLession?.storeAllLession?.subject?.Subject)
+      );
     }
-  }, [storeAllLession])
+  }, [storeAllLession]);
 
   const handleStartLesson = async (lessonId, subjectId, status) => {
     dispatch(
@@ -45,13 +47,14 @@ const SubjectDetail = () => {
       console.log(converedResponse, "ASDFASDFASDFASFASDASDFAS");
 
       if (converedResponse) {
-        dispatch(startLession({ lesson_id: lessonId }));
+        // sessionStorage.setItem("hasNavigatedToMyComponent", "true");
         navigate(
           `/student/lesson-detail?lessonId=${lessonId}&attemptId=${converedResponse}&subjectId=${subjectId}`,
           {
             state: {
               simulateMatchingQuizAnswered:
                 status == "completed" ? true : false,
+              isReload: false,
             },
           }
         );
@@ -62,7 +65,6 @@ const SubjectDetail = () => {
   const CapitalizeFirstLetter = (str) => {
     if (!str) return "";
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-
   };
 
   return (
@@ -72,10 +74,7 @@ const SubjectDetail = () => {
           <h1 className="mb-2">
             {storeAllLession?.storeAllLession?.subject?.Subject}
             <span>
-              <b>
-                {storeAllLession?.storeAllLession?.subject?.percentage}
-                %
-              </b>
+              <b>{storeAllLession?.storeAllLession?.subject?.percentage}%</b>
             </span>
           </h1>
           <div className="sub-pro">
@@ -91,16 +90,16 @@ const SubjectDetail = () => {
             <ul className="w-100">
               <li>
                 <img src="/images/subject-detail/lessons.svg" alt="" />
-                {storeAllLession?.storeAllLession?.subject?.total_lessons}
-                {" "} lessons
+                {storeAllLession?.storeAllLession?.subject?.total_lessons}{" "}
+                lessons
               </li>
               <li>
                 <img src="/images/subject-detail/quizzes.svg" alt="" />
                 {
                   storeAllLession?.storeAllLession?.subject
                     ?.total_lesson_quizzes
-                }
-                {" "} Quizzes
+                }{" "}
+                Quizzes
               </li>
               <li className="me-3">
                 <span>Overall Progress</span>
@@ -110,11 +109,12 @@ const SubjectDetail = () => {
               <div
                 className="progress-bar"
                 style={{
-                  width: `${(storeAllLession?.storeAllLession?.subject?.completed /
-                    storeAllLession?.storeAllLession?.subject
-                      ?.total_lessons) *
-                    100 || 0
-                    }%`,
+                  width: `${
+                    (storeAllLession?.storeAllLession?.subject?.completed /
+                      storeAllLession?.storeAllLession?.subject
+                        ?.total_lessons) *
+                      100 || 0
+                  }%`,
                 }}
                 role="progressbar"
                 aria-valuenow={
@@ -122,7 +122,7 @@ const SubjectDetail = () => {
                     (storeAllLession?.storeAllLession?.subject?.completed /
                       storeAllLession?.storeAllLession?.subject
                         ?.total_lessons) *
-                    100
+                      100
                   ) || 0
                 }
                 aria-valuemin="0"
@@ -143,15 +143,16 @@ const SubjectDetail = () => {
                 alt=""
               /> */}
               <img
-                src={`/images/subject-detail/sub-lessons/${storeAllLession?.storeAllLession?.baseline_test?.status ==
+                src={`/images/subject-detail/sub-lessons/${
+                  storeAllLession?.storeAllLession?.baseline_test?.status ==
                   "locked"
-                  ? "locked-not-started"
-                  : storeAllLession?.storeAllLession?.baseline_test?.status ==
-                    "completed"
+                    ? "locked-not-started"
+                    : storeAllLession?.storeAllLession?.baseline_test?.status ==
+                      "completed"
                     ? "completed"
                     : "in-progress"
-                  }.svg`}
-              // alt={lesson?.status}
+                }.svg`}
+                // alt={lesson?.status}
               />
             </div>
             <div className="lesson-data">
@@ -171,23 +172,28 @@ const SubjectDetail = () => {
               </p>
             </div>
             <div className="sub-lessons-list-in-ryt">
-              <div className="status completed"
+              <div
+                className="status completed"
                 style={{
                   backgroundColor:
-                    storeAllLession?.storeAllLession?.baseline_test?.status === "in_process"
+                    storeAllLession?.storeAllLession?.baseline_test?.status ===
+                    "in_process"
                       ? "#FFC107" // Yellow for Inprocess
-                        : "#28a745", // Default green
+                      : "#28a745", // Default green
 
-                        color:
-                    storeAllLession?.storeAllLession?.baseline_test?.status === "in_process"
+                  color:
+                    storeAllLession?.storeAllLession?.baseline_test?.status ===
+                    "in_process"
                       ? "#fff" // Yellow for Inprocess
-                        : "#fff", // Default green
+                      : "#fff", // Default green
                 }}
               >
-                {CapitalizeFirstLetter(storeAllLession?.storeAllLession?.baseline_test?.status ==
-                  "in_process"
-                  ? "Inprocess"
-                  : storeAllLession?.storeAllLession?.baseline_test?.status)}
+                {CapitalizeFirstLetter(
+                  storeAllLession?.storeAllLession?.baseline_test?.status ==
+                    "in_process"
+                    ? "Inprocess"
+                    : storeAllLession?.storeAllLession?.baseline_test?.status
+                )}
               </div>
               <span>&nbsp;</span>
             </div>
@@ -207,11 +213,13 @@ const SubjectDetail = () => {
             </h2>
 
             {storeAllLession?.storeAllLession?.baseline_test?.answers &&
-              storeAllLession.storeAllLession.baseline_test.answers.length > 0 ? (
+            storeAllLession.storeAllLession.baseline_test.answers.length > 0 ? (
               storeAllLession.storeAllLession.baseline_test.answers.map(
                 (answer, index) => (
                   <div className="asse-complete-q-a" key={index}>
-                    <h4>Question {index + 1}: {answer.question}</h4>
+                    <h4>
+                      Question {index + 1}: {answer.question}
+                    </h4>
                     {answer.selected_option ? (
                       <p className="ps-0 d-flex gap-2 justify-content-start">
                         <span>Your Answer</span>
@@ -253,12 +261,13 @@ const SubjectDetail = () => {
               <div className="lesson-num-ico">
                 <span>{index + 1}</span>
                 <img
-                  src={`/images/subject-detail/sub-lessons/${lesson?.status == "locked"
-                    ? "locked-not-started"
-                    : lesson?.status == "completed"
+                  src={`/images/subject-detail/sub-lessons/${
+                    lesson?.status == "locked"
+                      ? "locked-not-started"
+                      : lesson?.status == "completed"
                       ? "completed"
                       : "in-progress"
-                    }.svg`}
+                  }.svg`}
                   alt={lesson?.status}
                 />
               </div>
@@ -284,37 +293,39 @@ const SubjectDetail = () => {
                   className={`status ${lesson?.status
                     .toLowerCase()
                     .replace(" ", "-")}`}
-                    style={{
-                      backgroundColor: 
-                        lesson?.status === "completed"
-                          ? "#28a745" // Green for completed
+                  style={{
+                    backgroundColor:
+                      lesson?.status === "completed"
+                        ? "#28a745" // Green for completed
                         : lesson?.status === "retake"
-                          ? "#FFA500" // Orange for retake
-                          : lesson?.status === "review"
-                          ? "#FFA500" // Orange for retake
+                        ? "#FFA500" // Orange for retake
+                        : lesson?.status === "review"
+                        ? "#FFA500" // Orange for retake
                         : lesson?.status === "in_progress"
-                          ? "#FFC107" // Yellow for inprocess
+                        ? "#FFC107" // Yellow for inprocess
                         : "", // Default (empty for other statuses)
 
-                        color: 
-                        lesson?.status === "completed"
-                          ? "#fff" 
+                    color:
+                      lesson?.status === "completed"
+                        ? "#fff"
                         : lesson?.status === "retake"
-                          ? "#fff" 
+                        ? "#fff"
                         : lesson?.status === "in_progress"
-                          ? "#fff" 
-                        : "#000", 
-                      // color: "#fff",
-                      // padding: "4px 8px",
-                      // borderRadius: "4px",
-                      // display: "inline-block"
-                    }}
+                        ? "#fff"
+                        : "#000",
+                    // color: "#fff",
+                    // padding: "4px 8px",
+                    // borderRadius: "4px",
+                    // display: "inline-block"
+                  }}
                 >
-                  {CapitalizeFirstLetter(lesson?.status == "not_started"
-                    ? "Not Started"
-                    : lesson?.status == "in_progress"
+                  {CapitalizeFirstLetter(
+                    lesson?.status == "not_started"
+                      ? "Not Started"
+                      : lesson?.status == "in_progress"
                       ? "In-progress"
-                      : lesson?.status)}
+                      : lesson?.status
+                  )}
                 </div>
                 <span>
                   <i className="fa-light fa-clock"></i> {lesson?.duration}
@@ -332,14 +343,15 @@ const SubjectDetail = () => {
               <span></span>
               <img
                 // src="/images/subject-detail/sub-lessons/completed.svg"
-                src={`/images/subject-detail/sub-lessons/${storeAllLession?.storeAllLession?.summative_test?.status ==
+                src={`/images/subject-detail/sub-lessons/${
+                  storeAllLession?.storeAllLession?.summative_test?.status ==
                   "locked"
-                  ? "locked-not-started"
-                  : storeAllLession?.storeAllLession?.summative_test?.status ==
-                    "completed"
+                    ? "locked-not-started"
+                    : storeAllLession?.storeAllLession?.summative_test
+                        ?.status == "completed"
                     ? "completed"
                     : "in-progress"
-                  }.svg`}
+                }.svg`}
                 alt=""
               />
             </div>
@@ -347,9 +359,10 @@ const SubjectDetail = () => {
               <h2
                 style={{ cursor: "pointer" }}
                 onClick={() =>
-                  (storeAllLession?.storeAllLession?.summative_test?.status !=
-                    "locked" && storeAllLession?.storeAllLession?.summative_test?.status !=
-                    "completed") &&
+                  storeAllLession?.storeAllLession?.summative_test?.status !=
+                    "locked" &&
+                  storeAllLession?.storeAllLession?.summative_test?.status !=
+                    "completed" &&
                   navigate(`/student/summative-assessment/${subjectId}`, {
                     state: { subjectId: subjectId },
                   })
@@ -359,17 +372,17 @@ const SubjectDetail = () => {
                 -{storeAllLession?.storeAllLession?.summative_test?.test_name}
                 {storeAllLession?.storeAllLession?.summative_test?.status ===
                   "completed" && (
-                    <button
-                      type="button"
-                      className={showSubmittiveModal ? "active" : ""}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowSubmittiveModal(!showSubmittiveModal);
-                      }}
-                    >
-                      <i className="fa-regular fa-angle-down"></i>
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    className={showSubmittiveModal ? "active" : ""}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowSubmittiveModal(!showSubmittiveModal);
+                    }}
+                  >
+                    <i className="fa-regular fa-angle-down"></i>
+                  </button>
+                )}
               </h2>
               <p>
                 {storeAllLession?.storeAllLession?.summative_test?.description}
@@ -377,56 +390,65 @@ const SubjectDetail = () => {
             </div>
             {storeAllLession?.storeAllLession?.summative_test?.status ===
               "retake" && (
-                <div className="start-quiz-cta">
-                  <Link
-                    to={
-                      storeAllLession?.storeAllLession?.summative_test?.quizLink
-                    }
-                  >
-                    Start Quiz
-                  </Link>
-                </div>
-              )}
+              <div className="start-quiz-cta">
+                <Link
+                  to={
+                    storeAllLession?.storeAllLession?.summative_test?.quizLink
+                  }
+                >
+                  Start Quiz
+                </Link>
+              </div>
+            )}
             <div className="sub-lessons-list-in-ryt">
               <div
-                className={`status ${storeAllLession?.storeAllLession?.summative_test?.status ==
+                className={`status ${
+                  storeAllLession?.storeAllLession?.summative_test?.status ==
                   "completed"
-                  ? "completed"
-                  : storeAllLession?.storeAllLession?.summative_test
-                    ?.status == "retake"
+                    ? "completed"
+                    : storeAllLession?.storeAllLession?.summative_test
+                        ?.status == "retake"
                     ? "retake"
                     : ""
-                  } `}
+                } `}
                 style={{
                   backgroundColor:
-                    storeAllLession?.storeAllLession?.summative_test?.status === "completed"
+                    storeAllLession?.storeAllLession?.summative_test?.status ===
+                    "completed"
                       ? "#28a745" // Green for completed
-                      : storeAllLession?.storeAllLession?.summative_test?.status === "retake"
-                        ? "#FFA500" // Orange for retake
-                        : storeAllLession?.storeAllLession?.summative_test?.status === "in_process"
-                          ? "#FFC107" // Yellow for inprocess
-                          : "", // Default
-                          color: 
-                        storeAllLession?.storeAllLession?.summative_test?.status === "completed"
-                          ? "#fff" 
-                        : storeAllLession?.storeAllLession?.summative_test?.status === "retake"
-                          ? "#fff" 
-                       : storeAllLession?.storeAllLession?.summative_test?.status === "in_process"
-                          ? "#fff" 
-                        : "#000", 
+                      : storeAllLession?.storeAllLession?.summative_test
+                          ?.status === "retake"
+                      ? "#FFA500" // Orange for retake
+                      : storeAllLession?.storeAllLession?.summative_test
+                          ?.status === "in_process"
+                      ? "#FFC107" // Yellow for inprocess
+                      : "", // Default
+                  color:
+                    storeAllLession?.storeAllLession?.summative_test?.status ===
+                    "completed"
+                      ? "#fff"
+                      : storeAllLession?.storeAllLession?.summative_test
+                          ?.status === "retake"
+                      ? "#fff"
+                      : storeAllLession?.storeAllLession?.summative_test
+                          ?.status === "in_process"
+                      ? "#fff"
+                      : "#000",
                   // color: "#000",
                   // padding: "4px 8px",
                   // borderRadius: "4px",
                   // display: "inline-block"
                 }}
               >
-                {CapitalizeFirstLetter(storeAllLession?.storeAllLession?.summative_test?.status ==
-                  "not_started"
-                  ? "Not Started"
-                  : storeAllLession?.storeAllLession?.summative_test?.status ==
-                    "in_process"
+                {CapitalizeFirstLetter(
+                  storeAllLession?.storeAllLession?.summative_test?.status ==
+                    "not_started"
+                    ? "Not Started"
+                    : storeAllLession?.storeAllLession?.summative_test
+                        ?.status == "in_process"
                     ? "In progress"
-                    : storeAllLession?.storeAllLession?.summative_test?.status)}
+                    : storeAllLession?.storeAllLession?.summative_test?.status
+                )}
               </div>
               <span>&nbsp;</span>
             </div>
@@ -446,7 +468,7 @@ const SubjectDetail = () => {
             </h2>
 
             {storeAllLession?.storeAllLession?.summative_test?.answers &&
-              storeAllLession.storeAllLession.summative_test.answers.length >
+            storeAllLession.storeAllLession.summative_test.answers.length >
               0 ? (
               storeAllLession.storeAllLession.summative_test.answers.map(
                 (answer, index) => (
