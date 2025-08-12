@@ -120,11 +120,11 @@ const Profile = () => {
                 />
               </div>
               <div className="form-group">
-                <input
+                {/* <input
                   type="submit"
                   value={isEditing ? "Update" : "Edit Profile"}
                   onClick={handleEdit}
-                />
+                /> */}
               </div>
             </form>
           </div>

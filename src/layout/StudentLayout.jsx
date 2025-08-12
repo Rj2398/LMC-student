@@ -8,6 +8,10 @@ const StudentLayout = () => {
   const [hideNavSidebar, setHideNavSidebar] = useState(false);
 
   const location = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location?.pathname]);
 
   const hiddenPaths = [
     // "/student/baseline-assignment",

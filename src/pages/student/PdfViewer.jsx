@@ -17,21 +17,20 @@ const PdfViewer = ({ pdfUrl, pdfName }) => {
       <div className="pdf-viewer-container" style={{
         border: '1px solid #e0e0e0',
         borderRadius: '20px',
-        padding: '5px 16px 5px 16px',
+        padding: '10px 15px',
         marginBottom: '16px',
         backgroundColor: '#fff'
       }}>
         <div style={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: '12px'
+          justifyContent: 'space-between'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap:"12px" }}>
             <img 
               src="/images/pdf.png" 
               alt="PDF Icon" 
-              style={{ width: '50px', height: '50px', marginRight: '12px' }}
+              style={{ width: '50px', height: '50px', margin: 'auto' }}
             />
             <span style={{ fontWeight: '500' }}>{pdfName}</span>
           </div>
