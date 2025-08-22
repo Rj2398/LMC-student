@@ -10,7 +10,10 @@ const TeacherLayout = () => {
   const [hideNavSidebar, setHideNavSidebar] = useState(false);
 
   const location = useLocation();
-  const { loading } = useSelector((state) => state.dashboard)
+  const dashboardLoading = useSelector((state) => state.dashboard?.loading);
+  const progressLoading = useSelector((state) => state.progress?.loading);
+  const mwlLoading = useSelector((state) => state.mwl?.loading);
+  const loading = dashboardLoading || progressLoading || mwlLoading;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -22,7 +25,11 @@ const TeacherLayout = () => {
     "/teacher/subject-baseline-detail",
     "/teacher/mwl-parent-training",
     "/teacher/subject-summative-detail",
-    "/teacher/mwl-onboarding",]
+    "/teacher/mwl-onboarding",
+    "/teacher/mwl-micro-credentials-domain-training-lesson",
+    "/teacher/onboarding",
+
+  ]
 
   useEffect(() => {
       // setHideNavSidebar(hiddenPaths.includes(location.pathname));
@@ -35,7 +42,7 @@ const TeacherLayout = () => {
   return (
     hideNavSidebar ? ( <main> <Outlet /> </main> ) : (
     <>
-      {loading && <Loading />}
+      {(loading) && <Loading />}
 
       <Sidebar showSidebar={showSidebar} />
       <section id="content">

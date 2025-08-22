@@ -48,6 +48,33 @@ export const getSubjectList = createAsyncThunk("/student/getSubjectList", async 
   }
 });
 
+export const getClassList = createAsyncThunk("/student/getClassList", async (formData, { rejectWithValue }) => {
+  try {
+    const response = await api.getClassList(formData);
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(error.response?.data || error.message);
+  }
+});
+
+export const getStudentList = createAsyncThunk("/student/getStudentList", async (formData, { rejectWithValue }) => {
+  try {
+    const response = await api.getStudentList(formData);
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(error.response?.data || error.message);
+  }
+});
+
+export const getStudentList2 = createAsyncThunk("/student/getStudentList2", async (formData, { rejectWithValue }) => {
+  try {
+    const response = await api.getStudentList(formData);
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(error.response?.data || error.message);
+  }
+});
+
 export const getTeacherSubDashboard = createAsyncThunk("/student/getTeacherSubDashboard", async (formData, { rejectWithValue }) => {
   try {
     const response = await api.getTeacherSubDashboard(formData);
@@ -84,6 +111,26 @@ export const studentProfilePerformance = createAsyncThunk("/student/studentProfi
   }
 });
 
+export const getStudentAnswers = createAsyncThunk("/student/getStudentAnswers", async (formData, { rejectWithValue }) => {
+  try {
+    const response = await api.getStudentAnswers(formData);
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(error.response?.data || error.message);
+  }
+});
+
+// lesson quiz page API
+
+export const getLessonQuizAnswers = createAsyncThunk("/student/getLessonQuizAnswers", async (formData, { rejectWithValue }) => {
+  try {
+    const response = await api.getLessonQuizAnswers(formData);
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(error.response?.data || error.message);
+  }
+});
+
 const dashboardSlice = createSlice({
   name: "dashboardSlice",
   initialState: {
@@ -92,14 +139,50 @@ const dashboardSlice = createSlice({
     classDetails: null,
     subjectInfo : null,
     subjectList: null,
+    classList: null,
+    studentList: null,
+    studentList2: null,
     subDashboard: null,
     lessonInfo: null,
     baslineSummitiveInfo: null,
     studentProfileInfo:null,
+    allQuestionAnswer: null,
+    lessonQuizAnswer: null,
     loading: false,
     error: null,
+    // reducers 
+    teacherCurrentSubject: null,
+    teacherStudentName: null,
+    lessonQuizName: null,
+    mwlTraining: null,
+    mwlDomain: null,
   },
-  reducers: {},
+  reducers: {
+    setTeacherCurrentSubject: (state, action) => {
+      state.teacherCurrentSubject = action.payload;
+      localStorage.setItem('teacherCurrentSubject', action.payload);
+    },
+
+    setTeacherStudentName: (state, action) => {
+      state.teacherStudentName = action.payload;
+      localStorage.setItem("teacherStudentName",action.payload);
+    },
+    
+    setLessonQuizName: (state, action) => {
+      state.lessonQuizName = action.payload;
+      localStorage.setItem('lessonQuizName', action.payload);
+    },
+
+    setMwlTraining: (state, action) => {
+      state.mwlTraining = action.payload;
+      localStorage.setItem('mwlTraining', action.payload);
+    },
+
+    setMwlDomain: (state, action) => {
+      state.mwlDomain = action.payload;
+      localStorage.setItem('mwlDomain', action.payload);
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getSubjectLevel.pending, (state) => {
@@ -167,6 +250,45 @@ const dashboardSlice = createSlice({
         state.error = action.payload?.message || "Failed to fetch client information";
       }) 
 
+      .addCase(getClassList.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getClassList.fulfilled, (state, action) => {
+        state.loading = false;
+        state.classList = action.payload?.data;
+      })
+      .addCase(getClassList.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "Failed to fetch client information";
+      }) 
+
+      .addCase(getStudentList.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getStudentList.fulfilled, (state, action) => {
+        state.loading = false;
+        state.studentList = action.payload?.data;
+      })
+      .addCase(getStudentList.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "Failed to fetch client information";
+      }) 
+
+      .addCase(getStudentList2.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getStudentList2.fulfilled, (state, action) => {
+        state.loading = false;
+        state.studentList2 = action.payload?.data;
+      })
+      .addCase(getStudentList2.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "Failed to fetch client information";
+      }) 
+
       .addCase(getTeacherSubDashboard.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -219,7 +341,36 @@ const dashboardSlice = createSlice({
         state.error = action.payload?.message || "Failed to fetch client information";
       }) 
 
+      .addCase(getStudentAnswers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getStudentAnswers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.allQuestionAnswer = action.payload;
+      })
+      .addCase(getStudentAnswers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "Failed to fetch client information";
+      }) 
+
+      // lesson quiz page API
+      .addCase(getLessonQuizAnswers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getLessonQuizAnswers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.lessonQuizAnswer = action.payload;
+      })
+      .addCase(getLessonQuizAnswers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "Failed to fetch client information";
+      }) 
+
   },
 });
 
+
+export const { setTeacherCurrentSubject, setTeacherStudentName, setLessonQuizName, setMwlTraining, setMwlDomain } = dashboardSlice.actions;
 export default dashboardSlice.reducer;

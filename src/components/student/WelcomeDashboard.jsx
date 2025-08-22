@@ -3,12 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { dashboardInfo } from "../../redux/slices/student/studentSlice";
 
 const WelcomeDashboard = () => {
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const { dashboardData } = useSelector((state) => state.student);
 
   useEffect(() => {
     dispatch(dashboardInfo());
-  },[dispatch])
+  }, [dispatch]);
 
   return (
     <>
@@ -24,39 +24,52 @@ const WelcomeDashboard = () => {
           <div className="col-lg-3">
             <div className="progress-grid-in ms-0">
               <h2>
-                <img src="/images/dashboard/progress-grid/1.svg" alt="" />Baseline <br /> Assessments
+                <img src="/images/dashboard/progress-grid/1.svg" alt="" />
+                Baseline <br /> Assessments
               </h2>
               <h3>{dashboardData?.baseline_assessments?.percentage}%</h3>
               <p style={{ color: "white", fontWeight: "400" }}>
-                {dashboardData?.baseline_assessments?.completed}/{dashboardData?.baseline_assessments?.total} Completed
+                {/* {dashboardData?.baseline_assessments?.completed}/{dashboardData?.baseline_assessments?.total} Completed */}
               </p>
             </div>
           </div>
           <div className="col-lg-3">
             <div className="progress-grid-in">
               <h2>
-                <img src="/images/dashboard/progress-grid/3.svg" alt="" />Lesson-Wise Quiz Progress
+                <img src="/images/dashboard/progress-grid/3.svg" alt="" />
+                Lesson Wise Quiz Progress
               </h2>
               <h3>{dashboardData?.lesson_quiz_progress?.percentage}%</h3>
-              <p className="text-black">{dashboardData?.lesson_quiz_progress?.completed}/{dashboardData?.lesson_quiz_progress?.total} Completed </p>
+              <p className="text-black">
+                {/* {dashboardData?.lesson_quiz_progress?.completed}/
+                {dashboardData?.lesson_quiz_progress?.total} Completed{" "} */}
+              </p>
             </div>
           </div>
           <div className="col-lg-3">
             <div className="progress-grid-in">
               <h2>
-                <img src="/images/dashboard/progress-grid/2.svg" alt="" />Summative Assessments
+                <img src="/images/dashboard/progress-grid/2.svg" alt="" />
+                Summative Assessments
               </h2>
               <h3>{dashboardData?.summative_assessments?.percentage}%</h3>
-              <p className="text-black">{dashboardData?.summative_assessments?.completed}/{dashboardData?.summative_assessments?.total} Completed </p>
+              <p className="text-black">
+                {/* {dashboardData?.summative_assessments?.completed}/
+                {dashboardData?.summative_assessments?.total} Completed{" "} */}
+              </p>
             </div>
           </div>
           <div className="col-lg-3">
             <div className="progress-grid-in">
               <h2>
-                <img src="/images/dashboard/progress-grid/3.svg" alt="" />Overall Lesson progress
+                <img src="/images/dashboard/progress-grid/3.svg" alt="" />
+                Overall Lesson progress
               </h2>
               <h3>{dashboardData?.overall_lesson_progress?.percentage}%</h3>
-              <p className="text-black">{dashboardData?.overall_lesson_progress?.completed}/{dashboardData?.overall_lesson_progress?.total} Completed </p>
+              <p className="text-black">
+                {/* {dashboardData?.overall_lesson_progress?.completed}/
+                {dashboardData?.overall_lesson_progress?.total} Completed{" "} */}
+              </p>
             </div>
           </div>
         </div>

@@ -1802,7 +1802,6 @@ a.disabled {
   color: #4B5563;
   outline: none;
 }
-
 .personal-info form .form-group input[type="email"] {
   width: 100%;
   height: 40px;
@@ -2010,7 +2009,7 @@ a.disabled {
   height: 100%;
   display: flex;
   flex-wrap: nowrap;
-  gap: 4rem;
+  gap: 2rem;
   justify-content: center;
   margin: auto;
   margin-left: 5rem;

@@ -1,212 +1,474 @@
-import React, { useState } from 'react';
-import { Modal } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router';
+import React, { useEffect, useState } from "react";
+import { Modal } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate, useSearchParams } from "react-router";
+import {
+  getMwlContent,
+  getmwlLesson,
+} from "../../redux/slices/teacher/mwlSlice";
+import {
+  completeLesson,
+  startLession,
+} from "../../redux/slices/student/lessionSlice";
+import { useLocation } from "react-router";
+import toast from "react-hot-toast";
 
 const MwlMicroCredentialsDomainTrainingLesson = () => {
-    const navigate = useNavigate();
+  const trainingName = localStorage.getItem("mwlTraining");
 
-    const [showModal, setShowModal] = useState(false);
+  const [searchParams] = useSearchParams();
+  const lesson_id = searchParams.get("lesson_id");
+  const location = useLocation();
+  var id = searchParams.get("id");
+  // var lessonId = searchParams.get("lessonId");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { mwlContents, mwlessondetail } = useSelector((state) => state?.mwl);
 
-    const handleShowModal = () => setShowModal(true);
-    const handleCloseModal = () => setShowModal(false);
-    return (
-        <>
-            <div className="baseline-ass-wrp">
-                <div className="back-btn mb-3">
-                    <Link to="" onClick={() => navigate(-1)}>
-                        <img src="../images/baseline-assessment/back-icon.svg" alt="" /> Back to the Subject
-                    </Link>
-                </div>
-                <div className="less-wrapper">
-                    <div className="less-details">
-                        <h1>Life Dream, Ruby Level, Lesson 1</h1>
-                        <h1 style={{ color: "#4126A8" }}>Life Dream component of PMSC!</h1>
-                        <div className="less-details-in">
-                            <h2>Introduction</h2>
+  //local toggle for video
+  // const initialVideoState = mwlContents?.lesson?.contents
+  //   ?.filter((item) => item.type === "video")
+  //   .reduce((acc, item) => {
+  //     acc[item.id] = false; // all closed initially
+  //     return acc;
+  //   }, {});
 
-                            <p>Life Dream helps you visualize success in the future. It also keeps you inspired to overcome
-                                obstacles when trying to accomplish what you want. You have a long life ahead of you filled
-                                with
-                                many opportunities to make a positive impact on the community and world.</p>
-                            <p>Agenda</p>
-                            <p>&#8226; Must I Grow to reach my fullest Potential?</p>
-                            <p>&#8226; Do I need Courage to become my best?</p>
-                            <p>&#8226; What is Motivation?</p>
-                            <p>Imagining your future success and staying inspired to get what you want in life are strongly
-                                related to hope. Take a look at this short video to learn what some students hope for.</p>
+  const [videoState, setVideoState] = React.useState({});
+  console.log(videoState, "&*&*&*******");
+
+  // useEffect(() => {
+  //   if (mwlContents?.lesson?.contents) {
+  //     const initialVideoState = mwlContents?.lesson?.contents
+  //       ?.filter((item) => item.type === "video")
+  //       .reduce((acc, item) => {
+  //         acc[item.id] = false;
+  //         return acc;
+  //       }, {});
+
+  //     setVideoState(initialVideoState); // reset state when lesson changes
+  //   }
+  // }, [lesson_id, location]);
+
+  useEffect(() => {
+    if (mwlContents?.lesson?.contents) {
+      const initialVideoState = mwlContents?.lesson?.contents
+        ?.filter((item) => item.type === "video")
+        .reduce((acc, item) => {
+          acc[item.id] = false;
+          return acc;
+        }, {});
+
+      setVideoState((prev) => ({
+        ...initialVideoState, // ensure all lesson video IDs exist
+        ...prev, // keep old values (true stays true)
+      }));
+    }
+  }, [lesson_id, location, mwlContents]);
+
+  var simulateMatchingQuizAnswered =
+    location.state?.simulateMatchingQuizAnswered;
+
+  var previousName = location.state?.previousName;
+
+  const [showModal, setShowModal] = useState(false);
+
+  const handleShowModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
+
+  useEffect(() => {
+    window.history.pushState(null, document.title, window.location.href);
+    window.addEventListener("popstate", function (event) {
+      window.history.pushState(null, document.title, window.location.href);
+    });
+  }, [location]);
+  // fetch data
+
+  useEffect(() => {
+    if (lesson_id) dispatch(getMwlContent({ lesson_id: parseInt(lesson_id) }));
+  }, [dispatch, lesson_id, location.key]);
+
+  useEffect(() => {
+    if (id) dispatch(getmwlLesson({ subject_id: id }));
+  }, [dispatch, id]);
+
+  //start to play video
+
+  // const openVideo = (id) => {
+  //   console.log(id, "SADFASDFASF");
+  //   setVideoState((prev) =>
+  //     Object.keys(prev).reduce((acc, key) => {
+  //       acc[key] = Number(key) === id; // only clicked id = true
+  //       return acc;
+  //     }, {})
+  //   );
+  // };
+  const openVideo = (id) => {
+    setVideoState((prev) => ({
+      ...prev,
+      [id]: true, // toggle only this video
+    }));
+  };
+  //handle next submit
+  // const handleNextSubmit = async (e) => {
+  //   if (trainingName == "Lesson Prep") {
+  //     dispatch(completeLesson({ lesson_id: lesson_id })).then((response) => {
+  //       const data = response?.payload;
+  //       if (data) {
+  //         dispatch(getMwlContent({ category_id: data?.next_lesson_id }));
+
+  //         dispatch(startLession({ lesson_id: data?.next_lesson_id }));
+
+  //         navigate(
+  //           data?.next_lesson_id
+  //             ? `/teacher/mwl-micro-credentials-domain-training-lesson?lesson_id=${data?.next_lesson_id}&id=${id}`
+  //             : `/teacher/mwl-micro-credentials-domain-training-subject?id=${id}`
+  //         );
+  //       }
+  //     });
+  //   }else{
+  //     const hasUnwatched = Object.values(videoState).some(
+  //       (val) => val === false
+  //     );
+  //     // e.preventDefault();
+  //     if (hasUnwatched) {
+  //       // alert("Please watch all videos before continuing."); // replace with toast or error UI
+  //       toast.error("Please watch all videos before next lesson.");
+  //       // navigate(
+  //       //   `/teacher/mwl-micro-credentials-domain-training-lesson?lesson_id=${lesson_id}&id=${id}`
+  //       // );
+  //       // e.preventDefault();
+  //       return;
+  //       dispatch(completeLesson({ lesson_id: lesson_id })).then((response) => {
+  //         const data = response?.payload;
+  //         if (data) {
+  //           dispatch(getMwlContent({ category_id: data?.next_lesson_id }));
+
+  //           dispatch(startLession({ lesson_id: data?.next_lesson_id }));
+
+  //           navigate(
+  //             data?.next_lesson_id
+  //               ? `/teacher/mwl-micro-credentials-domain-training-lesson?lesson_id=${data?.next_lesson_id}&id=${id}`
+  //               : `/teacher/mwl-micro-credentials-domain-training-subject?id=${id}`
+  //           );
+  //         }
+  //       });
+  //   }
+
+  // };
+
+  const handleNextSubmit = async () => {
+    if (trainingName === "Lesson Prep") {
+      dispatch(completeLesson({ lesson_id: lesson_id })).then((response) => {
+        const data = response?.payload;
+        if (data) {
+          dispatch(getMwlContent({ category_id: data?.next_lesson_id }));
+          dispatch(startLession({ lesson_id: data?.next_lesson_id }));
+
+          navigate(
+            data?.next_lesson_id
+              ? `/teacher/mwl-micro-credentials-domain-training-lesson?lesson_id=${data?.next_lesson_id}&id=${id}`
+              : `/teacher/mwl-micro-credentials-domain-training-subject?id=${id}`
+          );
+        }
+      });
+    } else {
+      const hasUnwatched = Object.values(videoState).some(
+        (val) => val === false
+      );
+
+      if (hasUnwatched) {
+        toast.error("Please watch all videos before next lesson.");
+        return; // stop here if not all watched
+      }
+
+      // ✅ only runs if ALL videos are watched
+      dispatch(completeLesson({ lesson_id: lesson_id })).then((response) => {
+        const data = response?.payload;
+        if (data) {
+          dispatch(getMwlContent({ category_id: data?.next_lesson_id }));
+          dispatch(startLession({ lesson_id: data?.next_lesson_id }));
+
+          navigate(
+            data?.next_lesson_id
+              ? `/teacher/mwl-micro-credentials-domain-training-lesson?lesson_id=${data?.next_lesson_id}&id=${id}`
+              : `/teacher/mwl-micro-credentials-domain-training-subject?id=${id}`
+          );
+        }
+      });
+    }
+  };
+
+  return (
+    <>
+      <div className="baseline-ass-wrp">
+        <div className="back-btn mb-3">
+          <Link
+            to={`/teacher/mwl-micro-credentials-domain-training-subject?id=${id}`}
+          >
+            <img src="../images/baseline-assessment/back-icon.svg" alt="" />{" "}
+            Back to the Subject
+          </Link>
+        </div>
+        <div className="less-wrapper">
+          <div className="less-details">
+            {mwlContents?.subject && (
+              <>
+                <h1>
+                  {mwlContents?.subject?.Subject}, {mwlContents?.subject?.level}
+                  , {mwlContents?.lesson?.title}
+                </h1>
+                <h1 style={{ color: "#4126A8" }}>
+                  {mwlContents?.subject?.Subject} component of PMSC!
+                </h1>
+              </>
+            )}
+
+            {mwlContents?.lesson?.contents?.length > 0 ? (
+              mwlContents.lesson.contents.map((item, index) => {
+                return (
+                  <div key={`${item.id}-${index}`}>
+                    {/* {item.type === "video" && (
+                      <div onClick={() => openVideo(item.id)}>
+                        <div className="less-details-in">
+                          <h2 onClick={() => openVideo(item.id)}>
+                            {item.title.replace(/<[^>]+>/g, "")}
+                          </h2>
+                          <iframe
+                            src={item.video_link}
+                            width="100%"
+                            height="400"
+                            allow="autoplay"
+                            style={{ border: "none" }}
+                            allowFullScreen
+                            onClick={() => openVideo(item.id)}
+                          ></iframe>
                         </div>
                         <hr />
+                      </div>
+                    )} */}
+
+                    {item.type === "video" && (
+                      <div className="less-details-in">
+                        <h2>{item.title.replace(/<[^>]+>/g, "")}</h2>
+
+                        <div style={{ position: "relative" }}>
+                          <iframe
+                            id={`video-${item.id}`}
+                            src={item.video_link} // initially without autoplay
+                            width="100%"
+                            height="400"
+                            style={{ border: "none" }}
+                            allow="autoplay; fullscreen"
+                            allowFullScreen
+                          ></iframe>
+
+                          {/* Transparent overlay to catch click */}
+                          <div
+                            onClick={() => {
+                              openVideo(item.id);
+                              const iframe = document.getElementById(
+                                `video-${item.id}`
+                              );
+                              if (iframe) {
+                                // force reload with autoplay=1
+                                let url = item.video_link;
+                                if (!url.includes("autoplay=1")) {
+                                  url += url.includes("?")
+                                    ? "&autoplay=1"
+                                    : "?autoplay=1";
+                                }
+                                iframe.src = url;
+                              }
+                            }}
+                            style={{
+                              position: "absolute",
+                              top: 0,
+                              left: 0,
+                              width: "100%",
+                              height: "100%",
+                              cursor: "pointer",
+                              background: "transparent",
+                            }}
+                          />
+                        </div>
+
+                        <hr />
+                      </div>
+                    )}
+
+                    {item.type === "text" && (
+                      <>
                         <div className="less-details-in">
-                            <h2>Video</h2>
-                            <video width="100%" controls poster="../images/lesson-details/tumb_1.svg">
-                                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
-                                <source src="https://www.w3schools.com/html/mov_bbb.ogg" type="video/ogg" />
-                                Your browser does not support HTML video.
-                            </video>
+                          <h2>{item.title.replace(/<[^>]+>/g, "")}</h2>
+                          <div
+                            dangerouslySetInnerHTML={{ __html: item.desc }}
+                          ></div>
                         </div>
                         <hr />
+                      </>
+                    )}
+
+                    {item.type === "image" && (
+                      <>
                         <div className="less-details-in">
-                            <h2>Growth Potential</h2>
-                            <p>Growth is to increase in size or maturity across time. It can be seen when watching a seed
-                                develop into a tree, or looking at pictures of when you were an infant to now. In general,
-                                everything that is alive, has a natural tendencey to grow.</p>
+                          <h2>{item.title.replace(/<[^>]+>/g, "")}</h2>
+                          <img
+                            src={item.image}
+                            alt=""
+                            style={{ maxWidth: "100%" }}
+                          />
                         </div>
                         <hr />
-                        <div className="less-details-in">
-                            <h2>Art</h2>
-                            <img src="../images/lesson-details/img_1.svg" alt="" />
+                      </>
+                    )}
+                  </div>
+                );
+              })
+            ) : (
+              <p>No data found.</p>
+            )}
+          </div>
+          {previousName == "Micro-Credentials & Domain Training" && (
+            <div className="less-details-list">
+              <div className="less-details-in mt-0">
+                <h2>Videos Outline</h2>
+                <div className="less-details-list-in">
+                  {mwlessondetail?.lessons?.length > 0 ? (
+                    mwlessondetail.lessons.map((lesson) => {
+                      let imageSrc = "";
+
+                      if (lesson.status === "locked") {
+                        imageSrc =
+                          "../images/subject-detail/sub-lessons/locked-not-started.svg";
+                      } else if (lesson.status === "in-progress") {
+                        imageSrc =
+                          "../images/subject-detail/sub-lessons/in-progress.svg";
+                      } else if (lesson.status === "completed") {
+                        imageSrc =
+                          "../images/subject-detail/sub-lessons/completed.svg";
+                      } else {
+                        // fallback image if status is something unexpected
+                        imageSrc =
+                          "../images/subject-detail/sub-lessons/locked-not-started.svg";
+                      }
+
+                      return (
+                        <div className="item" key={lesson.id + 1}>
+                          <img src={imageSrc} alt={lesson.status} />
+                          {lesson.title}
                         </div>
-                        <hr />
-                        <div className="less-details-in">
-                            <h2>Potential</h2>
-                            <p>Potential is the possibility of something happening when a person shows effort. Similar to
-                                Growth, people have some level of Potential to accomplish goals and tasks. Based upon
-                                certain
-                                conditions such as strength, timing, mood, and reflexes, a person may have a high  Potential
-                                of
-                                hitting a home-run.</p>
-                        </div>
-                        <hr />
-                        <div className="less-details-in">
-                            <h2>Art</h2>
-                            <img src="../images/lesson-details/img_2.svg" alt="" />
-                        </div>
-                        <hr />
-                        <div className="less-details-in">
-                            <p>So, when Growth and Potential are combined, we get **Growth Potential**. This terms is
-                                defined as
-                                the possibility of a person to mature, or accomplish goals and tasks under certain
-                                conditions.
-                            </p>
-                            <p>Reaching your fullest Potential is being the _best version of yourself_. This is never easy!
-                                You
-                                must be willing to do things that are outside of your comfort zone. Some people are too
-                                intimidated by struggles they must face to grow. Other people don’t put forth the effort to
-                                grow, because they have a history of failing, or not getting what they desire. In order to
-                                become the _best version of yourself_, you must find Courage.</p>
-                            <p>Let’s take a look at two concepts that are closely linked to Growth Potential.</p>
-                        </div>
-                        <hr />
-                        <div className="less-details-in">
-                            <h2>Base</h2>
-                            <p>Base is the starting point, origin, or bottom of something. When this term is applied to
-                                people,
-                                it represents the beginning or what’s normal for them. For example, people might have a Base
-                                of
-                                getting a C on a paper, having few friends, or having minimal playing time in a sport.</p>
-                        </div>
-                        <hr />
-                        <div className="less-details-in">
-                            <h2>Art</h2>
-                            <img src="../images/lesson-details/img_2.svg" alt="" />
-                            <img src="../images/lesson-details/img_2.svg" alt="" />
-                            <img src="../images/lesson-details/img_2.svg" alt="" />
-                        </div>
-                        <hr />
-                        <div className="less-details-in">
-                            <h2>Ideal</h2>
-                            <p>Take a look at this short video about what type of vacation a youngster wants.</p>
-                        </div>
-                        <hr />
-                        <div className="less-details-in">
-                            <h2>Video</h2>
-                            <video width="100%" controls poster="../images/lesson-details/tumb_2.svg">
-                                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
-                                <source src="https://www.w3schools.com/html/mov_bbb.ogg" type="video/ogg" />
-                                Your browser does not support HTML video.
-                            </video>
-                        </div>
-                        <hr />
-                        <div className="less-details-in">
-                            <h2>Ideal</h2>
-                            <p>Ideal is what a person wants to happen. It shows a person has a desire for change,
-                                advancement,
-                                or something better. If we continue with our example above, this could mean getting an A on
-                                a
-                                paper, have many friends, or playing the majority of time in a sport.</p>
-                        </div>
-                        <hr />
-                        <div className="less-details-in">
-                            <h2>Art</h2>
-                            <img src="../images/lesson-details/img_2.svg" alt="" />
-                            <img src="../images/lesson-details/img_2.svg" alt="" />
-                            <img src="../images/lesson-details/img_2.svg" alt="" />
-                        </div>
-                        <hr />
-                        <div className="less-details-in">
-                            <h2 className="mb-0">Read the sentence below and fill-in the blank with the correct term.</h2>
-                        </div>
-                    </div>
-                    <div className="less-details-list">
-                        <div className="less-details-in mt-0">
-                            <h2>Videos Outline</h2>
-                            <div className="less-details-list-in">
-                                <div className="item"><img src="../images/subject-detail/sub-lessons/locked-not-started.svg"
-                                    alt="" />Life Dream Lesson 1</div>
-                                <div className="item"><img src="../images/subject-detail/sub-lessons/locked-not-started.svg"
-                                    alt="" />Life Dream Lesson 2</div>
-                                <div className="item"><img src="../images/subject-detail/sub-lessons/locked-not-started.svg"
-                                    alt="" />Life Dream Lesson 3</div>
-                                <div className="item"><img src="../images/subject-detail/sub-lessons/locked-not-started.svg"
-                                    alt="" />Life Dream Lesson 4</div>
-                                <div className="item"><img src="../images/subject-detail/sub-lessons/locked-not-started.svg"
-                                    alt="" />Life Dream Lesson 5</div>
-                                <div className="item"><img src="../images/subject-detail/sub-lessons/locked-not-started.svg"
-                                    alt="" />Life Dream Lesson 6</div>
-                                <div className="item"><img src="../images/subject-detail/sub-lessons/locked-not-started.svg"
-                                    alt="" />Life Dream Lesson 7</div>
-                                <div className="item"><img src="../images/subject-detail/sub-lessons/locked-not-started.svg"
-                                    alt="" />Life Dream Lesson 8</div>
-                            </div>
-                        </div>
-                    </div>
+                      );
+                    })
+                  ) : (
+                    <p>No lessons found.</p>
+                  )}
                 </div>
-                <div className="bottom-cta justify-content-end">
-                    <a href="javascript:void(0);" data-bs-target="#quit-popup" data-bs-toggle="modal" className="next-cta">Next
-                        Lesson <i className="fa-regular fa-arrow-right"></i></a>
-                </div>
+              </div>
             </div>
-
-
-            {/* Confirmation Modal JSX */}
-            <Modal
-                show={showModal}
-                onHide={handleCloseModal}
-                centered
-                className="my-popup"
-                dialogClassName="modal-dialog-edit"
-                id="quit-popup"
-                aria-labelledby="myModalLabel"
+          )}
+        </div>
+        <div className="bottom-cta justify-content-end">
+          {simulateMatchingQuizAnswered ? (
+            <span
+              className="next-cta disabled"
+              disabled
+              style={{
+                backgroundColor: "#4126A8",
+                color: "white",
+                width: "160px",
+                height: "40px",
+                borderRadius: "10px",
+                justifyContent: "space-around",
+                alignItems: "center",
+                display: "flex",
+                opacity: 0.8,
+              }}
             >
-                <div className="modal-content clearfix">
-                    <div className="modal-heading">
-                        <h2>Confirmation</h2>
-                        <button type="button" className="close close-btn-front" onClick={handleCloseModal} aria-label="Close">
-                            <span aria-hidden="true">
-                                <img src="../images/cross-pop.svg" alt="" />
-                            </span>
-                        </button>
-                    </div>
-                    <div className="modal-body">
-                        <div className="delete-pop-wrap">
-                            <form>
-                                <div className="delete-pop-inner">
-                                    <p><b>Have you answered all your questions?</b></p>
-                                    <p>
-                                        Completing them can help you feel more confident and reduce stress. Keep going you’re doing great!
-                                    </p>
-                                </div>
-                                <div className="delete-pop-btn">
-                                    <a href="lesson-detail.html" className="active" onClick={handleCloseModal} aria-label="Close">Review</a>
-                                    <a href="subject-detail.html">Continue</a>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </Modal>
-        </>
-    )
-}
+              {location.state?.isLastLesson?.isLastLesson
+                ? "Finish Lesson"
+                : "Next Lesson"}{" "}
+              <i className="fa-regular fa-arrow-right"></i>
+            </span>
+          ) : (
+            <Link
+              to={`/teacher/mwl-micro-credentials-domain-training-lesson?lesson_id=${lesson_id}&id=${id}`}
+              onClick={(e) => {
+                // e.preventDefault(); // stop navigation
+                handleNextSubmit();
+              }}
+              className="next-cta"
+            >
+              {location.state?.isLastLesson?.isLastLesson
+                ? "Finish Lesson"
+                : "Next Lesson"}{" "}
+              <i className="fa-regular fa-arrow-right"></i>
+            </Link>
+          )}
+          {/* <a
+            href="javascript:void(0);"
+            data-bs-target="#quit-popup"
+            data-bs-toggle="modal"
+            className="next-cta"
+          >
+            Next Lesson <i className="fa-regular fa-arrow-right"></i>
+          </a> */}
+        </div>
+      </div>
 
-export default MwlMicroCredentialsDomainTrainingLesson
+      {/* Confirmation Modal JSX */}
+      <Modal
+        show={showModal}
+        onHide={handleCloseModal}
+        centered
+        className="my-popup"
+        dialogClassName="modal-dialog-edit"
+        id="quit-popup"
+        aria-labelledby="myModalLabel"
+      >
+        <div className="modal-content clearfix">
+          <div className="modal-heading">
+            <h2>Confirmation</h2>
+            <button
+              type="button"
+              className="close close-btn-front"
+              onClick={handleCloseModal}
+              aria-label="Close"
+            >
+              <span aria-hidden="true">
+                <img src="../images/cross-pop.svg" alt="" />
+              </span>
+            </button>
+          </div>
+          <div className="modal-body">
+            <div className="delete-pop-wrap">
+              <form>
+                <div className="delete-pop-inner">
+                  <p>
+                    <b>Have you answered all your questions?</b>
+                  </p>
+                  <p>
+                    Completing them can help you feel more confident and reduce
+                    stress. Keep going you’re doing great!
+                  </p>
+                </div>
+                <div className="delete-pop-btn">
+                  <a
+                    href="lesson-detail.html"
+                    className="active"
+                    onClick={handleCloseModal}
+                    aria-label="Close"
+                  >
+                    Review
+                  </a>
+                  <a href="subject-detail.html">Continue</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </Modal>
+    </>
+  );
+};
+
+export default MwlMicroCredentialsDomainTrainingLesson;

@@ -10,9 +10,6 @@ import { Modal, Button } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import PdfViewer from "./PdfViewer";
-
-import PauseIcon from "../../assets/icons/videoIcon.png";
-
 import toast from "react-hot-toast";
 
 import {
@@ -21,6 +18,7 @@ import {
   getLessionSlice,
   lessionSubmit,
   retriveLesson,
+  startLession,
 } from "../../redux/slices/student/lessionSlice";
 
 // --- Utility function to cyclically shift an array ---
@@ -99,14 +97,12 @@ const MatchingLeftOption = ({
       onMouseEnter={
         () =>
           !(isTemporarilyDisabled || isAlreadySelected) && !isCurrentlySelected
-        // &&
-        // setIsHovered(true) // Add condition
+        // && setIsHovered(true) // Add condition
       }
       onMouseLeave={
         () =>
           !(isTemporarilyDisabled || isAlreadySelected) && !isCurrentlySelected
-        // &&
-        // setIsHovered(false) // Add condition
+        // && setIsHovered(false) // Add condition
       }
       onClick={() =>
         !(isTemporarilyDisabled || isAlreadySelected) && // Add condition
@@ -212,14 +208,12 @@ const MatchingRightOption = ({
       onMouseEnter={
         () =>
           !(isTemporarilyDisabled || isAlreadySelected) && !isCurrentlySelected
-        // &&
-        // setIsHovered(true) // Add condition
+        // && setIsHovered(true) // Add condition
       }
       onMouseLeave={
         () =>
           !(isTemporarilyDisabled || isAlreadySelected) && !isCurrentlySelected
-        //  &&
-        // setIsHovered(false) // Add condition
+        //  && setIsHovered(false) // Add condition
       }
       onClick={() =>
         !(isTemporarilyDisabled || isAlreadySelected) && // Add condition
@@ -336,14 +330,15 @@ const LessonDetail = () => {
 
   const [lessionWiseDetails, setLessonWiseDetails] = useState();
 
+  const next_lesson_id = useSelector(
+    (state) => state.lession?.completeLessonResponse?.next_lesson_id
+  );
+
   const toastShownRef = useRef(false);
   const toastShowerrRef = useRef(false);
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  // var simulateMatchingQuizAnswered =
-  //   location.state?.simulateMatchingQuizAnswered;
-  //
 
   const isCompletedFromSession = sessionStorage.getItem("isCompleted");
 
@@ -353,7 +348,6 @@ const LessonDetail = () => {
     : location.state?.simulateMatchingQuizAnswered;
 
   // const isReload = location.state?.isReload;
-  console.log(simulateMatchingQuizAnswered, "IIIIIIIIIIII");
   const [selectedData, setSelectedData] = useState();
 
   const [searchParams] = useSearchParams();
@@ -377,20 +371,9 @@ const LessonDetail = () => {
     });
   }, [location]);
 
-  //
-
-  //reload to back
-  // useEffect(() => {
-  //   // Check if `isReload` is false, which is the condition for a redirect in your case.
-  //   if (isReload === undefined) {
-  //     // Redirect to the previous page
-  //     navigate(`/student/subject-detail?subjectId=${subjectId}`);
-  //   }
-  // }, [navigate, isReload, subjectId]);
-
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [location?.pathname]);
+  }, [location?.pathname, navigate, location.key]);
 
   useEffect(() => {
     setLessonWiseDetails(lessionWiseDetailsFromStore);
@@ -403,6 +386,7 @@ const LessonDetail = () => {
   useEffect(() => {
     if (lessonId) {
       dispatch(getLessionDetailSlice({ lesson_id: lessonId }));
+      dispatch(startLession({ lesson_id: lessonId }));
     }
   }, [lessonId]);
 
@@ -450,7 +434,6 @@ const LessonDetail = () => {
 
   const checkAndCommitMatch = useCallback(
     (quizId, currentQuizState) => {
-      console.log(currentQuizState, "current state*****");
       const currentLeftSelection =
         currentQuizState?.currentLeftSelection || null;
       const currentRightSelection =
@@ -597,6 +580,94 @@ const LessonDetail = () => {
     });
   };
 
+  // const handleSubmitQuizAnswers = () => {
+  //   const answersToSubmit = [];
+
+  //   Object.keys(quizAnswers).forEach((quizId) => {
+  //     const currentQuizId = parseInt(quizId, 10);
+  //     const quizAnswerData = quizAnswers[quizId];
+
+  //     const originalQuizContent = getQuizContentById(currentQuizId);
+
+  //     if (!originalQuizContent) {
+
+  //       return;
+  //     }
+
+  //     if (originalQuizContent.quiz_subtype === "matching") {
+  //       const submittedMatches =
+  //         quizAnswerData?.recoloredMatches.map((match, index) => {
+  //           const originalLeftItem = originalQuizContent.matching_pairs.find(
+  //             (p) => p.id === match.leftId
+  //           );
+  //           return {
+  //             id: match.leftId,
+  //             left_item: originalLeftItem
+  //               ? originalLeftItem.left_item
+  //               : "Unknown Left Item",
+  //             right_item: match.rightValue,
+  //             match_key: String.fromCharCode(65 + index),
+  //           };
+  //         }) || [];
+
+  //       answersToSubmit.push({
+  //         quiz_id: currentQuizId,
+  //         matching: submittedMatches,
+  //       });
+  //     } else {
+  //       if (quizAnswerData !== null && quizAnswerData !== undefined) {
+  //         answersToSubmit.push({
+  //           quiz_id: currentQuizId,
+  //           selected_option_id: parseInt(quizAnswerData, 10),
+  //         });
+  //       }
+  //     }
+  //   });
+
+  //   const params = {
+  //     attempt_id: attemptId,
+  //     answers: answersToSubmit,
+  //   };
+
+  //   dispatch(lessionSubmit(params)).then((response) => {
+  //     const data = response.payload;
+  //     if (data) {
+  //       dispatch(completeLesson({ lesson_id: lessonId })).then((response) => {
+  //         const data = response?.payload;
+
+  //         if (data && subjectId) {
+  //           dispatch(getLessionSlice({ subject_id: subjectId }));
+
+  //         }
+  //       });
+  //     }
+  //   });
+
+  //   handleClosePopup();
+  // };
+  //
+
+  const handleMultipleSelectChange = (quizId, optionId) => {
+    setQuizAnswers((prevAnswers) => {
+      const currentAnswers = prevAnswers[quizId] || [];
+      const isSelected = currentAnswers.includes(optionId);
+
+      if (isSelected) {
+        // Remove the option if it's already selected
+        return {
+          ...prevAnswers,
+          [quizId]: currentAnswers.filter((id) => id !== optionId),
+        };
+      } else {
+        // Add the option if it's not selected
+        return {
+          ...prevAnswers,
+          [quizId]: [...currentAnswers, optionId],
+        };
+      }
+    });
+  };
+
   const handleSubmitQuizAnswers = () => {
     const answersToSubmit = [];
 
@@ -633,6 +704,18 @@ const LessonDetail = () => {
           quiz_id: currentQuizId,
           matching: submittedMatches,
         });
+      } else if (originalQuizContent.quiz_subtype === "multiple_select") {
+        // Handle multiple select quiz
+        if (
+          quizAnswerData &&
+          Array.isArray(quizAnswerData) &&
+          quizAnswerData.length > 0
+        ) {
+          answersToSubmit.push({
+            quiz_id: currentQuizId,
+            selected_option_ids: quizAnswerData.map((id) => parseInt(id, 10)),
+          });
+        }
       } else {
         if (quizAnswerData !== null && quizAnswerData !== undefined) {
           answersToSubmit.push({
@@ -653,9 +736,25 @@ const LessonDetail = () => {
       if (data) {
         dispatch(completeLesson({ lesson_id: lessonId })).then((response) => {
           const data = response?.payload;
-
-          if (data) {
+          // setnextLessonID(data?.next_lesson_id);
+          if (data && subjectId) {
             dispatch(getLessionSlice({ subject_id: subjectId }));
+
+            if (data?.next_lesson_id) {
+              dispatch(
+                getLessionDetailSlice({ lesson_id: data?.next_lesson_id })
+              );
+              dispatch(startLession({ lesson_id: data?.next_lesson_id }));
+
+              navigate(
+                data?.next_lesson_id
+                  ? `/student/lesson-detail?lessonId=${data?.next_lesson_id}&attemptId=${attemptId}&subjectId=${subjectId}`
+                  : `/student/subject-detail?subjectId=${subjectId}`
+              );
+            }
+            if (!data?.next_lesson_id) {
+              navigate(`/student/subject-detail?subjectId=${subjectId}`);
+            }
           }
         });
       }
@@ -664,37 +763,45 @@ const LessonDetail = () => {
     handleClosePopup();
   };
 
+  //
   const handleOpenPopup = () => {
-    let allMatchingQuizzesCompleted = true;
+    let allQuizzesAnswered = true;
     let validationMessage = "";
 
     for (const contentItem of sortedContents) {
-      if (
-        contentItem.type === "quiz" &&
-        contentItem.quiz_subtype === "matching"
-      ) {
+      if (contentItem.type === "quiz") {
         const quizId = contentItem.id;
         const currentQuizAnswers = quizAnswers[quizId];
         const quizQuestion = contentItem.question || `Quiz ID: ${quizId}`;
 
-        const totalPairs = contentItem.matching_pairs
-          ? contentItem.matching_pairs.length
-          : 0;
-        const recoloredMatchesCount =
-          currentQuizAnswers?.recoloredMatches?.length || 0;
+        if (contentItem.quiz_subtype === "matching") {
+          const totalPairs = contentItem.matching_pairs
+            ? contentItem.matching_pairs.length
+            : 0;
+          const recoloredMatchesCount =
+            currentQuizAnswers?.recoloredMatches?.length || 0;
 
-        if (totalPairs > 0) {
-          if (recoloredMatchesCount < totalPairs) {
-            allMatchingQuizzesCompleted = false;
-            validationMessage = `Please match all options for the matching quiz: "${quizQuestion}" before proceeding.`;
+          if (totalPairs > 0) {
+            if (recoloredMatchesCount < totalPairs) {
+              allQuizzesAnswered = false;
+              validationMessage = `Please answer all questions.`;
+              break;
+            }
+          }
+        } else {
+          // This is the validation for single-choice and other quiz types.
+          // It checks if an answer exists for this quiz.
+          if (!currentQuizAnswers) {
+            allQuizzesAnswered = false;
+            validationMessage = `Please answer all questions.`;
             break;
           }
         }
       }
     }
 
-    if (!allMatchingQuizzesCompleted) {
-      // toast.error(validationMessage);
+    if (!allQuizzesAnswered) {
+      toast.error(validationMessage);
     } else {
       setShowModal(true);
     }
@@ -705,16 +812,6 @@ const LessonDetail = () => {
       "lessionWiseDetails?.lesson?.contents is not an array or is missing. Using empty array for content."
     );
   }
-
-  const handleVideoClick = () => {
-    if (videoRef.current.paused) {
-      videoRef.current.play();
-      setIsPlaying(true);
-    } else {
-      videoRef.current.pause();
-      setIsPlaying(false);
-    }
-  };
 
   return (
     <>
@@ -760,41 +857,24 @@ const LessonDetail = () => {
                                 }}
                               ></p>
                             )}
-                            {!contentItem.title && !contentItem.desc && (
-                              <p>
-                                Text content available but no title or
-                                description provided.
-                              </p>
+
+                            {contentItem.image && (
+                              <img
+                                src={contentItem.image}
+                                alt={
+                                  contentItem.desc ||
+                                  `Lesson image ${contentItem.id}`
+                                }
+                                style={{ maxWidth: "100%", height: "554px" }}
+                              />
                             )}
                           </div>
                         );
 
                       case "video":
                         return (
-                          // <div className="lesson-content-item video-content">
-                          //   {contentItem.video_link ? (
-                          //     <video
-                          //       controls
-                          //       width="100%"
-                          //       style={{ height: "554px" }}
-                          //     >
-                          //       <source
-                          //         src={contentItem.video_link}
-                          //         type="video/mp4"
-                          //       />
-                          //       Your browser does not support the video tag.
-                          //     </video>
-                          //   ) : (
-                          //     <p>
-                          //       Video content available but no video link
-                          //       provided.
-                          //     </p>
-                          //   )}
-                          //   {contentItem.desc && <p>{contentItem.desc}</p>}
-                          // </div>
-
                           <div className="lesson-content-item video-content">
-                            {contentItem.video_link ? (
+                            {contentItem.video_link && (
                               <iframe
                                 src={contentItem.video_link.replace(
                                   "/view",
@@ -807,11 +887,6 @@ const LessonDetail = () => {
                                 style={{ border: 0 }}
                                 title="Embedded Google Drive Video Player"
                               ></iframe>
-                            ) : (
-                              <p>
-                                Video content available but no video link
-                                provided.
-                              </p>
                             )}
                             {contentItem.desc && (
                               <p
@@ -821,53 +896,6 @@ const LessonDetail = () => {
                               ></p>
                             )}
                           </div>
-
-                          //
-
-                          // <div
-                          //   style={{
-                          //     position: "relative",
-                          //     width: "100%",
-                          //     height: "554px",
-                          //     overflow: "hidden",
-                          //   }}
-                          // >
-                          //   <video
-                          //     ref={videoRef}
-                          //     controls
-                          //     width="100%"
-                          //     style={{ height: "100%" }}
-                          //     onClick={handleVideoClick} // Clicking the video itself also toggles play/pause
-                          //   >
-                          //     <source
-                          //       src={contentItem.video_link}
-                          //       type="video/mp4"
-                          //     />
-                          //     Your browser does not support the video tag.
-                          //   </video>
-
-                          //   {/* Conditionally render the pause icon overlay */}
-                          //   {!isPlaying && (
-                          //     <img
-                          //       src={PauseIcon}
-                          //       alt="Pause"
-                          //       style={{
-                          //         position: "absolute",
-                          //         top: "50%",
-                          //         left: "50%",
-                          //         transform: "translate(-50%, -50%)",
-                          //         width: "80px", // Reduced size
-                          //         height: "80px", // Reduced size
-                          //         cursor: "pointer",
-                          //         // You might need a transparent background to see the video behind it
-                          //         // backgroundColor: "rgba(0, 0, 0, 0.5)",
-                          //         // borderRadius: "50%",
-                          //         padding: "10px",
-                          //       }}
-                          //       onClick={handleVideoClick}
-                          //     />
-                          //   )}
-                          // </div>
                         );
 
                       case "pdf":
@@ -876,15 +904,11 @@ const LessonDetail = () => {
                             className="lesson-content-item pdf-content"
                             style={{ width: "40%" }}
                           >
-                            {contentItem.file_name ? (
+                            {contentItem.file_name && (
                               <PdfViewer
                                 pdfUrl={contentItem.file_name}
                                 pdfName={contentItem.title || "Document.pdf"}
                               />
-                            ) : (
-                              <p>
-                                PDF content available but no PDF link provided.
-                              </p>
                             )}
                             {contentItem.desc && (
                               <p
@@ -896,36 +920,106 @@ const LessonDetail = () => {
                           </div>
                         );
 
-                      case "image":
-                        return (
-                          <div className="lesson-content-item ">
-                            {contentItem.image ? (
-                              <img
-                                src={contentItem.image}
-                                alt={
-                                  contentItem.desc ||
-                                  `Lesson image ${contentItem.id}`
-                                }
-                                style={{ maxWidth: "100%", height: "554px" }}
-                              />
-                            ) : (
-                              <p>
-                                Image content available but no image name
-                                provided.
-                              </p>
-                            )}
-                            {contentItem.desc && (
-                              <p
-                                dangerouslySetInnerHTML={{
-                                  __html: contentItem.desc,
-                                }}
-                              ></p>
-                            )}
-                          </div>
-                        );
+                      // case "image":
+                      //   return (
+                      //     <div className="lesson-content-item ">
+                      //       {contentItem.title && (
+                      //         <p
+                      //           dangerouslySetInnerHTML={{
+                      //             __html: contentItem.title,
+                      //           }}
+                      //         ></p>
+                      //       )}
+                      //       {contentItem.desc && (
+                      //         <p
+                      //           dangerouslySetInnerHTML={{
+                      //             __html: contentItem.desc,
+                      //           }}
+                      //         ></p>
+                      //       )}
+
+                      //       {contentItem.image && (
+                      //         <img
+                      //           src={contentItem.image}
+                      //           alt={
+                      //             contentItem.desc ||
+                      //             `Lesson image ${contentItem.id}`
+                      //           }
+                      //           style={{ maxWidth: "100%", height: "554px" }}
+                      //         />
+                      //       )}
+                      //     </div>
+                      //   );
+
                       case "quiz":
                         const quizId = contentItem.id;
                         let quizState;
+
+                        if (contentItem.quiz_subtype === "multiple_select") {
+                          // Render multiple select quiz
+                          const selectedOptionIds = contentItem.user_answer
+                            ? contentItem.user_answer.map(
+                                (ans) => ans.selected_option_id
+                              )
+                            : quizAnswers[quizId] || [];
+
+                          return (
+                            <div
+                              className="lesson-content-item quiz-content"
+                              key={`quiz-${quizId}`}
+                            >
+                              {contentItem.question ? (
+                                <h4>{contentItem.question}</h4>
+                              ) : (
+                                <p>
+                                  Quiz content available but no question
+                                  provided.
+                                </p>
+                              )}
+
+                              {contentItem.options &&
+                              Array.isArray(contentItem.options) &&
+                              contentItem.options.length > 0 ? (
+                                <div className="quiz-options">
+                                  {contentItem.options.map(
+                                    (option, optionIndex) => {
+                                      if (
+                                        !option ||
+                                        !option.id ||
+                                        !option.option
+                                      ) {
+                                        console.warn(
+                                          `Missing data for a quiz option in quiz ID: ${contentItem.id}. Skipping option.`
+                                        );
+                                        return null;
+                                      }
+                                      const isSelected =
+                                        selectedOptionIds.includes(option.id);
+                                      return (
+                                        <MultipleSelectOption
+                                          key={`option-${option.id}-${quizId}-${optionIndex}`}
+                                          option={option}
+                                          optionIndex={optionIndex}
+                                          quizId={quizId}
+                                          isSelected={isSelected}
+                                          handleMultipleSelectChange={
+                                            handleMultipleSelectChange
+                                          }
+                                          isAlreadySelected={
+                                            simulateMatchingQuizAnswered
+                                          }
+                                        />
+                                      );
+                                    }
+                                  )}
+                                </div>
+                              ) : (
+                                <p>No options available for this quiz.</p>
+                              )}
+                            </div>
+                          );
+                        }
+
                         if (contentItem.quiz_subtype === "matching") {
                           if (simulateMatchingQuizAnswered) {
                             quizState = {
@@ -1086,9 +1180,9 @@ const LessonDetail = () => {
                             </div>
                           );
                         } else {
-                          const selectedOptionId = contentItem.user_answer
+                          const selectedOptionId = contentItem.user_answer?.[0]
                             ?.selected_option_id
-                            ? contentItem.user_answer.selected_option_id
+                            ? contentItem.user_answer?.[0]?.selected_option_id
                             : quizAnswers[quizId];
                           return (
                             <div className="lesson-content-item quiz-content">
@@ -1151,12 +1245,12 @@ const LessonDetail = () => {
                     }
                   })()}
                   {contentItem.type !== "pdf" &&
-                    index < sortedContents?.length - 1 && <hr />}
+                    index < sortedContents?.length - 2 && <hr />}
                 </React.Fragment>
               );
             })}
           </div>
-          <hr />
+          {/* <hr /> */}
         </div>
         <div className="bottom-cta justify-content-end">
           {simulateMatchingQuizAnswered ? (
@@ -1196,6 +1290,7 @@ const LessonDetail = () => {
         lessonId={lessonId}
         attemptId={attemptId}
         subjectId={subjectId}
+        next_lesson_id={next_lesson_id}
       />
     </>
   );
@@ -1210,7 +1305,10 @@ const QuitPopup = ({
   lessonId,
   attemptId,
   subjectId,
+  next_lesson_id,
 }) => {
+  const nextLessID = localStorage.getItem("next_lesson_id");
+
   return (
     <Modal
       show={show}
@@ -1242,7 +1340,10 @@ const QuitPopup = ({
                   stress. Keep going you're doing great!
                 </p>
               </div>
-              <div className="delete-pop-btn d-flex gap-3">
+              <div
+                className="delete-pop-btn d-flex"
+                style={{ marginLeft: -20 }}
+              >
                 <Link
                   to={`/student/lesson-detail?lessonId=${lessonId}&attemptId=${attemptId}&subjectId=${subjectId}`}
                   onClick={onHide}
@@ -1251,9 +1352,10 @@ const QuitPopup = ({
                   Review
                 </Link>
                 <Link
-                  to={`/student/subject-detail?subjectId=${subjectId}`}
-                  onClick={onSubmitQuiz}
                   className="btn btn-outline-secondary"
+                  onClick={onSubmitQuiz}
+                  // to={`/student/subject-detail?subjectId=${subjectId}`}
+                  // to={ nextLessID ? `/student/lesson-detail?lessonId=${nextLessID}&attemptId=${attemptId}&subjectId=${subjectId}` : `/student/subject-detail?subjectId=${subjectId}`}
                 >
                   Continue
                 </Link>
@@ -1266,6 +1368,71 @@ const QuitPopup = ({
   );
 };
 
+const MultipleSelectOption = ({
+  option,
+  optionIndex,
+  quizId,
+  isSelected,
+  handleMultipleSelectChange,
+  isAlreadySelected,
+}) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <div
+      key={`option-${option.id}-${quizId}-${optionIndex}`}
+      className="quiz-option-item"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        marginBottom: "10px",
+        padding: "10px",
+        borderRadius: "8px",
+        pointerEvents: isAlreadySelected ? "none" : "auto",
+        backgroundColor: isSelected
+          ? "#4126A8"
+          : isHovered && !isSelected
+          ? "#4126A8"
+          : "#fff",
+        color: isHovered && !isSelected ? "#fff" : isSelected ? "#fff" : "#333",
+        border: `1px solid ${isSelected ? "#6a5acd" : "#e0e0e0"}`,
+        boxShadow: isSelected
+          ? "0 2px 5px rgba(106,90,205,0.2)"
+          : "0 1px 3px rgba(0,0,0,0.05)",
+        transition:
+          "background-color 0.01s ease, border-color 0.2s ease, color 0.2s ease",
+      }}
+      onMouseEnter={() => !isSelected && setIsHovered(true)}
+      onMouseLeave={() => !isSelected && setIsHovered(false)}
+      // onClick={() => handleMultipleSelectChange(quizId, option.id)}
+    >
+      <input
+        type="checkbox"
+        id={`option-${option.id}-${quizId}-${optionIndex}`}
+        name={`quiz-${quizId}`}
+        value={option.id}
+        checked={isSelected}
+        onChange={() => handleMultipleSelectChange(quizId, option.id)}
+        style={{
+          marginRight: "10px",
+          transform: "scale(1.2)",
+        }}
+        disabled={isAlreadySelected}
+      />
+      <label
+        htmlFor={`option-${option.id}-${quizId}-${optionIndex}`}
+        style={{
+          flex: 1,
+          cursor: "pointer",
+          fontWeight: "normal",
+        }}
+      >
+        {option.option}
+      </label>
+    </div>
+  );
+};
+
 // import React, { useEffect, useState, useCallback, useMemo, useRef, } from "react";
 // import { Link, useSearchParams, useNavigate } from "react-router-dom";
 // import { Modal, Button } from "react-bootstrap";
@@ -1273,11 +1440,11 @@ const QuitPopup = ({
 // import { useDispatch, useSelector } from "react-redux";
 // import PdfViewer from "./PdfViewer";
 
-// import PauseIcon from "../../assets/icons/videoIcon.png"
+// import PauseIcon from "../../assets/icons/videoIcon.png";
 
 // import toast from "react-hot-toast";
 
-// import { completeLesson, getLessionDetailSlice, getLessionSlice, lessionSubmit, retriveLesson, } from "../../redux/slices/student/lessionSlice";
+// import { completeLesson, getLessionDetailSlice, getLessionSlice, lessionSubmit, retriveLesson, startLession, } from "../../redux/slices/student/lessionSlice";
 
 // // --- Utility function to cyclically shift an array ---
 // function cyclicallyShiftArray(array) {
@@ -1313,7 +1480,13 @@ const QuitPopup = ({
 
 //   const getColor = () => {
 //     if (isIncorrect) return "#fff";
-//     if ( isHovered || isCurrentlySelected || isCorrect || isRecolored || isAlreadySelected )
+//     if (
+//       isHovered ||
+//       isCurrentlySelected ||
+//       isCorrect ||
+//       isRecolored ||
+//       isAlreadySelected
+//     )
 //       return "#fff";
 //     return "#333";
 //   };
@@ -1348,15 +1521,15 @@ const QuitPopup = ({
 //       }}
 //       onMouseEnter={
 //         () =>
-//           !(isTemporarilyDisabled || isAlreadySelected) &&
-//           !isCurrentlySelected &&
-//           setIsHovered(true) // Add condition
+//           !(isTemporarilyDisabled || isAlreadySelected) && !isCurrentlySelected
+//         // &&
+//         // setIsHovered(true) // Add condition
 //       }
 //       onMouseLeave={
 //         () =>
-//           !(isTemporarilyDisabled || isAlreadySelected) &&
-//           !isCurrentlySelected &&
-//           setIsHovered(false) // Add condition
+//           !(isTemporarilyDisabled || isAlreadySelected) && !isCurrentlySelected
+//         // &&
+//         // setIsHovered(false) // Add condition
 //       }
 //       onClick={() =>
 //         !(isTemporarilyDisabled || isAlreadySelected) && // Add condition
@@ -1461,15 +1634,15 @@ const QuitPopup = ({
 //       }}
 //       onMouseEnter={
 //         () =>
-//           !(isTemporarilyDisabled || isAlreadySelected) &&
-//           !isCurrentlySelected &&
-//           setIsHovered(true) // Add condition
+//           !(isTemporarilyDisabled || isAlreadySelected) && !isCurrentlySelected
+//         // &&
+//         // setIsHovered(true) // Add condition
 //       }
 //       onMouseLeave={
 //         () =>
-//           !(isTemporarilyDisabled || isAlreadySelected) &&
-//           !isCurrentlySelected &&
-//           setIsHovered(false) // Add condition
+//           !(isTemporarilyDisabled || isAlreadySelected) && !isCurrentlySelected
+//         //  &&
+//         // setIsHovered(false) // Add condition
 //       }
 //       onClick={() =>
 //         !(isTemporarilyDisabled || isAlreadySelected) && // Add condition
@@ -1513,6 +1686,7 @@ const QuitPopup = ({
 //   quizId,
 //   isSelected,
 //   handleSingleChoiceQuizChange,
+//   isAlreadySelected,
 // }) => {
 //   const [isHovered, setIsHovered] = useState(false);
 
@@ -1526,7 +1700,8 @@ const QuitPopup = ({
 //         marginBottom: "10px",
 //         padding: "10px",
 //         borderRadius: "8px",
-//         cursor: "pointer",
+//         pointerEvents: isAlreadySelected ? "none" : "auto",
+//         // cursor: "pointer",
 //         backgroundColor: isSelected
 //           ? "#4126A8"
 //           : isHovered && !isSelected
@@ -1538,10 +1713,12 @@ const QuitPopup = ({
 //           ? "0 2px 5px rgba(106,90,205,0.2)"
 //           : "0 1px 3px rgba(0,0,0,0.05)",
 //         transition:
-//           "background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease",
+//           "background-color 0.01s ease, border-color 0.2s ease, color 0.2s ease",
 //       }}
-//       onMouseEnter={() => !isSelected && setIsHovered(true)}
-//       onMouseLeave={() => !isSelected && setIsHovered(false)}
+//       // onMouseEnter={() => !isSelected && setIsHovered(true)}
+//       // onMouseLeave={() => !isSelected && setIsHovered(false)}
+//       onMouseEnter={() => !isSelected}
+//       onMouseLeave={() => !isSelected}
 //       onClick={() => handleSingleChoiceQuizChange(quizId, option.id)}
 //     >
 //       <input
@@ -1555,6 +1732,7 @@ const QuitPopup = ({
 //           marginRight: "10px",
 //           transform: "scale(1.2)",
 //         }}
+//         // disabled={isAlreadySelected}
 //       />
 //       <label
 //         htmlFor={`option-${option.id}-${quizId}-${optionIndex}`}
@@ -1586,9 +1764,18 @@ const QuitPopup = ({
 //   const location = useLocation();
 //   const dispatch = useDispatch();
 //   const navigate = useNavigate();
-//   var simulateMatchingQuizAnswered =
-//     location.state?.simulateMatchingQuizAnswered;
+//   // var simulateMatchingQuizAnswered =
+//   //   location.state?.simulateMatchingQuizAnswered;
+//   //
 
+//   const isCompletedFromSession = sessionStorage.getItem("isCompleted");
+
+//   // If sessionStorage has a value, use it. Otherwise, fall back to location.state.
+//   var simulateMatchingQuizAnswered = isCompletedFromSession
+//     ? isCompletedFromSession === "true"
+//     : location.state?.simulateMatchingQuizAnswered;
+
+//   // const isReload = location.state?.isReload;
 //   const [selectedData, setSelectedData] = useState();
 
 //   const [searchParams] = useSearchParams();
@@ -1601,7 +1788,6 @@ const QuitPopup = ({
 //   const [quizAnswers, setQuizAnswers] = useState({});
 //   const [correctMatchState, setCorrectMatchState] = useState({}); // New state for temporary correct feedback
 
-//   console.log(correctMatchState, "correct matching state***");
 //   const [incorrectMatchState, setIncorrectMatchState] = useState({}); // New state for temporary incorrect feedback
 
 //   const handleClosePopup = () => setShowModal(false);
@@ -1614,6 +1800,15 @@ const QuitPopup = ({
 //   }, [location]);
 
 //   //
+
+//   //reload to back
+//   // useEffect(() => {
+//   //   // Check if `isReload` is false, which is the condition for a redirect in your case.
+//   //   if (isReload === undefined) {
+//   //     // Redirect to the previous page
+//   //     navigate(`/student/subject-detail?subjectId=${subjectId}`);
+//   //   }
+//   // }, [navigate, isReload, subjectId]);
 
 //   useEffect(() => {
 //     window.scrollTo(0, 0);
@@ -1630,6 +1825,7 @@ const QuitPopup = ({
 //   useEffect(() => {
 //     if (lessonId) {
 //       dispatch(getLessionDetailSlice({ lesson_id: lessonId }));
+//       dispatch(startLession({ lesson_id: lessonId }));
 //     }
 //   }, [lessonId]);
 
@@ -1677,7 +1873,6 @@ const QuitPopup = ({
 
 //   const checkAndCommitMatch = useCallback(
 //     (quizId, currentQuizState) => {
-//       console.log(currentQuizState, "current state*****");
 //       const currentLeftSelection =
 //         currentQuizState?.currentLeftSelection || null;
 //       const currentRightSelection =
@@ -1875,57 +2070,150 @@ const QuitPopup = ({
 //       answers: answersToSubmit,
 //     };
 
-//     dispatch(lessionSubmit(params)).then((response) => {
-//       const data = response.payload;
-//       if (data) {
-//         dispatch(completeLesson({ lesson_id: lessonId })).then((response) => {
-//           const data = response?.payload;
+//       dispatch(lessionSubmit(params)).then((response) => {
+//         const data = response.payload;
+//         if (data) {
+//           dispatch(completeLesson({ lesson_id: lessonId })).then((response) => {
+//             const data = response?.payload;
 
-//           if (data) {
-//             dispatch(getLessionSlice({ subject_id: subjectId }));
-//           }
-//         });
-//       }
-//     });
+//             if (data && subjectId) {
+//               dispatch(getLessionSlice({ subject_id: subjectId }));
+//             }
+//           });
+//         }
+//       });
 
 //     handleClosePopup();
 //   };
 
 //   const handleOpenPopup = () => {
-//     let allMatchingQuizzesCompleted = true;
+//     let allQuizzesAnswered = true;
 //     let validationMessage = "";
 
 //     for (const contentItem of sortedContents) {
-//       if (
-//         contentItem.type === "quiz" &&
-//         contentItem.quiz_subtype === "matching"
-//       ) {
+//       if (contentItem.type === "quiz") {
 //         const quizId = contentItem.id;
 //         const currentQuizAnswers = quizAnswers[quizId];
 //         const quizQuestion = contentItem.question || `Quiz ID: ${quizId}`;
 
-//         const totalPairs = contentItem.matching_pairs
-//           ? contentItem.matching_pairs.length
-//           : 0;
-//         const recoloredMatchesCount =
-//           currentQuizAnswers?.recoloredMatches?.length || 0;
+//         if (contentItem.quiz_subtype === "matching") {
+//           const totalPairs = contentItem.matching_pairs
+//             ? contentItem.matching_pairs.length
+//             : 0;
+//           const recoloredMatchesCount =
+//             currentQuizAnswers?.recoloredMatches?.length || 0;
 
-//         if (totalPairs > 0) {
-//           if (recoloredMatchesCount < totalPairs) {
-//             allMatchingQuizzesCompleted = false;
-//             validationMessage = `Please match all options for the matching quiz: "${quizQuestion}" before proceeding.`;
+//           if (totalPairs > 0) {
+//             if (recoloredMatchesCount < totalPairs) {
+//               allQuizzesAnswered = false;
+//               validationMessage = `Please answer all questions.`;
+//               break;
+//             }
+//           }
+//         } else {
+//           // This is the validation for single-choice and other quiz types.
+//           // It checks if an answer exists for this quiz.
+//           if (!currentQuizAnswers) {
+//             allQuizzesAnswered = false;
+//             validationMessage = `Please answer all questions.`;
 //             break;
 //           }
 //         }
 //       }
 //     }
 
-//     if (!allMatchingQuizzesCompleted) {
+//     if (!allQuizzesAnswered) {
 //       toast.error(validationMessage);
 //     } else {
 //       setShowModal(true);
 //     }
 //   };
+
+//  // rajan sir 2
+//   // const handleOpenPopup = () => {
+//   //   let validationMessage = "";
+//   //   let allQuizzesAnswered = true;
+
+//   //   // Check if any matching quiz exists in the lesson
+//   //   const hasMatchingQuiz = sortedContents.some(
+//   //     (item) => item.type === "quiz" && item.quiz_subtype === "matching"
+//   //   );
+
+//   //   // Apply the "select at least one" validation ONLY IF there are no matching quizzes
+//   //   const hasAnyQuizAnswered = Object.keys(quizAnswers).length > 0;
+//   //   if (!hasMatchingQuiz && !hasAnyQuizAnswered) {
+//   //     toast.error("Please select at least one option before proceeding.");
+//   //     return;
+//   //   }
+
+//   //   // Now, iterate through the quizzes to check for incomplete matching quizzes.
+//   //   for (const contentItem of sortedContents) {
+//   //     if (
+//   //       contentItem.type === "quiz" &&
+//   //       contentItem.quiz_subtype === "matching"
+//   //     ) {
+//   //       const quizId = contentItem.id;
+//   //       const currentQuizAnswers = quizAnswers[quizId];
+//   //       const quizQuestion = contentItem.question || `Quiz ID: ${quizId}`;
+
+//   //       const totalPairs = contentItem.matching_pairs
+//   //         ? contentItem.matching_pairs.length
+//   //         : 0;
+//   //       const recoloredMatchesCount =
+//   //         currentQuizAnswers?.recoloredMatches?.length || 0;
+
+//   //       // If a matching quiz exists, validate it fully.
+//   //       if (totalPairs > 0 && recoloredMatchesCount < totalPairs) {
+//   //         allQuizzesAnswered = false;
+//   //         validationMessage = `Please match all options for the matching quiz: "${quizQuestion}" before proceeding.`;
+//   //         break; // Stop checking as soon as an incomplete matching quiz is found.
+//   //       }
+//   //     }
+//   //   }
+
+//   //   if (!allQuizzesAnswered) {
+//   //     toast.error(validationMessage);
+//   //   } else {
+//   //     setShowModal(true);
+//   //   }
+//   // };
+
+//   // rajan sir
+//   // const handleOpenPopup = () => {
+//   //   let allMatchingQuizzesCompleted = true;
+//   //   let validationMessage = "";
+
+//   //   for (const contentItem of sortedContents) {
+//   //     if (
+//   //       contentItem.type === "quiz" &&
+//   //       contentItem.quiz_subtype === "matching"
+//   //     ) {
+//   //       const quizId = contentItem.id;
+//   //       const currentQuizAnswers = quizAnswers[quizId];
+//   //       const quizQuestion = contentItem.question || `Quiz ID: ${quizId}`;
+
+//   //       const totalPairs = contentItem.matching_pairs
+//   //         ? contentItem.matching_pairs.length
+//   //         : 0;
+//   //       const recoloredMatchesCount =
+//   //         currentQuizAnswers?.recoloredMatches?.length || 0;
+
+//   //       if (totalPairs > 0) {
+//   //         if (recoloredMatchesCount < totalPairs) {
+//   //           allMatchingQuizzesCompleted = false;
+//   //           validationMessage = `Please match all options for the matching quiz: "${quizQuestion}" before proceeding.`;
+//   //           break;
+//   //         }
+//   //       }
+//   //     }
+//   //   }
+
+//   //   if (!allMatchingQuizzesCompleted) {
+//   //     toast.error(validationMessage);
+//   //   } else {
+//   //     setShowModal(true);
+//   //   }
+//   // };
 
 //   if (!Array.isArray(lessionWiseDetails?.lesson?.contents)) {
 //     console.warn(
@@ -1947,7 +2235,12 @@ const QuitPopup = ({
 //     <>
 //       <div className="baseline-ass-wrp">
 //         <div className="back-btn mb-3">
-//           <Link to={`/student/subject-detail?subjectId=${subjectId}`}>
+//           <Link
+//             to={`/student/subject-detail?subjectId=${subjectId}`}
+//             onClick={() => {
+//               sessionStorage.removeItem("isCompleted");
+//             }}
+//           >
 //             <img src="/images/baseline-assessment/back-icon.svg" alt="icon" />{" "}
 //             Back to the Subject
 //           </Link>
@@ -1967,8 +2260,21 @@ const QuitPopup = ({
 //                       case "text":
 //                         return (
 //                           <div className="lesson-content-item text-content">
-//                             {contentItem.title && <h3>{contentItem.title}</h3>}
-//                             {contentItem.desc && <p>{contentItem.desc}</p>}
+//                             {contentItem.title && (
+//                               <h3
+//                                 dangerouslySetInnerHTML={{
+//                                   __html: contentItem.title,
+//                                 }}
+//                               ></h3>
+//                             )}
+
+//                             {contentItem.desc && (
+//                               <p
+//                                 dangerouslySetInnerHTML={{
+//                                   __html: contentItem.desc,
+//                                 }}
+//                               ></p>
+//                             )}
 //                             {!contentItem.title && !contentItem.desc && (
 //                               <p>
 //                                 Text content available but no title or
@@ -2001,6 +2307,35 @@ const QuitPopup = ({
 //                           //   )}
 //                           //   {contentItem.desc && <p>{contentItem.desc}</p>}
 //                           // </div>
+
+//                           <div className="lesson-content-item video-content">
+//                             {contentItem.video_link ? (
+//                               <iframe
+//                                 src={contentItem.video_link.replace(
+//                                   "/view",
+//                                   "/preview"
+//                                 )}
+//                                 width="100%"
+//                                 height="554px"
+//                                 frameBorder="0"
+//                                 allowFullScreen
+//                                 style={{ border: 0 }}
+//                                 title="Embedded Google Drive Video Player"
+//                               ></iframe>
+//                             ) : (
+//                               <p>
+//                                 Video content available but no video link
+//                                 provided.
+//                               </p>
+//                             )}
+//                             {contentItem.desc && (
+//                               <p
+//                                 dangerouslySetInnerHTML={{
+//                                   __html: contentItem.desc,
+//                                 }}
+//                               ></p>
+//                             )}
+//                           </div>
 
 //                           //
 
@@ -2036,8 +2371,8 @@ const QuitPopup = ({
 //                           //         top: "50%",
 //                           //         left: "50%",
 //                           //         transform: "translate(-50%, -50%)",
-//                           //         width: "65px", // Reduced size
-//                           //         height: "70px", // Reduced size
+//                           //         width: "80px", // Reduced size
+//                           //         height: "80px", // Reduced size
 //                           //         cursor: "pointer",
 //                           //         // You might need a transparent background to see the video behind it
 //                           //         // backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -2048,49 +2383,40 @@ const QuitPopup = ({
 //                           //     />
 //                           //   )}
 //                           // </div>
-
-//                           <div className="lesson-content-item video-content">
-//                             {contentItem.video_link ? (
-//                               <iframe
-//                                 src={contentItem.video_link.replace(
-//                                   "/view",
-//                                   "/preview"
-//                                 )}
-//                                 width="100%"
-//                                 height="554px"
-//                                 frameBorder="0"
-//                                 allowFullScreen
-//                                 style={{ border: 0 }}
-//                                 title="Embedded Google Drive Video Player"
-//                               ></iframe>
-//                             ) : (
-//                               <p>
-//                                 Video content available but no video link
-//                                 provided.
-//                               </p>
-//                             )}
-//                             {contentItem.desc && <p>{contentItem.desc}</p>}
-//                           </div>
 //                         );
 
-//                         case "pdf":
-//                           return (
-//                             <div className="lesson-content-item pdf-content" style={{width:"40%"}}>
-//                               {contentItem.file_name ? (
-//                                 <PdfViewer pdfUrl={contentItem.file_name} pdfName={contentItem.title || "Document.pdf"} />
-//                               ) : (
-//                                 <p>PDF content available but no PDF link provided.</p>
-//                               )}
-//                               {contentItem.desc && <p>{contentItem.desc}</p>}
-//                             </div>
-//                           );
+//                       case "pdf":
+//                         return (
+//                           <div
+//                             className="lesson-content-item pdf-content"
+//                             style={{ width: "40%" }}
+//                           >
+//                             {contentItem.file_name ? (
+//                               <PdfViewer
+//                                 pdfUrl={contentItem.file_name}
+//                                 pdfName={contentItem.title || "Document.pdf"}
+//                               />
+//                             ) : (
+//                               <p>
+//                                 PDF content available but no PDF link provided.
+//                               </p>
+//                             )}
+//                             {contentItem.desc && (
+//                               <p
+//                                 dangerouslySetInnerHTML={{
+//                                   __html: contentItem.desc,
+//                                 }}
+//                               ></p>
+//                             )}
+//                           </div>
+//                         );
 
 //                       case "image":
 //                         return (
 //                           <div className="lesson-content-item ">
-//                             {contentItem.img_name ? (
+//                             {contentItem.image ? (
 //                               <img
-//                                 src={contentItem.img_name}
+//                                 src={contentItem.image}
 //                                 alt={
 //                                   contentItem.desc ||
 //                                   `Lesson image ${contentItem.id}`
@@ -2103,7 +2429,13 @@ const QuitPopup = ({
 //                                 provided.
 //                               </p>
 //                             )}
-//                             {contentItem.desc && <p>{contentItem.desc}</p>}
+//                             {contentItem.desc && (
+//                               <p
+//                                 dangerouslySetInnerHTML={{
+//                                   __html: contentItem.desc,
+//                                 }}
+//                               ></p>
+//                             )}
 //                           </div>
 //                         );
 //                       case "quiz":
@@ -2117,11 +2449,6 @@ const QuitPopup = ({
 //                               currentLeftSelection: null,
 //                               currentRightSelection: null,
 //                             };
-
-//                             console.log(
-//                               JSON.stringify(quizState, null, 2),
-//                               "*************"
-//                             );
 //                           } else {
 //                             quizState = {
 //                               completedMatches: [],
@@ -2317,6 +2644,11 @@ const QuitPopup = ({
 //                                           handleSingleChoiceQuizChange={
 //                                             handleSingleChoiceQuizChange
 //                                           }
+//                                           isAlreadySelected={
+//                                             simulateMatchingQuizAnswered
+//                                               ? true
+//                                               : false
+//                                           }
 //                                         />
 //                                       );
 //                                     }
@@ -2448,3 +2780,1218 @@ const QuitPopup = ({
 //     </Modal>
 //   );
 // };
+
+// // import React, {
+// //   useEffect,
+// //   useState,
+// //   useCallback,
+// //   useMemo,
+// //   useRef,
+// // } from "react";
+// // import { Link, useSearchParams, useNavigate } from "react-router-dom";
+// // import { Modal, Button } from "react-bootstrap";
+// // import { useLocation } from "react-router-dom";
+// // import { useDispatch, useSelector } from "react-redux";
+// // import PdfViewer from "./PdfViewer";
+
+// // import PauseIcon from "../../assets/icons/videoIcon.png";
+
+// // import toast from "react-hot-toast";
+
+// // import {
+// //   completeLesson,
+// //   getLessionDetailSlice,
+// //   getLessionSlice,
+// //   lessionSubmit,
+// //   retriveLesson,
+// // } from "../../redux/slices/student/lessionSlice";
+
+// // // --- Utility function to cyclically shift an array ---
+// // function cyclicallyShiftArray(array) {
+// //   if (!array || array.length <= 1) {
+// //     return array;
+// //   }
+// //   const lastElement = array[array.length - 1];
+// //   const shiftedArray = [lastElement, ...array.slice(0, array.length - 1)];
+// //   return shiftedArray;
+// // }
+
+// // const MatchingLeftOption = ({
+// //   pair,
+// //   quizId,
+// //   isCurrentlySelected,
+// //   isRecolored, // New prop for correct match final color
+// //   isCorrect, // New prop for temporary correct feedback
+// //   isIncorrect, // New prop for temporary incorrect feedback
+// //   handleMatchingLeftRadioChange,
+// //   isAlreadySelected,
+// // }) => {
+// //   const [isHovered, setIsHovered] = useState(false);
+
+// //   const getBackgroundColor = () => {
+// //     if (isCorrect) return "#16A34A"; // Correct feedback (green)
+// //     if (isIncorrect) return "#16A34A"; // Incorrect feedback (red)
+// //     if (isRecolored) return "#1B0866"; // Final correct color
+// //     if (isCurrentlySelected) return "#4126A8"; // Currently selected (purple)
+// //     if (isAlreadySelected) return "#4126A8";
+// //     if (isHovered) return "#4126A8"; // Hover
+// //     return "#fff"; // Default
+// //   };
+
+// //   const getColor = () => {
+// //     if (isIncorrect) return "#fff";
+// //     if (
+// //       isHovered ||
+// //       isCurrentlySelected ||
+// //       isCorrect ||
+// //       isRecolored ||
+// //       isAlreadySelected
+// //     )
+// //       return "#fff";
+// //     return "#333";
+// //   };
+
+// //   const isTemporarilyDisabled = isCorrect || isIncorrect;
+
+// //   return (
+// //     <div
+// //       style={{
+// //         display: "flex",
+// //         alignItems: "center",
+// //         marginBottom: "10px",
+// //         padding: "10px",
+// //         borderRadius: "8px",
+// //         cursor:
+// //           isTemporarilyDisabled || isAlreadySelected
+// //             ? "not-allowed"
+// //             : "pointer", // Update cursor style
+// //         backgroundColor: getBackgroundColor(),
+// //         color: getColor(),
+// //         border: `1px solid ${
+// //           isRecolored
+// //             ? "#1B0866"
+// //             : isCorrect
+// //             ? "#16A34A"
+// //             : isIncorrect
+// //             ? "#B00020"
+// //             : "#e0e0e0"
+// //         }`,
+// //         transition:
+// //           "background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease",
+// //       }}
+// //       onMouseEnter={
+// //         () =>
+// //           !(isTemporarilyDisabled || isAlreadySelected) &&
+// //           !isCurrentlySelected &&
+// //           setIsHovered(true) // Add condition
+// //       }
+// //       onMouseLeave={
+// //         () =>
+// //           !(isTemporarilyDisabled || isAlreadySelected) &&
+// //           !isCurrentlySelected &&
+// //           setIsHovered(false) // Add condition
+// //       }
+// //       onClick={() =>
+// //         !(isTemporarilyDisabled || isAlreadySelected) && // Add condition
+// //         handleMatchingLeftRadioChange(quizId, pair.id)
+// //       }
+// //     >
+// //       <input
+// //         type="radio"
+// //         id={`left-${pair.id}-${quizId}`}
+// //         name={`quiz-${quizId}-left`}
+// //         value={pair.id}
+// //         checked={isCurrentlySelected}
+// //         onChange={() =>
+// //           !(isTemporarilyDisabled || isAlreadySelected) && // Add condition
+// //           handleMatchingLeftRadioChange(quizId, pair.id)
+// //         }
+// //         disabled={isTemporarilyDisabled || isAlreadySelected} // Add condition
+// //         style={{ marginRight: "10px", transform: "scale(1.2)" }}
+// //       />
+// //       <label
+// //         htmlFor={`left-${pair.id}-${quizId}`}
+// //         style={{
+// //           flex: 1,
+// //           cursor:
+// //             isTemporarilyDisabled || isAlreadySelected
+// //               ? "not-allowed"
+// //               : "pointer", // Update cursor style
+// //           fontWeight: "normal",
+// //         }}
+// //       >
+// //         {pair.left_item}
+// //       </label>
+// //     </div>
+// //   );
+// // };
+
+// // // Component for a single Matching Right Option
+// // const MatchingRightOption = ({
+// //   rightOption,
+// //   idx,
+// //   quizId,
+// //   isCurrentlySelected,
+// //   isRecolored, // New prop for correct match final color
+// //   isCorrect, // New prop for temporary correct feedback
+// //   isIncorrect, // New prop for temporary incorrect feedback
+// //   handleMatchingRightRadioChange,
+// //   isAlreadySelected,
+// // }) => {
+// //   const [isHovered, setIsHovered] = useState(false);
+
+// //   const getBackgroundColor = () => {
+// //     if (isCorrect) return "#16A34A";
+// //     if (isIncorrect) return "#EF4343";
+// //     if (isRecolored) return "#1B0866";
+// //     if (isCurrentlySelected) return "#4126A8";
+// //     if (isAlreadySelected) return "#4126A8";
+// //     if (isHovered) return "#4126A8";
+// //     return "#fff";
+// //   };
+
+// //   const getColor = () => {
+// //     if (isIncorrect) return "#fff";
+// //     if (
+// //       isHovered ||
+// //       isCurrentlySelected ||
+// //       isCorrect ||
+// //       isRecolored ||
+// //       isAlreadySelected
+// //     )
+// //       return "#fff";
+// //     return "#333";
+// //   };
+
+// //   const isTemporarilyDisabled = isCorrect || isIncorrect;
+
+// //   return (
+// //     <div
+// //       key={`right-${rightOption}-${quizId}-${idx}`}
+// //       style={{
+// //         display: "flex",
+// //         alignItems: "center",
+// //         marginBottom: "10px",
+// //         padding: "10px",
+// //         borderRadius: "8px",
+// //         cursor:
+// //           isTemporarilyDisabled || isAlreadySelected
+// //             ? "not-allowed"
+// //             : "pointer", // Update cursor style
+// //         backgroundColor: getBackgroundColor(),
+// //         color: getColor(),
+// //         border: `1px solid ${
+// //           isRecolored
+// //             ? "#1B0866"
+// //             : isCorrect
+// //             ? "#16A34A"
+// //             : isIncorrect
+// //             ? "#B00020"
+// //             : "#e0e0e0"
+// //         }`,
+// //         transition:
+// //           "background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease",
+// //       }}
+// //       onMouseEnter={
+// //         () =>
+// //           !(isTemporarilyDisabled || isAlreadySelected) &&
+// //           !isCurrentlySelected &&
+// //           setIsHovered(true) // Add condition
+// //       }
+// //       onMouseLeave={
+// //         () =>
+// //           !(isTemporarilyDisabled || isAlreadySelected) &&
+// //           !isCurrentlySelected &&
+// //           setIsHovered(false) // Add condition
+// //       }
+// //       onClick={() =>
+// //         !(isTemporarilyDisabled || isAlreadySelected) && // Add condition
+// //         handleMatchingRightRadioChange(quizId, rightOption)
+// //       }
+// //     >
+// //       <input
+// //         type="radio"
+// //         id={`right-${rightOption}-${quizId}-${idx}`}
+// //         name={`quiz-${quizId}-right`}
+// //         value={rightOption}
+// //         checked={isCurrentlySelected}
+// //         onChange={() =>
+// //           !(isTemporarilyDisabled || isAlreadySelected) && // Add condition
+// //           handleMatchingRightRadioChange(quizId, rightOption)
+// //         }
+// //         disabled={isTemporarilyDisabled || isAlreadySelected} // Add condition
+// //         style={{ marginRight: "10px", transform: "scale(1.2)" }}
+// //       />
+// //       <label
+// //         htmlFor={`right-${rightOption}-${quizId}-${idx}`}
+// //         style={{
+// //           flex: 1,
+// //           cursor:
+// //             isTemporarilyDisabled || isAlreadySelected
+// //               ? "not-allowed"
+// //               : "pointer", // Update cursor style
+// //           fontWeight: "normal",
+// //         }}
+// //       >
+// //         {rightOption}
+// //       </label>
+// //     </div>
+// //   );
+// // };
+
+// // // Component for a single Single Choice Option
+// // const SingleChoiceOption = ({
+// //   option,
+// //   optionIndex,
+// //   quizId,
+// //   isSelected,
+// //   handleSingleChoiceQuizChange,
+// //   isAlreadySelected,
+// // }) => {
+// //   const [isHovered, setIsHovered] = useState(false);
+
+// //   return (
+// //     <div
+// //       key={`option-${option.id}-${quizId}-${optionIndex}`}
+// //       className="quiz-option-item"
+// //       style={{
+// //         display: "flex",
+// //         alignItems: "center",
+// //         marginBottom: "10px",
+// //         padding: "10px",
+// //         borderRadius: "8px",
+// //         pointerEvents: isAlreadySelected ? "none" : "auto",
+// //         // cursor: "pointer",
+// //         backgroundColor: isSelected
+// //           ? "#4126A8"
+// //           : isHovered && !isSelected
+// //           ? "#4126A8"
+// //           : "#fff",
+// //         color: isHovered && !isSelected ? "#fff" : isSelected ? "#fff" : "#333",
+// //         border: `1px solid ${isSelected ? "#6a5acd" : "#e0e0e0"}`,
+// //         boxShadow: isSelected
+// //           ? "0 2px 5px rgba(106,90,205,0.2)"
+// //           : "0 1px 3px rgba(0,0,0,0.05)",
+// //         transition:
+// //           "background-color 0.01s ease, border-color 0.2s ease, color 0.2s ease",
+// //       }}
+// //       onMouseEnter={() => !isSelected && setIsHovered(true)}
+// //       onMouseLeave={() => !isSelected && setIsHovered(false)}
+// //       onClick={() => handleSingleChoiceQuizChange(quizId, option.id)}
+// //     >
+// //       <input
+// //         type="radio"
+// //         id={`option-${option.id}-${quizId}-${optionIndex}`}
+// //         name={`quiz-${quizId}`}
+// //         value={option.id}
+// //         checked={isSelected}
+// //         onChange={() => handleSingleChoiceQuizChange(quizId, option.id)}
+// //         style={{
+// //           marginRight: "10px",
+// //           transform: "scale(1.2)",
+// //         }}
+// //         // disabled={isAlreadySelected}
+// //       />
+// //       <label
+// //         htmlFor={`option-${option.id}-${quizId}-${optionIndex}`}
+// //         style={{
+// //           flex: 1,
+// //           cursor: "pointer",
+// //           fontWeight: "normal",
+// //         }}
+// //       >
+// //         {option.option}
+// //       </label>
+// //     </div>
+// //   );
+// // };
+
+// // const LessonDetail = () => {
+// //   const lessionWiseDetailsFromStore = useSelector(
+// //     ({ lession }) => lession.lessionWiseDetails
+// //   );
+// //   const { retriveLessonResponse } = useSelector(({ lession }) => lession);
+
+// //   const [isPlaying, setIsPlaying] = useState(false);
+// //   const videoRef = useRef(null);
+
+// //   const [lessionWiseDetails, setLessonWiseDetails] = useState();
+
+// //   const toastShownRef = useRef(false);
+// //   const toastShowerrRef = useRef(false);
+// //   const location = useLocation();
+// //   const dispatch = useDispatch();
+// //   const navigate = useNavigate();
+// //   var simulateMatchingQuizAnswered =
+// //     location.state?.simulateMatchingQuizAnswered;
+
+// //   const [selectedData, setSelectedData] = useState();
+
+// //   const [searchParams] = useSearchParams();
+// //   const lessonId = searchParams.get("lessonId");
+// //   const attemptId = searchParams.get("attemptId");
+// //   const subjectId = searchParams.get("subjectId");
+
+// //   const [showModal, setShowModal] = useState(false);
+
+// //   const [quizAnswers, setQuizAnswers] = useState({});
+// //   const [correctMatchState, setCorrectMatchState] = useState({}); // New state for temporary correct feedback
+
+// //   const [incorrectMatchState, setIncorrectMatchState] = useState({}); // New state for temporary incorrect feedback
+
+// //   const handleClosePopup = () => setShowModal(false);
+
+// //   useEffect(() => {
+// //     window.history.pushState(null, document.title, window.location.href);
+// //     window.addEventListener("popstate", function (event) {
+// //       window.history.pushState(null, document.title, window.location.href);
+// //     });
+// //   }, [location]);
+
+// //   //
+
+// //   useEffect(() => {
+// //     window.scrollTo(0, 0);
+// //   }, [location?.pathname]);
+
+// //   useEffect(() => {
+// //     setLessonWiseDetails(lessionWiseDetailsFromStore);
+// //   }, [lessionWiseDetailsFromStore]);
+
+// //   useEffect(() => {
+// //     setSelectedData(retriveLessonResponse);
+// //   }, [retriveLessonResponse]);
+
+// //   useEffect(() => {
+// //     if (lessonId) {
+// //       dispatch(getLessionDetailSlice({ lesson_id: lessonId }));
+// //     }
+// //   }, [lessonId]);
+
+// //   useEffect(() => {
+// //     dispatch(retriveLesson({ lesson_id: lessonId }));
+// //   }, [lessonId]);
+
+// //   const sortedContents = useMemo(() => {
+// //     const rawContents = simulateMatchingQuizAnswered
+// //       ? selectedData?.lesson?.contents
+// //       : lessionWiseDetails?.lesson?.contents;
+// //     const contents = Array.isArray(rawContents) ? rawContents : [];
+// //     return [...contents].sort(
+// //       (a, b) => (a?.order ?? Infinity) - (b?.order ?? Infinity)
+// //     );
+// //   }, [lessionWiseDetails?.lesson?.contents]);
+
+// //   const getQuizContentById = useCallback(
+// //     (id) => {
+// //       return sortedContents.find(
+// //         (item) => item.type === "quiz" && item.id === id
+// //       );
+// //     },
+// //     [sortedContents]
+// //   );
+
+// //   // This check is no longer needed since items can be re-matched
+// //   const isLeftItemMatched = useCallback(
+// //     (quizId, leftItemId) => {
+// //       return quizAnswers[quizId]?.completedMatches?.some(
+// //         (match) => match.leftId === leftItemId
+// //       );
+// //     },
+// //     [quizAnswers]
+// //   );
+
+// //   const isRightItemMatched = useCallback(
+// //     (quizId, rightItemValue) => {
+// //       return quizAnswers[quizId]?.completedMatches?.some(
+// //         (match) => match.rightValue === rightItemValue
+// //       );
+// //     },
+// //     [quizAnswers]
+// //   );
+
+// //   const checkAndCommitMatch = useCallback(
+// //     (quizId, currentQuizState) => {
+// //       const currentLeftSelection =
+// //         currentQuizState?.currentLeftSelection || null;
+// //       const currentRightSelection =
+// //         currentQuizState?.currentRightSelection || null;
+
+// //       if (currentLeftSelection !== null && currentRightSelection !== null) {
+// //         const originalQuizContent = getQuizContentById(quizId);
+// //         if (!originalQuizContent || !originalQuizContent.matching_pairs) return;
+
+// //         const correctPair = originalQuizContent.matching_pairs.find(
+// //           (pair) =>
+// //             pair.id === currentLeftSelection &&
+// //             pair.right_item === currentRightSelection
+// //         );
+
+// //         // Temporarily disable all clicks during feedback
+// //         const feedbackDelay = 2000;
+
+// //         if (correctPair) {
+// //           // New logic for correct match
+// //           if (!toastShownRef.current) {
+// //             toast.success("Correct match!");
+// //             toastShownRef.current = true;
+// //           }
+
+// //           setCorrectMatchState({
+// //             leftId: currentLeftSelection,
+// //             rightValue: currentRightSelection,
+// //             quizId: quizId,
+// //           });
+
+// //           setTimeout(() => {
+// //             setQuizAnswers((prev) => ({
+// //               ...prev,
+// //               [quizId]: {
+// //                 ...(prev[quizId] || { recoloredMatches: [] }),
+// //                 recoloredMatches: [
+// //                   ...new Set([
+// //                     ...(prev[quizId]?.recoloredMatches || []),
+// //                     {
+// //                       leftId: currentLeftSelection,
+// //                       rightValue: currentRightSelection,
+// //                     },
+// //                   ]),
+// //                 ],
+// //                 currentLeftSelection: null,
+// //                 currentRightSelection: null,
+// //               },
+// //             }));
+// //             setCorrectMatchState({});
+// //           }, feedbackDelay);
+// //         } else {
+// //           // Logic for incorrect match
+// //           if (!toastShowerrRef.current) {
+// //             toast.error("Incorrect match. Please try again.");
+// //             toastShownRef.current = true;
+// //           }
+
+// //           setIncorrectMatchState({
+// //             leftId: currentLeftSelection,
+// //             rightValue: currentRightSelection,
+// //             quizId: quizId,
+// //           });
+
+// //           setTimeout(() => {
+// //             setQuizAnswers((prev) => ({
+// //               ...prev,
+// //               [quizId]: {
+// //                 ...(prev[quizId] || { recoloredMatches: [] }),
+// //                 currentLeftSelection: null,
+// //                 currentRightSelection: null,
+// //               },
+// //             }));
+// //             setIncorrectMatchState({});
+// //           }, feedbackDelay);
+// //         }
+// //       }
+// //     },
+// //     [getQuizContentById]
+// //   );
+
+// //   const handleSingleChoiceQuizChange = (quizId, selectedOptionId) => {
+// //     setQuizAnswers((prevAnswers) => ({
+// //       ...prevAnswers,
+// //       [quizId]: selectedOptionId,
+// //     }));
+// //   };
+
+// //   const handleMatchingLeftRadioChange = (quizId, leftItemId) => {
+// //     // Clear feedback if a new selection is made
+// //     if (
+// //       correctMatchState.quizId === quizId ||
+// //       incorrectMatchState.quizId === quizId
+// //     ) {
+// //       setCorrectMatchState({});
+// //       setIncorrectMatchState({});
+// //     }
+
+// //     setQuizAnswers((prevAnswers) => {
+// //       const newQuizState = {
+// //         ...(prevAnswers[quizId] || { recoloredMatches: [] }),
+// //       };
+// //       newQuizState.currentLeftSelection = leftItemId;
+
+// //       const potentialState = {
+// //         ...newQuizState,
+// //         currentLeftSelection: leftItemId,
+// //       };
+// //       checkAndCommitMatch(quizId, potentialState);
+
+// //       return {
+// //         ...prevAnswers,
+// //         [quizId]: newQuizState,
+// //       };
+// //     });
+// //   };
+
+// //   const handleMatchingRightRadioChange = (quizId, rightItemValue) => {
+// //     // Clear feedback if a new selection is made
+// //     if (
+// //       correctMatchState.quizId === quizId ||
+// //       incorrectMatchState.quizId === quizId
+// //     ) {
+// //       setCorrectMatchState({});
+// //       setIncorrectMatchState({});
+// //     }
+
+// //     setQuizAnswers((prevAnswers) => {
+// //       const newQuizState = {
+// //         ...(prevAnswers[quizId] || { recoloredMatches: [] }),
+// //       };
+// //       newQuizState.currentRightSelection = rightItemValue;
+
+// //       const potentialState = {
+// //         ...newQuizState,
+// //         currentRightSelection: rightItemValue,
+// //       };
+// //       checkAndCommitMatch(quizId, potentialState);
+
+// //       return {
+// //         ...prevAnswers,
+// //         [quizId]: newQuizState,
+// //       };
+// //     });
+// //   };
+
+// //   const handleSubmitQuizAnswers = () => {
+// //     const answersToSubmit = [];
+
+// //     Object.keys(quizAnswers).forEach((quizId) => {
+// //       const currentQuizId = parseInt(quizId, 10);
+// //       const quizAnswerData = quizAnswers[quizId];
+
+// //       const originalQuizContent = getQuizContentById(currentQuizId);
+
+// //       if (!originalQuizContent) {
+// //         console.warn(
+// //           `Quiz content for ID ${currentQuizId} not found in lesson details.`
+// //         );
+// //         return;
+// //       }
+
+// //       if (originalQuizContent.quiz_subtype === "matching") {
+// //         const submittedMatches =
+// //           quizAnswerData?.recoloredMatches.map((match, index) => {
+// //             const originalLeftItem = originalQuizContent.matching_pairs.find(
+// //               (p) => p.id === match.leftId
+// //             );
+// //             return {
+// //               id: match.leftId,
+// //               left_item: originalLeftItem
+// //                 ? originalLeftItem.left_item
+// //                 : "Unknown Left Item",
+// //               right_item: match.rightValue,
+// //               match_key: String.fromCharCode(65 + index),
+// //             };
+// //           }) || [];
+
+// //         answersToSubmit.push({
+// //           quiz_id: currentQuizId,
+// //           matching: submittedMatches,
+// //         });
+// //       } else {
+// //         if (quizAnswerData !== null && quizAnswerData !== undefined) {
+// //           answersToSubmit.push({
+// //             quiz_id: currentQuizId,
+// //             selected_option_id: parseInt(quizAnswerData, 10),
+// //           });
+// //         }
+// //       }
+// //     });
+
+// //     const params = {
+// //       attempt_id: attemptId,
+// //       answers: answersToSubmit,
+// //     };
+
+// //     dispatch(lessionSubmit(params)).then((response) => {
+// //       const data = response.payload;
+// //       if (data) {
+// //         dispatch(completeLesson({ lesson_id: lessonId })).then((response) => {
+// //           const data = response?.payload;
+
+// //           if (data) {
+// //             dispatch(getLessionSlice({ subject_id: subjectId }));
+// //           }
+// //         });
+// //       }
+// //     });
+
+// //     handleClosePopup();
+// //   };
+
+// //   const handleOpenPopup = () => {
+// //     let allMatchingQuizzesCompleted = true;
+// //     let validationMessage = "";
+
+// //     for (const contentItem of sortedContents) {
+// //       if (
+// //         contentItem.type === "quiz" &&
+// //         contentItem.quiz_subtype === "matching"
+// //       ) {
+// //         const quizId = contentItem.id;
+// //         const currentQuizAnswers = quizAnswers[quizId];
+// //         const quizQuestion = contentItem.question || `Quiz ID: ${quizId}`;
+
+// //         const totalPairs = contentItem.matching_pairs
+// //           ? contentItem.matching_pairs.length
+// //           : 0;
+// //         const recoloredMatchesCount =
+// //           currentQuizAnswers?.recoloredMatches?.length || 0;
+
+// //         if (totalPairs > 0) {
+// //           if (recoloredMatchesCount < totalPairs) {
+// //             allMatchingQuizzesCompleted = false;
+// //             validationMessage = `Please match all options for the matching quiz: "${quizQuestion}" before proceeding.`;
+// //             break;
+// //           }
+// //         }
+// //       }
+// //     }
+
+// //     if (!allMatchingQuizzesCompleted) {
+// //       toast.error(validationMessage);
+// //     } else {
+// //       setShowModal(true);
+// //     }
+// //   };
+
+// //   if (!Array.isArray(lessionWiseDetails?.lesson?.contents)) {
+// //     console.warn(
+// //       "lessionWiseDetails?.lesson?.contents is not an array or is missing. Using empty array for content."
+// //     );
+// //   }
+
+// //   const handleVideoClick = () => {
+// //     if (videoRef.current.paused) {
+// //       videoRef.current.play();
+// //       setIsPlaying(true);
+// //     } else {
+// //       videoRef.current.pause();
+// //       setIsPlaying(false);
+// //     }
+// //   };
+
+// //   return (
+// //     <>
+// //       <div className="baseline-ass-wrp">
+// //         <div className="back-btn mb-3">
+// //           <Link to={`/student/subject-detail?subjectId=${subjectId}`}>
+// //             <img src="/images/baseline-assessment/back-icon.svg" alt="icon" />{" "}
+// //             Back to the Subject
+// //           </Link>
+// //         </div>
+// //         <div className="less-details">
+// //           <h1>{lessionWiseDetails?.lesson?.title}</h1>
+// //           <div className="less-details-in">
+// //             {sortedContents?.map((contentItem, index) => {
+// //               const itemKey = `${contentItem.type || "unknown"}-${
+// //                 contentItem.id || "noId"
+// //               }-${contentItem.order || "noOrder"}-${index}`;
+
+// //               return (
+// //                 <React.Fragment key={itemKey}>
+// //                   {(() => {
+// //                     switch (contentItem.type) {
+// //                       case "text":
+// //                         return (
+// //                           <div className="lesson-content-item text-content">
+// //                             {contentItem.title && (
+// //                               <h3 dangerouslySetInnerHTML={{ __html: contentItem.title, }} ></h3>
+// //                             )}
+
+// //                             {contentItem.desc && (
+// //                               <p dangerouslySetInnerHTML={{ __html: contentItem.desc, }} ></p>
+// //                             )}
+// //                             {!contentItem.title && !contentItem.desc && (
+// //                               <p>
+// //                                 Text content available but no title or
+// //                                 description provided.
+// //                               </p>
+// //                             )}
+// //                           </div>
+// //                         );
+
+// //                       case "video":
+// //                         return (
+// //                           // <div className="lesson-content-item video-content">
+// //                           //   {contentItem.video_link ? (
+// //                           //     <video
+// //                           //       controls
+// //                           //       width="100%"
+// //                           //       style={{ height: "554px" }}
+// //                           //     >
+// //                           //       <source
+// //                           //         src={contentItem.video_link}
+// //                           //         type="video/mp4"
+// //                           //       />
+// //                           //       Your browser does not support the video tag.
+// //                           //     </video>
+// //                           //   ) : (
+// //                           //     <p>
+// //                           //       Video content available but no video link
+// //                           //       provided.
+// //                           //     </p>
+// //                           //   )}
+// //                           //   {contentItem.desc && <p>{contentItem.desc}</p>}
+// //                           // </div>
+
+// //                           <div className="lesson-content-item video-content">
+// //                             {contentItem.video_link ? (
+// //                               <iframe
+// //                                 src={contentItem.video_link.replace(
+// //                                   "/view",
+// //                                   "/preview"
+// //                                 )}
+// //                                 width="100%"
+// //                                 height="554px"
+// //                                 frameBorder="0"
+// //                                 allowFullScreen
+// //                                 style={{ border: 0 }}
+// //                                 title="Embedded Google Drive Video Player"
+// //                               ></iframe>
+// //                             ) : (
+// //                               <p>
+// //                                 Video content available but no video link
+// //                                 provided.
+// //                               </p>
+// //                             )}
+// //                             {contentItem.desc && <p  dangerouslySetInnerHTML={{ __html: contentItem.desc, }} ></p>}
+// //                           </div>
+
+// //                           //
+
+// //                           // <div
+// //                           //   style={{
+// //                           //     position: "relative",
+// //                           //     width: "100%",
+// //                           //     height: "554px",
+// //                           //     overflow: "hidden",
+// //                           //   }}
+// //                           // >
+// //                           //   <video
+// //                           //     ref={videoRef}
+// //                           //     controls
+// //                           //     width="100%"
+// //                           //     style={{ height: "100%" }}
+// //                           //     onClick={handleVideoClick} // Clicking the video itself also toggles play/pause
+// //                           //   >
+// //                           //     <source
+// //                           //       src={contentItem.video_link}
+// //                           //       type="video/mp4"
+// //                           //     />
+// //                           //     Your browser does not support the video tag.
+// //                           //   </video>
+
+// //                           //   {/* Conditionally render the pause icon overlay */}
+// //                           //   {!isPlaying && (
+// //                           //     <img
+// //                           //       src={PauseIcon}
+// //                           //       alt="Pause"
+// //                           //       style={{
+// //                           //         position: "absolute",
+// //                           //         top: "50%",
+// //                           //         left: "50%",
+// //                           //         transform: "translate(-50%, -50%)",
+// //                           //         width: "80px", // Reduced size
+// //                           //         height: "80px", // Reduced size
+// //                           //         cursor: "pointer",
+// //                           //         // You might need a transparent background to see the video behind it
+// //                           //         // backgroundColor: "rgba(0, 0, 0, 0.5)",
+// //                           //         // borderRadius: "50%",
+// //                           //         padding: "10px",
+// //                           //       }}
+// //                           //       onClick={handleVideoClick}
+// //                           //     />
+// //                           //   )}
+// //                           // </div>
+// //                         );
+
+// //                       case "pdf":
+// //                         return (
+// //                           <div
+// //                             className="lesson-content-item pdf-content"
+// //                             style={{ width: "40%" }}
+// //                           >
+// //                             {contentItem.file_name ? (
+// //                               <PdfViewer
+// //                                 pdfUrl={contentItem.file_name}
+// //                                 pdfName={contentItem.title || "Document.pdf"}
+// //                               />
+// //                             ) : (
+// //                               <p>
+// //                                 PDF content available but no PDF link provided.
+// //                               </p>
+// //                             )}
+// //                             {contentItem.desc && <p  dangerouslySetInnerHTML={{ __html: contentItem.desc, }} ></p>}
+// //                           </div>
+// //                         );
+
+// //                       case "image":
+// //                         return (
+// //                           <div className="lesson-content-item ">
+// //                             {contentItem.image ? (
+// //                               <img
+// //                                 src={contentItem.image}
+// //                                 alt={
+// //                                   contentItem.desc ||
+// //                                   `Lesson image ${contentItem.id}`
+// //                                 }
+// //                                 style={{ maxWidth: "100%", height: "554px" }}
+// //                               />
+// //                             ) : (
+// //                               <p>
+// //                                 Image content available but no image name
+// //                                 provided.
+// //                               </p>
+// //                             )}
+// //                             {contentItem.desc && <p dangerouslySetInnerHTML={{ __html : contentItem.desc}}></p>}
+// //                           </div>
+// //                         );
+// //                       case "quiz":
+// //                         const quizId = contentItem.id;
+// //                         let quizState;
+// //                         if (contentItem.quiz_subtype === "matching") {
+// //                           if (simulateMatchingQuizAnswered) {
+// //                             quizState = {
+// //                               completedMatches:
+// //                                 contentItem.matching_pairs || [],
+// //                               currentLeftSelection: null,
+// //                               currentRightSelection: null,
+// //                             };
+// //                           } else {
+// //                             quizState = {
+// //                               completedMatches: [],
+// //                               currentLeftSelection: null,
+// //                               currentRightSelection: null,
+// //                             };
+// //                           }
+// //                         }
+
+// //                         if (contentItem.quiz_subtype === "matching") {
+// //                           const allLeftItems = contentItem.matching_pairs
+// //                             ? contentItem.matching_pairs
+// //                             : [];
+
+// //                           let allRightItems = Array.from(
+// //                             new Set(
+// //                               contentItem.matching_pairs
+// //                                 ? contentItem.matching_pairs.map(
+// //                                     (p) => p.right_item
+// //                                   )
+// //                                 : []
+// //                             )
+// //                           );
+
+// //                           allRightItems = cyclicallyShiftArray(allRightItems);
+
+// //                           const isRecoloredLeft = (pairId) => {
+// //                             return quizAnswers[quizId]?.recoloredMatches?.some(
+// //                               (match) => match.leftId === pairId
+// //                             );
+// //                           };
+// //                           const isRecoloredRight = (rightValue) => {
+// //                             return quizAnswers[quizId]?.recoloredMatches?.some(
+// //                               (match) => match.rightValue === rightValue
+// //                             );
+// //                           };
+
+// //                           return (
+// //                             <div className="lesson-content-item quiz-content">
+// //                               {contentItem.question ? (
+// //                                 <h4>{contentItem.question}</h4>
+// //                               ) : (
+// //                                 <p>
+// //                                   Quiz content available but no question
+// //                                   provided.
+// //                                 </p>
+// //                               )}
+
+// //                               <div
+// //                                 style={{
+// //                                   display: "flex",
+// //                                   justifyContent: "space-around",
+// //                                   gap: "20px",
+// //                                   borderRadius: "8px",
+// //                                   backgroundColor: "white",
+// //                                   margin: "0 auto",
+// //                                 }}
+// //                               >
+// //                                 {/* Left Column: Left Items */}
+// //                                 <div style={{ flex: 1 }}>
+// //                                   {allLeftItems && allLeftItems.length > 0 ? (
+// //                                     allLeftItems.map((pair) => {
+// //                                       const isCurrentlySelected =
+// //                                         quizAnswers[quizId]
+// //                                           ?.currentLeftSelection === pair.id;
+// //                                       const isRecolored = isRecoloredLeft(
+// //                                         pair.id
+// //                                       );
+// //                                       const isCorrect =
+// //                                         correctMatchState.quizId === quizId &&
+// //                                         correctMatchState.leftId === pair.id;
+// //                                       const isIncorrect =
+// //                                         incorrectMatchState.quizId === quizId &&
+// //                                         incorrectMatchState.leftId === pair.id;
+
+// //                                       return (
+// //                                         <MatchingLeftOption
+// //                                           key={`left-${pair.id}-${quizId}`}
+// //                                           pair={pair}
+// //                                           quizId={quizId}
+// //                                           isCurrentlySelected={
+// //                                             isCurrentlySelected
+// //                                           }
+// //                                           isRecolored={isRecolored}
+// //                                           isCorrect={isCorrect}
+// //                                           isIncorrect={isIncorrect}
+// //                                           handleMatchingLeftRadioChange={
+// //                                             handleMatchingLeftRadioChange
+// //                                           }
+// //                                           isAlreadySelected={
+// //                                             simulateMatchingQuizAnswered
+// //                                               ? true
+// //                                               : false
+// //                                           }
+// //                                         />
+// //                                       );
+// //                                     })
+// //                                   ) : (
+// //                                     <p>No left items available.</p>
+// //                                   )}
+// //                                 </div>
+
+// //                                 {/* Right Column: Right Options */}
+// //                                 <div style={{ flex: 1 }}>
+// //                                   {allRightItems && allRightItems.length > 0 ? (
+// //                                     allRightItems.map((rightOption, idx) => {
+// //                                       const isCurrentlySelected =
+// //                                         quizAnswers[quizId]
+// //                                           ?.currentRightSelection ===
+// //                                         rightOption;
+// //                                       const isRecolored =
+// //                                         isRecoloredRight(rightOption);
+// //                                       const isCorrect =
+// //                                         correctMatchState.quizId === quizId &&
+// //                                         correctMatchState.rightValue ===
+// //                                           rightOption;
+// //                                       const isIncorrect =
+// //                                         incorrectMatchState.quizId === quizId &&
+// //                                         incorrectMatchState.rightValue ===
+// //                                           rightOption;
+
+// //                                       return (
+// //                                         <MatchingRightOption
+// //                                           key={`right-${rightOption}-${quizId}-${idx}`}
+// //                                           rightOption={rightOption}
+// //                                           idx={idx}
+// //                                           quizId={quizId}
+// //                                           isCurrentlySelected={
+// //                                             isCurrentlySelected
+// //                                           }
+// //                                           isRecolored={isRecolored}
+// //                                           isCorrect={isCorrect}
+// //                                           isIncorrect={isIncorrect}
+// //                                           handleMatchingRightRadioChange={
+// //                                             handleMatchingRightRadioChange
+// //                                           }
+// //                                           isAlreadySelected={
+// //                                             simulateMatchingQuizAnswered
+// //                                               ? true
+// //                                               : false
+// //                                           }
+// //                                         />
+// //                                       );
+// //                                     })
+// //                                   ) : (
+// //                                     <p>No right items available.</p>
+// //                                   )}
+// //                                 </div>
+// //                               </div>
+// //                             </div>
+// //                           );
+// //                         } else {
+// //                           const selectedOptionId = contentItem.user_answer
+// //                             ?.selected_option_id
+// //                             ? contentItem.user_answer.selected_option_id
+// //                             : quizAnswers[quizId];
+// //                           return (
+// //                             <div className="lesson-content-item quiz-content">
+// //                               {contentItem.question ? (
+// //                                 <h4>{contentItem.question}</h4>
+// //                               ) : (
+// //                                 <p>
+// //                                   Quiz content available but no question
+// //                                   provided.
+// //                                 </p>
+// //                               )}
+
+// //                               {contentItem.options &&
+// //                               Array.isArray(contentItem.options) &&
+// //                               contentItem.options.length > 0 ? (
+// //                                 <div className="quiz-options">
+// //                                   {contentItem.options.map(
+// //                                     (option, optionIndex) => {
+// //                                       if (
+// //                                         !option ||
+// //                                         !option.id ||
+// //                                         !option.option
+// //                                       ) {
+// //                                         console.warn(
+// //                                           `Missing data for a quiz option in quiz ID: ${contentItem.id}. Skipping option.`
+// //                                         );
+// //                                         return null;
+// //                                       }
+// //                                       const isSelected =
+// //                                         selectedOptionId === option.id;
+// //                                       return (
+// //                                         <SingleChoiceOption
+// //                                           key={`option-${option.id}-${quizId}-${optionIndex}`}
+// //                                           option={option}
+// //                                           optionIndex={optionIndex}
+// //                                           quizId={quizId}
+// //                                           isSelected={isSelected}
+// //                                           handleSingleChoiceQuizChange={
+// //                                             handleSingleChoiceQuizChange
+// //                                           }
+// //                                           isAlreadySelected={
+// //                                             simulateMatchingQuizAnswered
+// //                                               ? true
+// //                                               : false
+// //                                           }
+// //                                         />
+// //                                       );
+// //                                     }
+// //                                   )}
+// //                                 </div>
+// //                               ) : (
+// //                                 <p>No options available for this quiz.</p>
+// //                               )}
+// //                             </div>
+// //                           );
+// //                         }
+
+// //                       default:
+// //                         return null;
+// //                     }
+// //                   })()}
+// //                   {contentItem.type !== "pdf" &&
+// //                     index < sortedContents?.length - 1 && <hr />}
+// //                 </React.Fragment>
+// //               );
+// //             })}
+// //           </div>
+// //           <hr />
+// //         </div>
+// //         <div className="bottom-cta justify-content-end">
+// //           {simulateMatchingQuizAnswered ? (
+// //             <span
+// //               className="next-cta disabled"
+// //               disabled
+// //               style={{
+// //                 backgroundColor: "#4126A8",
+// //                 color: "white",
+// //                 width: "160px",
+// //                 height: "40px",
+// //                 borderRadius: "10px",
+// //                 justifyContent: "space-around",
+// //                 alignItems: "center",
+// //                 display: "flex",
+// //                 opacity: 0.8,
+// //               }}
+// //             >
+// //               Next Lesson <i className="fa-regular fa-arrow-right"></i>
+// //             </span>
+// //           ) : (
+// //             <Link
+// //               to={`/student/lesson-detail?lessonId=${lessonId}&attemptId=${attemptId}&subjectId=${subjectId}`}
+// //               onClick={handleOpenPopup}
+// //               className="next-cta"
+// //             >
+// //               Next Lesson <i className="fa-regular fa-arrow-right"></i>
+// //             </Link>
+// //           )}
+// //         </div>
+// //       </div>
+
+// //       <QuitPopup
+// //         show={showModal}
+// //         onHide={handleClosePopup}
+// //         onSubmitQuiz={() => handleSubmitQuizAnswers()}
+// //         lessonId={lessonId}
+// //         attemptId={attemptId}
+// //         subjectId={subjectId}
+// //       />
+// //     </>
+// //   );
+// // };
+
+// // export default React.memo(LessonDetail);
+
+// // const QuitPopup = ({
+// //   show,
+// //   onHide,
+// //   onSubmitQuiz,
+// //   lessonId,
+// //   attemptId,
+// //   subjectId,
+// // }) => {
+// //   return (
+// //     <Modal
+// //       show={show}
+// //       onHide={onHide}
+// //       centered
+// //       id="#quit-popup"
+// //       className="my-popup"
+// //     >
+// //       <div className="modal-content clearfix">
+// //         <div className="modal-heading d-flex justify-content-between align-items-center p-3">
+// //           <h2 className="mb-0">Confirmation</h2>
+// //           <Button
+// //             variant="link"
+// //             onClick={onHide}
+// //             className="close close-btn-front p-0 m-0"
+// //           >
+// //             <img src="/images/cross-pop.svg" alt="close" />
+// //           </Button>
+// //         </div>
+// //         <Modal.Body>
+// //           <div className="delete-pop-wrap">
+// //             <form>
+// //               <div className="delete-pop-inner">
+// //                 <p>
+// //                   <strong>Have you answered all your questions?</strong>
+// //                 </p>
+// //                 <p>
+// //                   Completing them can help you feel more confident and reduce
+// //                   stress. Keep going you're doing great!
+// //                 </p>
+// //               </div>
+// //               <div className="delete-pop-btn d-flex gap-3">
+// //                 <Link
+// //                   to={`/student/lesson-detail?lessonId=${lessonId}&attemptId=${attemptId}&subjectId=${subjectId}`}
+// //                   onClick={onHide}
+// //                   className="btn btn-primary"
+// //                 >
+// //                   Review
+// //                 </Link>
+// //                 <Link
+// //                   to={`/student/subject-detail?subjectId=${subjectId}`}
+// //                   onClick={onSubmitQuiz}
+// //                   className="btn btn-outline-secondary"
+// //                 >
+// //                   Continue
+// //                 </Link>
+// //               </div>
+// //             </form>
+// //           </div>
+// //         </Modal.Body>
+// //       </div>
+// //     </Modal>
+// //   );
+// // };

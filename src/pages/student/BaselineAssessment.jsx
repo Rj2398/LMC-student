@@ -3,6 +3,7 @@ import { Button, Modal } from 'react-bootstrap';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllQuestion, getAttemptId, submitAnswer } from '../../redux/slices/student/subjectSlice';
+import toast from 'react-hot-toast';
 
 const BaselineAssessment = () => {
   const navigate = useNavigate(); 
@@ -60,6 +61,19 @@ const BaselineAssessment = () => {
       quiz_id: q.id,
       selected_option_id: answers[index] ?? null
     }));
+    
+    const anyUnanswered = formattedAnswers.some(ans => ans.selected_option_id === null);
+
+    if (anyUnanswered) {
+      toast.error("Please answer all questions.");
+      return;
+    } 
+    // const allEmpty = formattedAnswers.every(ans => ans.selected_option_id === null);
+
+    // if (allEmpty) {
+    //   toast.error("Please answer at least one question.");
+    //   return;
+    // }
 
     dispatch(submitAnswer({attempt_id: attemptId,answers: formattedAnswers}));
 

@@ -35,11 +35,6 @@ const authSlice = createSlice({
     error: null,
   },
   reducers: {
-    // login(state, action) {
-    //   state.isAuthenticated = true;
-    //   state.user = action.payload;
-    //   localStorage.setItem("pmsc", JSON.stringify(action.payload));
-    // },
     logout(state) {
       state.isAuthenticated = false;
       state.user = null;

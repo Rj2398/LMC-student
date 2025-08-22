@@ -647,21 +647,6 @@ main {
 }
 
 .my-popup .modal-dialog {
-  max-width: 450px;
-  height: 100%;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  margin-top: 0;
-  margin-bottom: 0;
-}
-/* .my-popup .modal-dialog {
   max-width: 400px;
   height: 100%;
   display: -webkit-box;
@@ -675,7 +660,7 @@ main {
   justify-content: center;
   margin-top: 0;
   margin-bottom: 0;
-} */
+}
 
 .delete-pop-inner img {
   width: 70px;
@@ -705,16 +690,7 @@ main {
   justify-content: flex-end;
   gap: 20px;
   margin-bottom: 0px;
-  padding-right: 18px;
 }
-/* .delete-pop-btn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 20px;
-  margin-bottom: 0px;
-} */
 
 .delete-pop-btn a {
   border-radius: 10px;
@@ -1447,10 +1423,6 @@ a.ui-state-default {
 }
 
 .influ-btn i.far.fa-chevron-down.active {
-  transform: rotate(180deg);
-}
-
-.influ-btn i.fas.fa-chevron-down.active {
   transform: rotate(180deg);
 }
 

@@ -3,6 +3,7 @@ import { Button, Modal } from 'react-bootstrap';
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllQuestion, getAttemptId, submitAnswer } from '../../redux/slices/student/subjectSlice';
+import toast from 'react-hot-toast';
 
 const SummativeAssessment = () => {
   const navigate = useNavigate(); 
@@ -63,11 +64,25 @@ const SummativeAssessment = () => {
       selected_option_id: answers[index] ?? null
     }));
 
-	dispatch(submitAnswer({attempt_id: attemptId,answers: formattedAnswers}));
-  
-  setTimeout(() => {
-    navigate(`/student/subject-detail?subjectId=${subjectIdbyParams || subjectId}`)
-  }, 1000);
+    const anyUnanswered = formattedAnswers.some(ans => ans.selected_option_id === null);
+
+    if (anyUnanswered) {
+      toast.error("Please answer all questions.");
+      return;
+    } 
+
+    // const allEmpty = formattedAnswers.every(ans => ans.selected_option_id === null);
+
+    // if (allEmpty) {
+    //   toast.error("Please answer at least one question.");
+    //   return;
+    // }
+
+    dispatch(submitAnswer({attempt_id: attemptId,answers: formattedAnswers}));
+    
+    setTimeout(() => {
+      navigate(`/student/subject-detail?subjectId=${subjectIdbyParams || subjectId}`)
+    }, 1000);
 
   };
 
@@ -188,60 +203,3 @@ const SummativeAssessment = () => {
 };
 
 export default SummativeAssessment;
-
-// import React from 'react'
-// import { Link } from 'react-router'
-
-// const SummativeAssessment = () => {
-//   return (
-//     <>
-// 		<div class="baseline-ass-wrp">
-// 			<div class="back-btn">
-// 				<Link to="javascript:void(0);" data-bs-target="#quit-popup" data-bs-toggle="modal"><img
-// 						src="/images/baseline-assessment/back-icon.svg" alt="" /> Back</Link>
-// 			</div>
-// 			<div class="sub-detail-top mt-3">
-// 				<h1 class="mb-2">Life Dream Summative Assessment <span class="text-black"><b>0%</b></span></h1>
-// 				<div class="sub-pro mb-2">
-// 					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit,</p>
-// 					<h1 class="mb-0"><span class="text-black">Question 1 of 5</span></h1>
-// 				</div>
-// 				<div class="sub-pro mb-0">
-// 					<ul>
-// 						<li><img src="/images/subject-detail/lessons.svg" alt="" /> 24 lessons</li>
-// 						<li><img src="/images/subject-detail/quizzes.svg" alt="" /> 24 Quizzes</li>
-// 						<li><span>&nbsp;</span></li>
-// 					</ul>
-// 					<div class="progress">
-// 						<div class="progress-bar" role="progressbar" aria-label="Basic example" aria-valuenow="75"
-// 							aria-valuemin="0" aria-valuemax="100"></div>
-// 					</div>
-// 				</div>
-// 			</div>
-
-// 			<form action="subject-detail.html" method="post">
-// 				<div class="baseline-ass-q-a">
-// 					<h2>Lorem ipsum dolor sit amet, consectetur adipiscing elit?</h2>
-// 					<label> <input type="radio" name="answer" value="1" /> Lorem ipsum dolor sit amet, consectetur
-// 						adipiscing elit,</label>
-// 					<label> <input type="radio" name="answer" value="2" /> Lorem ipsum dolor sit amet, consectetur
-// 						adipiscing elit,</label>
-// 					<label> <input type="radio" name="answer" value="3" /> Lorem ipsum dolor sit amet, consectetur
-// 						adipiscing elit,</label>
-// 					<label> <input type="radio" name="answer" value="4" /> Lorem ipsum dolor sit amet, consectetur
-// 						adipiscing elit,</label>
-// 				</div>
-// 				<div class="bottom-cta">
-// 					<Link class="previous-cta disabled"><i class="fa-regular fa-arrow-left"></i> Previous</Link>
-// 					<Link to="#" class="previous-cta"><i class="fa-regular fa-arrow-left"></i> Previous</Link>
-// 					<Link class="next-cta disabled">Next <i class="fa-regular fa-arrow-right"></i></Link>
-// 					<Link to="#" class="next-cta">Next <i class="fa-regular fa-arrow-right"></i></Link>
-// 					<button class="finish-cta" type="submit">Finish Assessment</button>
-// 				</div>
-// 			</form>
-// 		</div>
-// 	</>
-//   )
-// }
-
-// export default SummativeAssessment

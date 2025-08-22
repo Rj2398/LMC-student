@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import { Modal } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router';
 import { getTeacherLessionDetail } from '../../redux/slices/teacher/dashboardSlice';
-import Loading from '../common/Loading';
+import { completeLesson } from '../../redux/slices/student/lessionSlice';
 
 const SubjectLessonDetail = () => {
     const navigate = useNavigate();
@@ -14,23 +13,36 @@ const SubjectLessonDetail = () => {
     const lessonId = location?.state?.lessonId ? location?.state?.lessonId : paramData?.lessonId;
 
     const { lessonInfo } = useSelector((state) => state.dashboard);
+    const [nextLesson, setNextLesson] = useState(null)
 
     useEffect(() => {
         if(subjectId && lessonId){
-            dispatch(getTeacherLessionDetail({subject_id: subjectId, lesson_id:lessonId}));
+          dispatch(getTeacherLessionDetail({subject_id: subjectId, lesson_id: nextLesson ? nextLesson : lessonId}));
         }
-    }, [dispatch]);
+    }, [dispatch, nextLesson]);
 
-    const [showModal, setShowModal] = useState(false);
+    const handleNextButton = async (e) => {
+      e.preventDefault();
+      try {
+        const response = await dispatch(completeLesson({ lesson_id: lessonId })).unwrap();
 
-    const handleShowModal = () => setShowModal(true);
-    const handleCloseModal = () => setShowModal(false);
+        if (response?.next_lesson_id) {
+          setNextLesson(response?.next_lesson_id)
+          navigate(`/teacher/subject-lesson-detail/${subjectId}/${response.next_lesson_id}`);
+        } else {
+          navigate(`/teacher/subject-detail/${subjectId}`);
+        }
+      } catch (error) {
+        navigate(`/teacher/subject-detail/${subjectId}`);
+      }
+    };
+
     return (
         <>
             <div className="baseline-ass-wrp">
                 <div className="back-btn mb-3">
-                    <Link to="#" onClick={()=> navigate(-1)}>
-					    <img src="/images/baseline-assessment/back-icon.svg" alt="" /> Back to the Subject
+                <Link to="#" onClick={()=> navigate(-1)}>
+					    <img src="/images/baseline-assessment/back-icon.svg" alt="back" /> Back to the Subject
 				    </Link>
                 </div>
                 <div className="less-details">
@@ -44,51 +56,11 @@ const SubjectLessonDetail = () => {
                     ))}
                 </div>
                 <div className="bottom-cta justify-content-end">
-                    {/* <a href="javascript:void(0);" data-bs-target="#quit-popup" data-bs-toggle="modal" className="next-cta">Next
-                        Lesson <i className="fa-regular fa-arrow-right"></i></a> */}
-                    <a onClick={handleShowModal} className="next-cta" style={{cursor:"pointer"}} >
+                    <a onClick={handleNextButton} className="next-cta" style={{cursor:"pointer"}} >
                         Next Lesson <i className="fa-regular fa-arrow-right"></i>
                     </a>
                 </div>
             </div>
-
-
-            {/* Confirmation Modal JSX */}
-            <Modal show={showModal} onHide={handleCloseModal}
-                centered 
-                className="my-popup"
-                dialogClassName="modal-dialog-edit"
-            >
-                <div className="modal-content clearfix" style={{maxWidth:"450px"}}>
-                    <div className="modal-heading">
-                        <h2>Confirmation</h2>
-                        <button type="button" className="close close-btn-front" onClick={handleCloseModal} aria-label="Close">
-                            <span aria-hidden="true">
-                                <img src="/images/cross-pop.svg" alt="" />
-                            </span>
-                        </button>
-                    </div>
-                    <div className="modal-body">
-                        <div className="delete-pop-wrap">
-                            <form>
-                                <div className="delete-pop-inner">
-                                    <p><b>Have you answered all your questions?</b></p>
-                                    <p>
-                                        Completing them can help you feel more confident and reduce stress. Keep going you're doing great!
-                                    </p>
-                                </div>
-                                <div className="delete-pop-btn">
-                                    <a href="lesson-detail.html" className="active" onClick={handleCloseModal} aria-label="Close">Review</a>
-                                    <Link to="#" onClick={(e) => { 
-                                        e.preventDefault(); 
-                                        navigate(`/teacher/subject-detail/${subjectId}`); 
-                                        }}>Continue</Link>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </Modal>
         </>
     )
 }
@@ -111,6 +83,17 @@ const ShowContents = ({ data, type }) => {
 
       {/* VIDEO */}
       {type === 'video' && (
+        <div className="lesson-content-item video-content">
+          {data?.video_link ? (
+            <iframe src={data?.video_link.replace("/view","/preview")}
+              width="100%" height="554px" frameBorder="0" allowFullScreen style={{ border: 0 }}
+              title="Embedded Google Drive Video Player" 
+            ></iframe> ) : ( <p> Video content available but no video link provided. </p>
+          )}
+          {data?.desc && ( <p dangerouslySetInnerHTML={{ __html: data?.desc, }} ></p> )}
+        </div>
+      )}
+      {/* {type === 'video' && (
         <>
           <h2 dangerouslySetInnerHTML={{__html : data.title}}></h2>
           <video controls width="100%">
@@ -119,7 +102,7 @@ const ShowContents = ({ data, type }) => {
           </video>
           <p dangerouslySetInnerHTML={{__html : data.desc}}></p>
         </>
-      )}
+      )} */}
 
       {/* IMAGE */}
       {type === 'image' && (
@@ -174,6 +157,27 @@ const ShowContents = ({ data, type }) => {
         </>
       )}
 
+      {/* QUIZ - multiple_select */}
+      {type === 'quiz' && (data.quiz_subtype === 'multiple_select') && (
+        <>
+          <h2 dangerouslySetInnerHTML={{__html : data.question}}></h2>
+          <div className="baseline-ass-q-a b-line">
+            {data.options?.map((opt, i) => (
+                <div key={i} style={{display:"flex", gap:"10px"}}>
+                    <label >
+                        <input disabled type="checkbox" name={`answer-${data.id}`} value={i + 1} style={{
+                          transform: "scale(1.2)",}}/>
+                        {opt.option}
+                    </label>
+                    <label style={{width:"5%", justifyContent:"center"}}>
+                        {opt.points}
+                    </label>
+                </div>
+            ))}
+          </div>
+        </>
+      )}
+
       {/* QUIZ - MATCHING */}
       {type === 'quiz' && data.quiz_subtype === 'matching' && (
         <>
@@ -195,3 +199,4 @@ const ShowContents = ({ data, type }) => {
     </div>
   );
 };
+ 

@@ -20,6 +20,18 @@ const Login = () => {
 
   useEffect(() => {
     if (isAuthenticated && user?.role) {
+      switch (user.role) {
+        case "teacher":
+          document.title = "PMSC Teacher Panel";
+          break;
+        case "principal":
+          document.title = "PMSC Principal Panel";
+          break;
+        default:
+          document.title = "PMSC Student Panel";
+          break;
+      }
+
       navigate(`/${user.role}/dashboard`);
     }
   }, [isAuthenticated, user, navigate]);

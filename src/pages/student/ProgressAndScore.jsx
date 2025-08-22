@@ -197,16 +197,21 @@ const ProgressAndScore = () => {
 							<td>---</td>
 							<td>
 								<div className="prog">
-									{subjectWiseQuizInfo?.[0]?.baseline_score}%
+									{subjectWiseQuizInfo?.[0]?.baseline_score || 0}%
 									<div className="progress">
-										<div className="progress-bar" style={{width: `${subjectWiseQuizInfo?.[0]?.baseline_score}%`}} role="progressbar"
-											aria-label="Basic example" aria-valuenow={subjectWiseQuizInfo?.[0]?.baseline_score} aria-valuemin="0"
+										<div className="progress-bar" style={{width: `${subjectWiseQuizInfo?.[0]?.baseline_score || 0}%`}} role="progressbar"
+											aria-label="Basic example" aria-valuenow={subjectWiseQuizInfo?.[0]?.baseline_score || 0} aria-valuemin="0"
 											aria-valuemax="100"></div>
 									</div>
 								</div>
 							</td>
+							
 							<td>
-								<div className="status">{subjectWiseQuizInfo?.[0]?.baseline_status || "Incomplete"}</div>
+								<div className={`status  ${subjectWiseQuizInfo?.[0]?.baseline_status == "in_progress" ? "review" : subjectWiseQuizInfo?.[0]?.baseline_status == "review" ? "review" : subjectWiseQuizInfo?.[0]?.baseline_status == "in_progress" ? "review" : "" }`}
+								 style={{
+									backgroundColor: subjectWiseQuizInfo?.[0]?.baseline_status === "not_started" || subjectWiseQuizInfo?.[0]?.baseline_status === "undefined" || subjectWiseQuizInfo?.[0]?.baseline_status === "locked" || !subjectWiseQuizInfo?.[0]?.baseline_status ? "#9CA3AF" : "", 
+								}}>
+									{subjectWiseQuizInfo?.[0]?.baseline_status.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()) || "Not Started"}</div>
 							</td>
 						</tr>
 						<tr>
@@ -220,7 +225,12 @@ const ProgressAndScore = () => {
 								&nbsp;
 							</td>
 							<td>
-								<div className="status">{subjectWiseQuizInfo?.[0]?.lesson_overall_status || "Incomlete"}</div>
+								<div className={`status  ${subjectWiseQuizInfo?.[0]?.lesson_overall_status == "in_progress" ? "review" : subjectWiseQuizInfo?.[0]?.lesson_overall_status == "review" ? "review" : subjectWiseQuizInfo?.[0]?.lesson_overall_status == "in_progress" ? "review" : "" }`}
+								style={{
+									backgroundColor: subjectWiseQuizInfo?.[0]?.lesson_overall_status === "not_started" || subjectWiseQuizInfo?.[0]?.lesson_overall_status === "locked" || subjectWiseQuizInfo?.[0]?.lesson_overall_status === "undefined" || !subjectWiseQuizInfo?.[0]?.lesson_overall_status ? "#9CA3AF" : "", 
+								}}
+								
+								>{subjectWiseQuizInfo?.[0]?.lesson_overall_status.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()) || "Not Started"}</div>
 							</td>
 						</tr>
 						{showLession && <>
@@ -241,7 +251,11 @@ const ProgressAndScore = () => {
 										</div>
 									</td>
 									<td>
-										<div className="status">{item?.status || "Incomplete"}</div>
+										<div className={`status  ${item?.status == "in_progress" ? "review" : item?.status == "review" ? "review" : item?.status == "in_progress" ? "review" : "" }`}
+									style={{
+									backgroundColor: item?.status === "not_started" || item?.status === "locked" || item?.status === "undefined" || !item?.status ? "#9CA3AF" : "", 
+									}}>
+									{item?.status.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()) || "Not Started"}</div>
 									</td>
 								</tr>
 							))
@@ -254,16 +268,20 @@ const ProgressAndScore = () => {
 							<td>---</td>
 							<td>
 								<div className="prog">
-									{subjectWiseQuizInfo?.[0]?.summative_score}%
+									{subjectWiseQuizInfo?.[0]?.summative_score || 0}%
 									<div className="progress">
-										<div className="progress-bar" style={{width: `${subjectWiseQuizInfo?.[0]?.summative_score}`}} role="progressbar"
+										<div className="progress-bar" style={{width: `${subjectWiseQuizInfo?.[0]?.summative_score}%`}} role="progressbar"
 											aria-label="Basic example" aria-valuenow={subjectWiseQuizInfo?.[0]?.summative_score} aria-valuemin="0"
 											aria-valuemax="100"></div>
 									</div>
 								</div>
 							</td>
 							<td>
-								<div className="status">{subjectWiseQuizInfo?.[0]?.summative_status || "Incomplete"}</div>
+								<div className={`status  ${subjectWiseQuizInfo?.[0]?.summative_status == "in_progress" ? "review" : subjectWiseQuizInfo?.[0]?.summative_status == "review" ? "review" : subjectWiseQuizInfo?.[0]?.summative_status == "in_progress" ? "review" : subjectWiseQuizInfo?.[0]?.summative_status == "retake" ? "review" : "" }`} 
+								style={{
+									backgroundColor: subjectWiseQuizInfo?.[0]?.summative_status === "not_started" || subjectWiseQuizInfo?.[0]?.summative_status === "locked" || subjectWiseQuizInfo?.[0]?.summative_status === "undefined" || !subjectWiseQuizInfo?.[0]?.summative_status ? "#9CA3AF" : "", 
+								}}
+								>{subjectWiseQuizInfo?.[0]?.summative_status.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()) || "Not Started"}</div>
 							</td>
 						</tr>
 					</table>

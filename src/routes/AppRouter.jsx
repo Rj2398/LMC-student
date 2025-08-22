@@ -1,48 +1,62 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Roles } from '../utils/roles';
-import RoleBasedRoute from './RoleBasedRoute';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Roles } from "../utils/roles";
+import RoleBasedRoute from "./RoleBasedRoute";
 
 // Layouts
-import StudentLayout from '../layout/StudentLayout';
-import TeacherLayout from '../layout/TeacherLayout';
-import PrincipalLayout from '../layout/PrincipalLayout';
+import StudentLayout from "../layout/StudentLayout";
+import TeacherLayout from "../layout/TeacherLayout";
+import PrincipalLayout from "../layout/PrincipalLayout";
 
 // Student Panel Pages
-import StudentDashboard from '../pages/student/Dashboard';
-import PrincipalDashboard from '../pages/principal/Dashboard';
-import NotFound from '../pages/common/NotFound';
-import Login from '../pages/common/Login';
-import StudentProfile from '../pages/student/Profile';
-import StudentProgressAndScore from '../pages/student/ProgressAndScore';
-import BaselineAssessment from '../pages/student/BaselineAssessment';
-import SubjectDetail from '../pages/student/SubjectDetail';
-import LessonDetail from '../pages/student/LessonDetail';
-import SummativeAssessment from '../pages/student/SummativeAssessment';
+import StudentDashboard from "../pages/student/Dashboard";
+import PrincipalDashboard from "../pages/principal/Dashboard";
+import NotFound from "../pages/common/NotFound";
+import Login from "../pages/common/Login";
+import StudentProfile from "../pages/student/Profile";
+import StudentProgressAndScore from "../pages/student/ProgressAndScore";
+import BaselineAssessment from "../pages/student/BaselineAssessment";
+import SubjectDetail from "../pages/student/SubjectDetail";
+import LessonDetail from "../pages/student/LessonDetail";
+import SummativeAssessment from "../pages/student/SummativeAssessment";
 
 // Teacher Panel Pages
-import TeacherDashboard from '../pages/teacher/Dashboard';
-import TeacherMwlLibrary from '../pages/teacher/MwlLibrary';
-import TeacherProgressAndScore from '../pages/teacher/ProgressAndScore';
-import TeacherProfile from '../pages/teacher/Profile';
-import TeacherStudentProfile from '../pages/teacher/StudentProfile';
-import TeacherClassDetail from '../pages/teacher/ClassDetail';
-import TeacherSubjectDetail from '../pages/teacher/SubjectDetail';
-import TeacherSubjectSummativeDetail from '../pages/teacher/SubjectSummativeDetail';
-import TeacherSubjectLessonDetail from '../pages/teacher/SubjectLessonDetail';
-import TeacherMwlMicroCredentialsDomainTraining from '../pages/teacher/MwlMicroCredentialsDomainTraining';
-import TeacherMwlMicroCredentialsDomainTrainingSubject from '../pages/teacher/MwlMicroCredentialsDomainTrainingSubject';
-import TeacherMwlOnboarding from '../pages/teacher/MwlOnboarding';
-import TeacherMwlParentTraining from '../pages/teacher/MwlParentTraining';
-import TeacherSubjectBaselineDetail from '../pages/teacher/SubjectBaselineDetail';
-import TeacherMwlLessonPrep from '../pages/teacher/MwlLessonPrep';
-import TeacherMwlLessonPrepSubject from '../pages/teacher/MwlLessonPrepSubject';
-import TeacherMwlMicroCredentialsDomainTrainingLesson from '../pages/teacher/MwlMicroCredentialsDomainTrainingLesson';
-import TeacherMwlLessonPrepLesson from '../pages/teacher/MwlLessonPrepLesson';
-import TeacherStudentLessonQuiz from '../pages/teacher/StudentLessonQuiz';
-import TeacherStudentBaselineAssessment from '../pages/teacher/StudentBaselineAssessment';
-import TeacherStudentSummativeAssessment from '../pages/teacher/StudentSummativeAssessment';
+import TeacherDashboard from "../pages/teacher/Dashboard";
+import TeacherMwlLibrary from "../pages/teacher/MwlLibrary";
+import TeacherProgressAndScore from "../pages/teacher/ProgressAndScore";
+import TeacherProfile from "../pages/teacher/Profile";
+import TeacherStudentProfile from "../pages/teacher/StudentProfile";
+import TeacherClassDetail from "../pages/teacher/ClassDetail";
+import TeacherSubjectDetail from "../pages/teacher/SubjectDetail";
+import TeacherSubjectSummativeDetail from "../pages/teacher/SubjectSummativeDetail";
+import TeacherSubjectLessonDetail from "../pages/teacher/SubjectLessonDetail";
+import TeacherMwlMicroCredentialsDomainTraining from "../pages/teacher/MwlMicroCredentialsDomainTraining";
+import TeacherMwlMicroCredentialsDomainTrainingSubject from "../pages/teacher/MwlMicroCredentialsDomainTrainingSubject";
+import TeacherMwlOnboarding from "../pages/teacher/MwlOnboarding";
+import TeacherMwlParentTraining from "../pages/teacher/MwlParentTraining";
+import TeacherSubjectBaselineDetail from "../pages/teacher/SubjectBaselineDetail";
+import TeacherMwlLessonPrep from "../pages/teacher/MwlLessonPrep";
+import TeacherMwlLessonPrepSubject from "../pages/teacher/MwlLessonPrepSubject";
+import TeacherMwlMicroCredentialsDomainTrainingLesson from "../pages/teacher/MwlMicroCredentialsDomainTrainingLesson";
+import TeacherMwlLessonPrepLesson from "../pages/teacher/MwlLessonPrepLesson";
+import TeacherStudentLessonQuiz from "../pages/teacher/StudentLessonQuiz";
+import TeacherStudentBaselineAssessment from "../pages/teacher/StudentBaselineAssessment";
+import TeacherStudentSummativeAssessment from "../pages/teacher/StudentSummativeAssessment";
 
+//Principal Panel Pages
+import TeachersAndStudents from "../pages/principal/TeachersAndStudents";
+import PrincipalProfile from "../pages/principal/Profile";
+import Classdetails from "../pages/principal/Classdetails";
+import PricipalStudentprofile from "../pages/principal/PricipalStudentprofile";
+import PrincipleStudentbaseline from "../pages/principal/PrincipleStudentbaseline";
+import PrincipleStudentLessonquiz from "../pages/principal/PrincipleStudentLessonquiz";
+import PrincipleSubjectSummativedetails from "../pages/principal/PrincipleSubjectSummativedetails";
+import PrincipleSubjectDetails from "../pages/principal/PrincipleSubjectDetails";
+import SubjectBaselineDetail from "../pages/teacher/SubjectBaselineDetail";
+import SubjectBaselinedetails from "../pages/principal/SubjectBaselinedetails";
+import SubjectLessondetail from "../pages/principal/SubjectLessondetail";
 
+import PrincipalTeacherProfile from "../pages/principal/PrincipalTeacherProfile";
+import PrincipleSummative from "../pages/principal/PrincipleSummative";
 
 const AppRouter = () => (
   <Router>
@@ -54,7 +68,6 @@ const AppRouter = () => (
         <Route element={<StudentLayout />}>
           <Route path="/student/dashboard" element={<StudentDashboard />} />
           <Route path="/student/baseline-assignment/:subject_id" element={<BaselineAssessment />} />
-
           <Route path="/student/subject-detail" element={<SubjectDetail />} />
           <Route path="/student/lesson-detail" element={<LessonDetail />} />
           <Route path="/student/summative-assessment/:subject_id" element={<SummativeAssessment />} />
@@ -77,7 +90,9 @@ const AppRouter = () => (
           <Route path="/teacher/subject-detail/:subjectId" element={<TeacherSubjectDetail />} />
           <Route path="/teacher/subject-summative-detail/:subjectId" element={<TeacherSubjectSummativeDetail />} />
           <Route path="/teacher/subject-lesson-detail/:subjectId/:lessonId" element={<TeacherSubjectLessonDetail />} />
-          <Route path="/teacher/mwl-micro-credentials-domain-training" element={<TeacherMwlMicroCredentialsDomainTraining />} />
+          {/* <Route path="/teacher/mwl-micro-credentials-domain-training" element={<TeacherMwlMicroCredentialsDomainTraining />} /> */}
+          <Route path="/teacher/mwl-training" element={<TeacherMwlMicroCredentialsDomainTraining />} />
+
           <Route path="/teacher/mwl-micro-credentials-domain-training-subject" element={<TeacherMwlMicroCredentialsDomainTrainingSubject />} />
           <Route path="/teacher/mwl-onboarding" element={<TeacherMwlOnboarding />} />
           <Route path="/teacher/mwl-parent-training" element={<TeacherMwlParentTraining />} />
@@ -88,7 +103,13 @@ const AppRouter = () => (
           <Route path="/teacher/student-lesson-quiz" element={<TeacherStudentLessonQuiz />} />
           <Route path="/teacher/student-baseline-assessment" element={<TeacherStudentBaselineAssessment />} />
           <Route path="/teacher/student-summative-assessment" element={<TeacherStudentSummativeAssessment />} />
+          
+          <Route path="/teacher/progress-student-baseline-assessment" element={<TeacherStudentBaselineAssessment />} />
+          <Route path="/teacher/progress-student-lesson-quiz" element={<TeacherStudentLessonQuiz />} />
+          <Route path="/teacher/progress-student-summative-assessment" element={<TeacherStudentSummativeAssessment />} />
+          
           <Route path="/teacher/mwl-micro-credentials-domain-training-lesson" element={<TeacherMwlMicroCredentialsDomainTrainingLesson />} />
+          <Route path="/teacher/onboarding" element={<TeacherMwlParentTraining />} />
         </Route>
       </Route>
 
@@ -96,6 +117,20 @@ const AppRouter = () => (
       <Route element={<RoleBasedRoute allowedRoles={[Roles.PRINCIPAL]} />}>
         <Route element={<PrincipalLayout />}>
           <Route path="/principal/dashboard" element={<PrincipalDashboard />} />
+          <Route path="/principal/teachers-students" element={<TeachersAndStudents />} />
+          <Route path="/principal/profile" element={<PrincipalProfile />} />
+          <Route path="/principal/class-detail/:subjectId" element={<Classdetails />} />
+          <Route path="/principal/student-profile" element={<PricipalStudentprofile />} />
+          <Route path="/principal/student-baseline-assesment/:subjectId" element={<PrincipleStudentbaseline />} />
+          <Route path="/principal/student-lesson-quiz/:studentId" element={<PrincipleStudentLessonquiz />} />
+          <Route path="/principal/student-subject-summative/:subjectId" element={<PrincipleSubjectSummativedetails />} />
+          <Route path="/principal/student-subject-detail/:subjectId" element={<PrincipleSubjectDetails/>} />
+          <Route path="/principal/subject-baseline-detail/:subjectId" element={<SubjectBaselinedetails/>} />
+          <Route path="/principal/subject-lesson-detail/:subjectId/:lessonId" element={<SubjectLessondetail/>} />
+
+          <Route path="/principal/teacher-profile" element={<PrincipalTeacherProfile/>} />
+          <Route path="/principal/student-summative" element={<PrincipleSummative/>} />
+
         </Route>
       </Route>
 

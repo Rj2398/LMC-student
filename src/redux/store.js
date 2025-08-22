@@ -6,6 +6,8 @@ import lessionSlice from './slices/student/lessionSlice';
 
 // Teacher Panel
 import dashboardSlice from './slices/teacher/dashboardSlice';
+import mwlSlice from './slices/teacher/mwlSlice';
+import progressSlice from './slices/teacher/progressSlice';
 
 export const store = configureStore({
   reducer: {
@@ -16,5 +18,7 @@ export const store = configureStore({
 
     // Teacher Slices
     dashboard: dashboardSlice,
+    mwl: mwlSlice,
+    progress: progressSlice,
   }
 });
