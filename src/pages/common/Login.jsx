@@ -188,7 +188,6 @@
 // export default Login;
 
 //
-
 import { useDispatch, useSelector } from "react-redux";
 import { getMyDetails, signIn } from "../../redux/slices/authSlice"; // optional for real sign-in
 import { useLocation, useNavigate } from "react-router-dom";
@@ -210,7 +209,7 @@ const Login = () => {
   const location = useLocation();
   const { isAuthenticated, user, error } = useSelector((state) => state.auth);
 
-  // New state for the modal
+  // State for the modal
   const [showModal, setShowModal] = useState(false);
   const [isAgreed, setIsAgreed] = useState(false);
   const [validationError, setValidationError] = useState("");
@@ -227,7 +226,8 @@ const Login = () => {
   const handleModalClose = () => {
     if (isAgreed) {
       setShowModal(false);
-      // Logic to navigate or continue after closing the modal
+      setValidationError(""); // Clear validation error on successful close
+      // Navigate to the dashboard after the user agrees and clicks "Okay"
       if (user?.role) {
         navigate(`/${user.role}/dashboard`);
       }
@@ -252,9 +252,6 @@ const Login = () => {
         .post(backendApi, { code })
         .then((response) => {
           dispatch(getMyDetails({ token: response.data?.access_token }));
-          if (response.data.user) {
-            // alert(`Logged in as: ${JSON.stringify(response.data.user.data)}`);
-          }
         })
         .catch((err) => console.error("Error sending code to backend:", err));
     } else {
@@ -272,9 +269,9 @@ const Login = () => {
     };
   }, []);
 
-  // Modified useEffect to show modal instead of navigating immediately
   useEffect(() => {
     if (isAuthenticated && user?.role) {
+      // Show the modal instead of navigating immediately
       setShowModal(true);
       switch (user.role) {
         case "teacher":
@@ -313,8 +310,8 @@ const Login = () => {
           </button>
         </div>
       </Container>
-      {/* The Modal Component */}
-      <Modal show={showModal} onHide={() => {}}>
+      {/* The Modal Component with updated props */}
+      <Modal show={showModal} backdrop="static" keyboard={false} centered>
         <Modal.Header>
           <Modal.Title>Terms and Conditions</Modal.Title>
         </Modal.Header>
