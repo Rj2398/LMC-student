@@ -11,7 +11,7 @@ const Profile = () => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    full_name: "", email: "", school_name: "", experience: "", departments: ""
+    full_name: "", email: "", school_name: "", experience: "", department: ""
   });
 
   useEffect(() => {
@@ -25,7 +25,7 @@ const Profile = () => {
         email: profileData.email || "",
 		school_name: profileData.school_name || "",
 		experience: profileData.experience || "",
-		departments: profileData.departments || "",
+		department: profileData.department || "",
       });
     }
   }, [profileData]);
@@ -45,9 +45,16 @@ const Profile = () => {
     });
   };
 
+  // const handleLogout = () => {
+  //   dispatch(logout());
+  // };
+
   const handleLogout = () => {
-    dispatch(logout());
-  };
+  dispatch(logout());
+  localStorage.clear();
+  sessionStorage.clear();
+  window.location.assign("https://clever.com/oauth/logout?redirect_uri=https://pmsc-lms.vercel.app");
+};
 
   return (
     <>
@@ -126,7 +133,7 @@ const Profile = () => {
 					type="text"
 					name="departments"
 					placeholder="Departments"
-					value={formData.departments}
+					value={formData.department}
 					onChange={handleChange}
 					disabled={!isEditing}
 				/>

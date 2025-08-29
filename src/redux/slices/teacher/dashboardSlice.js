@@ -136,6 +136,7 @@ const dashboardSlice = createSlice({
   initialState: {
     classLevels: null,
     allSubjects: null,
+    allSubjectsData: null,
     classDetails: null,
     subjectInfo : null,
     subjectList: null,
@@ -205,6 +206,8 @@ const dashboardSlice = createSlice({
       .addCase(getSubjectsByLevel.fulfilled, (state, action) => {
         state.loading = false;
         state.allSubjects = action.payload?.data;
+        state.allSubjectsData = action.payload;
+
       })
       .addCase(getSubjectsByLevel.rejected, (state, action) => {
         state.loading = false;

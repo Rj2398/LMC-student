@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Spinner } from "react-bootstrap";
 import { logout } from "../../redux/slices/authSlice";
 
-const Profile = () => {
+const Profile = () => { 
   const dispatch = useDispatch();
   const { profileData, loading } = useSelector((state) => state.student);
 
@@ -42,9 +42,16 @@ const Profile = () => {
     });
   };
 
-  const handleLogout = () => {
-    dispatch(logout());
-  };
+  // const handleLogout = () => {
+  //   dispatch(logout());
+  // };
+
+ const handleLogout = () => {
+  dispatch(logout());
+  localStorage.clear();
+  sessionStorage.clear();
+  window.location.assign("https://clever.com/oauth/logout?redirect_uri=https://pmsc-lms.vercel.app");
+};
 
   return (
     <>

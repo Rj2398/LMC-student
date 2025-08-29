@@ -1,13 +1,41 @@
-import React from 'react';
-import {Link, useNavigate} from 'react-router';
+import React, { useEffect } from 'react';
+import {Link, useLocation, useNavigate} from 'react-router';
 import assesment from '../../assets/assesment.json';
+import { useDispatch, useSelector } from 'react-redux';
+import { getStudentAnswers } from '../../redux/slices/principal/principalDashboardSlice';
 
 const PrincipleSummative = () => {
-	const navigate = useNavigate();
+	// const navigate = useNavigate();
 
-	const summativeTest = assesment?.summative_test || {};
-	const answer = summativeTest?.answers || [];
-	const subject = assesment?.subject || {};
+	// const summativeTest = assesment?.summative_test || {};
+	// const answer = summativeTest?.answers || [];
+	// const subject = assesment?.subject || {};
+
+
+
+		const navigate = useNavigate();
+
+	// const baslineTest = assesment?.baseline_test || {};
+	// const answer = baslineTest?.answers || [];
+	// const subject = assesment?.subject || {};
+
+    const dispatch = useDispatch();
+    const location = useLocation();
+    const subjectId = location.state?.subjectId;
+    const studentId = location.state?.studentId;
+	console.log(subjectId,studentId)
+
+    const { allQuestionAnswer } = useSelector((state) => state.principalDashboard)
+
+    const summativeTest = allQuestionAnswer?.baseline_test || {};
+    const answer = summativeTest.answers || [];
+    const subject = allQuestionAnswer?.subject || {};
+
+    useEffect(() => {
+        if (subjectId && studentId) {
+            dispatch(getStudentAnswers({ subject_id: subjectId, student_id: studentId }))
+        }
+    }, [dispatch, studentId, subjectId]);
   return (
     <>
     
@@ -18,8 +46,8 @@ const PrincipleSummative = () => {
 
 					<div className="sub-pro mb-0">
 						<ul>
-							<li><img src="../images/subject-detail/lessons.svg" alt=''/> {subject.total_lessons} lessons</li>
-							<li style={{color: "#4126A8"}}><img src="../images/subject-detail/quizzes.svg" alt=''/> {subject.total_lesson_quizzes}
+							<li><img src="/images/subject-detail/lessons.svg" alt=''/> {subject.total_lessons} lessons</li>
+							<li style={{color: "#4126A8"}}><img src="/images/subject-detail/quizzes.svg" alt=''/> {subject.total_lesson_quizzes}
 								Quizzes
 							</li>
 						</ul>
@@ -29,7 +57,7 @@ const PrincipleSummative = () => {
 				</div>
 				<div className="assessment-result baseline-top border-0 p-0">
 					<div className="baseline-ass-q-a drop-list">
-						<h2><img src="../images/dashboard/earned-certificates/earned-certi.svg" alt=''/> Submitted
+						<h2><img src="/images/dashboard/earned-certificates/earned-certi.svg" alt=''/> Submitted
 							assessment
 							answers
 						</h2>
@@ -38,7 +66,7 @@ const PrincipleSummative = () => {
                                 <h4>Question {index + 1}: {answer?.question}</h4>
                                 {answer?.selected_option ? <p className="ps-0 d-flex gap-2 justify-content-start">
                                     <span>Your Answer</span>
-                                    <img src="../images/baseline-assessment/radio-icon.svg" alt="" />
+                                    <img src="/images/baseline-assessment/radio-icon.svg" alt="" />
                                     {answer?.selected_option}
                                 </p> : 
                                 <p className="ps-0 d-flex gap-2 justify-content-start">

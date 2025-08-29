@@ -1,9 +1,47 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router';
-import { subjectData, PrincipalStudent, ClassesPerformance, TeacherTrainingCom } from "../../assets/teacher.json"
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router";
+import {
+  subjectData,
+  PrincipalStudent,
+  ClassesPerformance,
+  TeacherTrainingCom,
+} from "../../assets/teacher.json";
+import { useSelector, useDispatch } from "react-redux";
+import { teacherProfile } from "../../redux/slices/principal/teacherAndStudentsSlice";
+import {
+  getSubjectLevel,
+  setPrincipalTeacherName,
+  getSubjectList,
+} from "../../redux/slices/principal/principalDashboardSlice";
 
 function PrincipalTeacherProfile() {
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const { teacherData } = useSelector((state) => state.teacherAndStudents);
+  const { subjectList } = useSelector((state) => state.principalDashboard);
+  // const [selectedLevel, setSelectedLevel] = useState(() => {return localStorage.getItem("classLevel") || null;});
+  const currentLevel = localStorage.getItem("classLevel");
   const navigate = useNavigate();
+
+  const teacherId = location?.state?.teacherId;
+  console.log(teacherId, "teacherId@@@@@@@#####");
+
+  // const [showAllSubject, setShowAllSubject] = useState(false);
+  const [expandedLevels, setExpandedLevels] = useState({});
+
+  const toggleLevel = (levelId) => {
+    setExpandedLevels((prev) => ({
+      ...prev,
+      [levelId]: !prev[levelId],
+    }));
+  };
+
+  useEffect(() => {
+    const level = Number(currentLevel) === 1 ? "ruby" : "emerald";
+    dispatch(teacherProfile({ level_id: level, teacher_id: teacherId }));
+  }, [dispatch, currentLevel, teacherId]);
+
+  console.log(teacherData, "teacherData%%%%%%%%");
 
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [selectedCourses, setSelectedCourses] = useState([]);
@@ -12,9 +50,6 @@ function PrincipalTeacherProfile() {
   const [searchQuery2, setSearchQuery2] = useState("");
   const [searchQuery3, setSearchQuery3] = useState("");
 
-  const filterClassesPerformance = ClassesPerformance.filter((classes) => classes.courseName.toLowerCase().includes(searchQuery1.toLowerCase()) || classes.averageScore.includes(searchQuery1))
-  const filterPrincipalStudent = PrincipalStudent.filter((student) => student.studentName.toLowerCase().includes(searchQuery2.toLowerCase()))
-  const filterTeacherTraining = TeacherTrainingCom.filter((teacher) => teacher.level.toLowerCase().includes(searchQuery3.toLowerCase()) || teacher.badge.toLocaleLowerCase().includes(searchQuery3.toLowerCase()) )
   useEffect(() => {
     const handleClickOutside = (event) => {
       const dropdowns = document.querySelectorAll(".influ-dropdown");
@@ -37,6 +72,63 @@ function PrincipalTeacherProfile() {
     };
   }, []);
 
+  // Add safe access with optional chaining and default to empty array
+  // const filterClassesPerformance = teacherData?.subjects?.filter((classes) =>
+  //   classes.subject.toLowerCase().includes(searchQuery1.toLowerCase()) ||
+  //   classes.avg_score.toString().includes(searchQuery1)
+  // ) || [];
+
+  // const filterPrincipalStudent = teacherData?.students.filter((student) => student.student_name.toLowerCase().includes(searchQuery2.toLowerCase()))
+  // // const filterTeacherTraining = teacherData?.teacher_training?.subjects.filter((teacher) => teacher.name.toLowerCase().includes(searchQuery3.toLowerCase()) || teacher.status.toLocaleLowerCase().includes(searchQuery3.toLowerCase()))
+
+  // const filterTeacherTraining = teacherData?.teacher_training?.flatMap(level =>
+  //   level.subjects?.filter(teacher =>
+  //     teacher.name?.toLowerCase().includes(searchQuery3.toLowerCase()) ||
+  //     teacher.status?.toLowerCase().includes(searchQuery3.toLowerCase())
+  //   ) || []
+  // ) || [];
+
+  useEffect(() => {
+    dispatch(getSubjectLevel({ level_id: currentLevel }));
+  }, [currentLevel]);
+
+  useEffect(() => {
+    dispatch(getSubjectList({ level_id: currentLevel }));
+  }, [currentLevel]);
+
+  // With these safer implementations:
+  const filterClassesPerformance =
+    teacherData?.subjects?.filter(
+      (classes) =>
+        classes?.subject?.toLowerCase().includes(searchQuery1.toLowerCase()) ||
+        classes?.avg_score?.toString().includes(searchQuery1)
+    ) || [];
+
+  const filterPrincipalStudent =
+    teacherData?.students?.filter((student) =>
+      student?.student_name?.toLowerCase().includes(searchQuery2.toLowerCase())
+    ) || [];
+
+  // const filterTeacherTraining = teacherData?.teacher_training?.filter((teacher) => teacher.level_name.toLowerCase().includes(searchQuery3.toLowerCase())
+  //   // || teacher.status.toLocaleLowerCase().includes(searchQuery3.toLowerCase())
+  // )
+  const filterTeacherTraining =
+    teacherData?.teacher_training?.filter((teacher) =>
+      teacher?.level_name?.toLowerCase().includes(searchQuery3.toLowerCase())
+    ) || [];
+
+  // const filterTeacherTraining = teacherData?.teacher_training?.flatMap(level =>
+  //   level?.subjects?.filter(teacher =>
+  //     teacher?.name?.toLowerCase().includes(searchQuery3.toLowerCase()) ||
+  //     teacher?.status?.toLowerCase().includes(searchQuery3.toLowerCase())
+  //   ) || []
+  // ) || [];
+
+  useEffect(() => {
+    if (teacherData) {
+      dispatch(setPrincipalTeacherName(teacherData?.name));
+    }
+  }, [teacherData]);
 
   return (
     <>
@@ -46,18 +138,21 @@ function PrincipalTeacherProfile() {
           <p>Detailed view of student performance and progress</p>
         </div>
         <div className="back-btn">
-          <a href="className-detail.html">
-            <img src="../images/baseline-assessment/back-icon.svg" alt="" /> Back
-          </a>
+          <Link to="" onClick={() => navigate(-1)}>
+            <img src="../images/baseline-assessment/back-icon.svg" alt="" />{" "}
+            Back
+          </Link>
         </div>
-
-
-
       </div>
 
       <div className="student-short-info">
-        <h3>Emma Thompson <span>Overall Score</span></h3>
-        <p>sarah.johnson@school.edu <b>92%</b></p>
+        <h3>
+          {teacherData?.name} <span>Overall Score</span>
+        </h3>
+        <p>
+          {teacherData?.email}
+          <b>{teacherData.overall_completion}%</b>
+        </p>
       </div>
       <div className="my-subjects">
         <div className="top-head">
@@ -65,16 +160,19 @@ function PrincipalTeacherProfile() {
             <h1 className="mb-0">classes Performance</h1>
           </div>
           <div className="students-src ms-auto">
-            <input type="text" placeholder="Search emails by subject, send..." value={searchQuery1}
+            <input
+              type="text"
+              placeholder="Search emails by subject, send..."
+              value={searchQuery1}
               onChange={(e) => setSearchQuery1(e.target.value)}
             />
           </div>
-          <div className="back-btn ms-3">
+          {/* <div className="back-btn ms-3">
             <a href="">
               <img src="../images/download-certif.svg" alt="" style={{ filter: "brightness(0) invert(1)" }} />
               Export Report
             </a>
-          </div>
+          </div> */}
         </div>
         <div className="table-responsive">
           <table>
@@ -86,37 +184,56 @@ function PrincipalTeacherProfile() {
                 <th>Avg. Score</th>
                 <th>Action </th>
               </tr>
-              {(filterClassesPerformance.length === 0) ? (
-                <div>No Data Found...</div>
+              {filterClassesPerformance.length === 0 ? (
+                // <div>No Data Found...</div>
+                <tr>
+                  <td colSpan="4" style={{ textAlign: "center" }}>
+                    No Data Found...
+                  </td>
+                </tr>
               ) : (
                 <>
-                {filterClassesPerformance?.map((item, index) => (
-                  <tr>
-                    <td>{item.courseName}</td>
-                    <td>{item.modules}</td>
-                    <td>
-                      <div className="prog">
-                        {item.completionPercentage}
-                        <div className="progress">
-                          <div className="progress-bar" style={{ width: `${item.progressWidth}` }} role="progressbar"
-                            aria-label="Basic example" aria-valuenow="75" aria-valuemin="0"
-                            aria-valuemax="100"></div>
+                  {filterClassesPerformance?.map((item, index) => (
+                    <tr>
+                      <td>{item?.subject}</td>
+                      {/* <td>{item?.subject_id}</td> */}
+                      <td>{item?.students}</td>
+                      <td>
+                        <div className="prog">
+                          {item?.completion}%
+                          <div className="progress">
+                            <div
+                              className="progress-bar"
+                              style={{ width: `${item?.completion}%` }}
+                              role="progressbar"
+                              aria-label="Basic example"
+                              aria-valuenow="75"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            ></div>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td>
-                      <div style={{ color: "#16A34A" }}>{item.averageScore}</div>
-                    </td>
-                    <td>
-                      <Link to="/principal/class-detail"><i className="fa-light fa-eye"></i> View Details</Link>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td>
+                        <div style={{ color: "#16A34A" }}>
+                          {item?.avg_score}%
+                        </div>
+                      </td>
+                      <td>
+                        <Link
+                          to={`/principal/class/detail/${item?.subject_id}`}
+                          state={{
+                            subjectId: item?.subject_id,
+                            teachercoming: "teachercoming",
+                          }}
+                        >
+                          <i className="fa-light fa-eye"></i> View Details
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
                 </>
               )}
-              
-
-           
             </tbody>
           </table>
         </div>
@@ -124,14 +241,18 @@ function PrincipalTeacherProfile() {
       <div className="my-subjects">
         <div className="top-head">
           <div className="top-head-in">
-            <h1 className="mb-0">Students(5)</h1>
+            <h1 className="mb-0">Students({filterPrincipalStudent?.length})</h1>
           </div>
           <div className="students-src ms-auto">
-            <input type="text" placeholder="Search emails by subject, sen....." value={searchQuery2}
-              onChange={(e) => setSearchQuery2(e.target.value)} />
+            <input
+              type="text"
+              placeholder="Search emails by subject, sen....."
+              value={searchQuery2}
+              onChange={(e) => setSearchQuery2(e.target.value)}
+            />
             {/* {console.log(searchQuery2, "searchQuery211111")} */}
           </div>
-          <div className="influ-btns ms-3">
+          {/* <div className="influ-btns ms-3">
             <div className="influ-dropdown">
               <button className="influ-btn influ-drop-btn" type="button" onClick={() => setActiveDropdown(activeDropdown === "courseDropdown" ? null : "courseDropdown")} >
                 All Subjects <i className={`fa-regular ${activeDropdown === "courseDropdown" ? "fa-angle-up" : "fa-angle-down"}`}></i>
@@ -139,7 +260,7 @@ function PrincipalTeacherProfile() {
               <div className="influ-drop-list" style={{ display: activeDropdown === "courseDropdown" ? "block" : "none" }}>
                 <div className="influ-drop-list-inner">
 
-                  {subjectData?.map((item, index) => (
+                  {subjectList?.map((item, index) => (
                     <div key={index} className="influ-drop-list-item"> <input type="checkbox"
                       checked={selectedCourses.includes(item.id)}
                       onChange={() => {
@@ -147,25 +268,25 @@ function PrincipalTeacherProfile() {
                           setSelectedCourses([]);
                         } else {
                           setSelectedCourses([item.id]);
-                          console.log(item.title, "item.title11111111111");
+                          // console.log(item.title, "item.title11111111111");
                         }
 
                       }}
                     />
-                      {item.title}
+                      {item.name}
                     </div>
                   ))}
 
                 </div>
               </div>
             </div>
-          </div>
-          <div className="back-btn ms-3">
+          </div> */}
+          {/* <div className="back-btn ms-3">
             <a href="">
               <img src="../images/download-certif.svg" alt="" style={{ filter: "brightness(0) invert(1)" }} />
               Export Report
             </a>
-          </div>
+          </div> */}
         </div>
         <div className="table-responsive">
           <table>
@@ -177,39 +298,81 @@ function PrincipalTeacherProfile() {
                 <th>Avg. Score</th>
                 <th>Action </th>
               </tr>
-              {(filterPrincipalStudent.length === 0) ? (
-                <div>No Data Found...</div>
-              ) : (
-                <>
-                 {filterPrincipalStudent?.map((item, index) => (
-                <tr key={index}>
-                  <td>{item.studentName}</td>
-                  <td>
-                    <div className="status">{item.status}</div>
-                  </td>
-                  <td>
-                    <div className="prog">
-                      {item.completionScore}
-                      <div className="progress">
-                        <div className="progress-bar" style={{ width: "88.5%" }} role="progressbar"
-                          aria-label="Basic example" aria-valuenow="75" aria-valuemin="0"
-                          aria-valuemax="100"></div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div style={{ color: "#16A34A" }}>{item.avgScore}</div>
-                  </td>
-                  <td>
-                    <Link to="/principal/student-profile"><i className="fa-light fa-eye"></i> View Details</Link>
-
+              {filterPrincipalStudent.length === 0 ? (
+                // <div>No Data Found...</div>
+                <tr>
+                  <td colSpan="4" style={{ textAlign: "center" }}>
+                    No Data Found...
                   </td>
                 </tr>
-              ))}
+              ) : (
+                <>
+                  {filterPrincipalStudent?.map((item, index) => (
+                    <tr key={index}>
+                      <td>{item.student_name}</td>
+                      <td>
+                        <div
+                          className={`status  ${
+                            item.status == "In Progress"
+                              ? "review"
+                              : item.status == "review"
+                              ? "review"
+                              : item.status == "In Progress"
+                              ? "review"
+                              : item.status == "retake"
+                              ? "review"
+                              : ""
+                          }`}
+                          style={{
+                            backgroundColor:
+                              item.status === "not_started" ||
+                              item.status === "locked" ||
+                              item.status === "undefined" ||
+                              !item.status
+                                ? "#9CA3AF"
+                                : "",
+                          }}
+                        >
+                          {item.status
+                            .replace(/_/g, " ")
+                            .replace(/\b\w/g, (char) => char.toUpperCase()) ||
+                            "Not Started"}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="prog">
+                          {item.completion_score}%
+                          <div className="progress">
+                            <div
+                              className="progress-bar"
+                              style={{ width: `${item?.completion_score}%` }}
+                              role="progressbar"
+                              aria-label="Basic example"
+                              aria-valuenow="75"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            ></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div style={{ color: "#16A34A" }}>{item.avg_score}</div>
+                      </td>
+                      <td>
+                        <Link
+                          to="/principal/students/profile"
+                          state={{
+                            studentId: item.student_id,
+                            teacherStudentComing: "teacherStudentComing",
+                          }}
+                        >
+                          <i className="fa-light fa-eye"></i> View Details
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
                 </>
               )}
-             
-
             </tbody>
           </table>
         </div>
@@ -220,58 +383,146 @@ function PrincipalTeacherProfile() {
             <h1 className="mb-0">Teacher Training Completion</h1>
           </div>
           <div className="students-src ms-auto">
-            <input type="text" placeholder="Search by teacher name....." value={searchQuery3} 
-            onChange={(e) => setSearchQuery3(e.target.value)}
+            <input
+              type="text"
+              placeholder="Search by teacher name....."
+              value={searchQuery3}
+              onChange={(e) => setSearchQuery3(e.target.value)}
             />
           </div>
-          <div className="back-btn ms-3">
+          {/* <div className="back-btn ms-3">
             <a href="">
               <img src="../images/download-certif.svg" alt="" style={{ filter: "brightness(0) invert(1)" }} />
               Export Report
             </a>
-          </div>
+          </div> */}
         </div>
-        <div className="table-responsive">
+        <div>
           <table>
-            <tbody>
+            <thead>
               <tr>
                 <th style={{ width: "400px" }}>Level</th>
+                <th>Subject</th>
                 <th>Completion</th>
                 <th>Badges Status</th>
               </tr>
-              {(filterTeacherTraining.length === 0) ? (
-                <div>No Data Found...</div>
-              ) : (
-                <>
-                 {filterTeacherTraining?.map((item, index) => (
-              
-              <tr>
-                <td>{item.level}</td>
-                <td>
-                  <div className="prog">
-                  {item.completion}
-                    <div className="progress">
-                      <div className="progress-bar" style={{ width: `${item.progressWidth}` }} role="progressbar"
-                        aria-label="Basic example" aria-valuenow="75" aria-valuemin="0"
-                        aria-valuemax="100"></div>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div className={`${item.earnedClass}`}>{item.badge}</div>
-                </td>
-              </tr>
-            ))}
-                </>
-              )}
-             
+            </thead>
 
+            <tbody>
+              {filterTeacherTraining.length === 0 ? (
+                <tr>
+                  <td colSpan="4" style={{ textAlign: "center" }}>
+                    No Data Found...
+                  </td>
+                </tr>
+              ) : (
+                filterTeacherTraining.map((item) => (
+                  <React.Fragment key={item.level_id}>
+                    {/* Level Row */}
+                    <tr>
+                      <td>{item.level_name}</td>
+                      <td
+                        onClick={() => toggleLevel(item.level_id)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        All Subject
+                        <button type="button" className="lessons-btn">
+                          <i
+                            className={`fa-solid ${
+                              expandedLevels[item.level_id]
+                                ? "fa-angle-up"
+                                : "fa-angle-down"
+                            }`}
+                          ></i>
+                        </button>
+                      </td>
+                      <td>
+                        <div className="prog">
+                          {item.percentage}%
+                          <div className="progress">
+                            <div
+                              className="progress-bar"
+                              style={{ width: `${item.percentage}%` }}
+                              role="progressbar"
+                              aria-valuenow={item.percentage}
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            ></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div
+                          className={`status  ${
+                            item.status == "in_progress"
+                              ? "review"
+                              : item.status == "review"
+                              ? "review"
+                              : item.status == "in_progress"
+                              ? "review"
+                              : item.status == "retake"
+                              ? "review"
+                              : ""
+                          }`}
+                          style={{
+                            backgroundColor:
+                              item.status === "not_started" ||
+                              item.status === "locked" ||
+                              item.status === "undefined" ||
+                              !item.status
+                                ? "#9CA3AF"
+                                : "",
+                          }}
+                        >
+                          {item.status
+                            .replace(/_/g, " ")
+                            .replace(/\b\w/g, (char) => char.toUpperCase()) ||
+                            "Not Started"}
+                        </div>
+                      </td>
+                    </tr>
+
+                    {/* Subjects Rows (only show if expanded) */}
+                    {expandedLevels[item.level_id] &&
+                      item?.subjects?.map((subject) => (
+                        <tr key={subject.id} className="lessons-list">
+                          <td>&nbsp;</td>
+                          <td>{subject?.name}</td>
+                          <td>
+                            <div className="prog">
+                              {subject?.percentage}%
+                              <div className="progress">
+                                <div
+                                  className="progress-bar"
+                                  style={{
+                                    width: `${subject?.percentage}%`,
+                                    backgroundColor:
+                                      subject?.percentage < 70
+                                        ? "#F28100"
+                                        : undefined,
+                                  }}
+                                  role="progressbar"
+                                  aria-valuenow={subject?.percentage}
+                                  aria-valuemin="0"
+                                  aria-valuemax="100"
+                                ></div>
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <div className="status">{subject.status}</div>
+                          </td>
+                        </tr>
+                      ))}
+                  </React.Fragment>
+                ))
+              )}
             </tbody>
           </table>
         </div>
       </div>
     </>
-  )
+  );
 }
 
-export default PrincipalTeacherProfile
+export default PrincipalTeacherProfile;

@@ -1,21 +1,23 @@
 import React, { useEffect } from 'react'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import data from "../../assets/principal.json";
 import { Link, useLocation, useParams } from 'react-router'
+import { getSubjectInfo } from '../../redux/slices/principal/principalDashboardSlice';
 
 const PrincipleSubjectDetails = () => {
 
 
-	 const location = useLocation();
+ const location = useLocation();
   const paramData = useParams();
   const dispatch = useDispatch();
   const subjectId = location?.state?.subjectId ? location?.state?.subjectId : paramData?.subjectId;
 
-  const subjectInfo=data?.course
+//   const subjectInfo=data?.course
+ const { subjectInfo} = useSelector((state) => state.principalDashboard)
 
   useEffect(() =>{
     if(subjectId) {
-        // dispatch(getSubjectInfo({subject_id: subjectId}))
+        dispatch(getSubjectInfo({subject_id: subjectId}))
 		console.log(subjectId)
     }
   },[subjectId])
@@ -24,7 +26,7 @@ const PrincipleSubjectDetails = () => {
 	<div className="sub-detail-wrap">
 				<div className="sub-detail-top">
 					<h1 className="mb-2">
-					{subjectInfo?.subject?.subject || "Not Available"}
+					{subjectInfo?.subject?.Subject || "Not Available"}
 						{/* <!-- <span><b>0%</b> 0/8 Lessons</span> --> */}
 					</h1>
 					{/* <!-- <div className="sub-pro">
@@ -58,7 +60,7 @@ const PrincipleSubjectDetails = () => {
 								src="/images/subject-detail/sub-lessons/locked-not-started.svg" alt=""/></div>
 					 <div className="lesson-data">
                     <h2>
-                        {subjectInfo?.subject?.subject}-Baseline Assessment
+                        {subjectInfo?.subject?.Subject}-Baseline Assessment
                        
                     </h2>
                     <p>{subjectInfo?.subject?.description}</p>
@@ -90,7 +92,7 @@ const PrincipleSubjectDetails = () => {
 				<div className="sub-lessons-list">
 					<h3> Lessons</h3>
 					{/* <!-- L --> */}
-				  {subjectInfo?.subject.lessons?.map((item, index) => (
+				  {subjectInfo?.lessons?.map((item, index) => (
 								<div className="sub-lessons-list-in" key={index}>
 									<div className="lesson-num-ico"><span>{index+1}</span> <img
 											src="/images/subject-detail/sub-lessons/locked-not-started.svg" alt="" /></div>
@@ -116,16 +118,16 @@ const PrincipleSubjectDetails = () => {
 
 
 				</div>
-				<div className="assessment-result">
+				<div className="assessment-result ">
 					<h6>Summative Assessment</h6>
-					<div className="sub-lessons-list-in drop-btn">
-						<div className="lesson-num-ico"><span></span>
+					<div className="sub-lessons-list-in drop-btn ">
+						<div className="lesson-num-ico" style={{width:"100%"}}><span></span>
 							<img src="/images/subject-detail/sub-lessons/locked-not-started.svg" alt=""/>
 							{/* <!-- <img src="/images/subject-detail/sub-lessons/locked-not-started.svg" alt=""/> -->
 						</div> */}
-						  <div className="lesson-data">
+						  <div className="lesson-data ">
                     <h2>
-                        {subjectInfo?.subject?.subject}-Summative Assessment
+                        {subjectInfo?.subject?.Subject}-Summative Assessment
                        
                     </h2>
                     <p>{subjectInfo?.subject?.description}</p>

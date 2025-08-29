@@ -140,3 +140,71 @@ export const getmwlLesson = (formData) =>
   API.post(`/get-mwl-lessons`, formData);
 
 export const getMwlContent = (formData) => API.post(`/mwl-content`, formData);
+
+
+// ------------------------------------- Principal Panel Api -------------------------------------------------
+
+
+export const getPrincipalSubDashboard = (formData) =>
+  API.post(`/principal-progress-dashboard`, formData);
+
+
+export const getPrincipalSubjectsByLevel = (formData) =>
+  API.post(`/principal-classes-dashboard`, formData);
+
+export const getPrincipalClassDetailBySubject = (formData) =>
+  API.post(`/class-details`, formData);
+
+export const getPrincipalSubjectList = (formData) => API.post(`/get-subject`, formData);
+
+export const getPrincipalLessionDetail = (formData) =>
+  API.post(`/view-lesson-details`, formData);
+
+export const getPrincipalBaselineSummitiveQuiz = (formData) =>
+  API.post(`/baseline-and-summative-questions`, formData);
+
+export const principalStudentProfilePerformance = (formData) =>
+  API.post(`/student-performance`, formData);
+
+export const getPrincipalSubjectInfo = (formData) =>
+  API.post(`/subject-details`, formData);
+
+
+export const getPrincipalStudentAnswers = (formData) =>
+  API.post(`/student-answers`, formData);
+
+
+export const getPrincipalLessonQuizAnswers = (formData) =>
+  API.post(`/student-lessons-review`, formData);
+
+
+//principal teacher and student
+export const getTeacherDetails = (formData) => API.post(`/teacher-students-detail`, formData);
+
+
+
+//prinicipal progress and score 
+
+export const getPrincipalProgressScore = (formData) =>
+  API.post(`/principal-progress-dashboard`, formData);
+
+export const getPrinicpalSubjectGraph = (formData) =>
+  API.post(`/subject-performance`, formData);
+
+
+export const getPrincipalSubjectQuizScore = (formData) =>
+  API.post(`/subject-quiz-score`, formData);
+
+
+export const getPrinicipalTeacherTrainingScore = (formData) =>
+  API.post(`/teacher-training-score`, formData);
+
+
+
+export const studentList = (formData) => API.post(`/get-students`, formData);
+export const teacherProfile = (formData) => API.post(`/teacher-profile`, formData);
+
+
+export const getMyDetails = (formData) => API.post(`/get-my-details`, formData);
+
+

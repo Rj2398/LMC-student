@@ -13,11 +13,12 @@ const PrincipalLayout = () => {
     window.scrollTo(0, 0);
   }, [location?.pathname]);
 
-  const hiddenPaths = [
+   const hiddenPaths = [
     // "/student/baseline-assignment",
     "/student/baseline-assignment/",
     "/student/lesson-detail",
-    "/student/summative-assessment",]
+    "/student/summative-assessment","/principal/subject-baseline-detail", "/principal/student-subject-summative", "/principal/subject-lesson-detail/"]
+
 
   useEffect(() => {
       // setHideNavSidebar(hiddenPaths.includes(location.pathname));

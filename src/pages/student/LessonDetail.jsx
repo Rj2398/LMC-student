@@ -1269,7 +1269,7 @@ const LessonDetail = () => {
                 opacity: 0.8,
               }}
             >
-              Next Lesson <i className="fa-regular fa-arrow-right"></i>
+             Finish Lesson<i className="fa-regular fa-arrow-right"></i>
             </span>
           ) : (
             <Link
@@ -1277,7 +1277,7 @@ const LessonDetail = () => {
               onClick={handleOpenPopup}
               className="next-cta"
             >
-              Next Lesson <i className="fa-regular fa-arrow-right"></i>
+              Finish Lesson <i className="fa-regular fa-arrow-right"></i>
             </Link>
           )}
         </div>

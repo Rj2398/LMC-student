@@ -9,6 +9,13 @@ import dashboardSlice from './slices/teacher/dashboardSlice';
 import mwlSlice from './slices/teacher/mwlSlice';
 import progressSlice from './slices/teacher/progressSlice';
 
+
+// principal Panel
+import principaDashboardSlice from './slices/principal/principalDashboardSlice';
+import teacherAndStudentsSlice from './slices/principal/teacherAndStudentsSlice';
+import principalProgressSlice from './slices/principal/principalProgressSlice'
+
+
 export const store = configureStore({
   reducer: {
     auth: authSlice,
@@ -20,5 +27,10 @@ export const store = configureStore({
     dashboard: dashboardSlice,
     mwl: mwlSlice,
     progress: progressSlice,
+
+    //principal slice 
+    principalDashboard:principaDashboardSlice,
+    teacherAndStudents:teacherAndStudentsSlice,
+    principalProgress:principalProgressSlice,
   }
 });

@@ -24,6 +24,7 @@ const MwlMicroCredentialsDomainTrainingLesson = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { mwlContents, mwlessondetail } = useSelector((state) => state?.mwl);
+  const [activeVideoId, setActiveVideoId] = React.useState(null);
 
   //local toggle for video
   // const initialVideoState = mwlContents?.lesson?.contents
@@ -103,10 +104,12 @@ const MwlMicroCredentialsDomainTrainingLesson = () => {
   //   );
   // };
   const openVideo = (id) => {
+    console.log(id, "shdfjahsdkf");
     setVideoState((prev) => ({
       ...prev,
       [id]: true, // toggle only this video
     }));
+    setActiveVideoId(id);
   };
   //handle next submit
   // const handleNextSubmit = async (e) => {
@@ -254,58 +257,31 @@ const MwlMicroCredentialsDomainTrainingLesson = () => {
                         <div style={{ position: "relative" }}>
                           <iframe
                             id={`video-${item.id}`}
-                            src={item.video_link} // initially without autoplay
+                            src={item.video_link}
                             width="100%"
                             height="400"
                             style={{ border: "none" }}
                             allow="autoplay; fullscreen"
                             allowFullScreen
                           ></iframe>
-
-                          {/* Transparent overlay to catch click */}
-                          <div
-                            onClick={() => {
-                              openVideo(item.id);
-                              const iframe = document.getElementById(
-                                `video-${item.id}`
-                              );
-                              if (iframe) {
-                                // force reload with autoplay=1
-                                let url = item.video_link;
-                                if (!url.includes("autoplay=1")) {
-                                  url += url.includes("?")
-                                    ? "&autoplay=1"
-                                    : "?autoplay=1";
-                                }
-                                iframe.src = url;
-                              }
-                            }}
-                            style={{
-                              position: "absolute",
-                              top: 0,
-                              left: 0,
-                              width: "100%",
-                              height: "100%",
-                              cursor: "pointer",
-                              background: "transparent",
-                            }}
-                          />
+                          {!videoState[item.id] && (
+                            <div
+                              onClick={() => openVideo(item.id)}
+                              style={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                width: "100%",
+                                height: "100%",
+                                cursor: "pointer",
+                                background: "rgba(0,0,0,0.3)", // overlay until play
+                              }}
+                            />
+                          )}
                         </div>
 
                         <hr />
                       </div>
-                    )}
-
-                    {item.type === "text" && (
-                      <>
-                        <div className="less-details-in">
-                          <h2>{item.title.replace(/<[^>]+>/g, "")}</h2>
-                          <div
-                            dangerouslySetInnerHTML={{ __html: item.desc }}
-                          ></div>
-                        </div>
-                        <hr />
-                      </>
                     )}
 
                     {item.type === "image" && (
@@ -386,7 +362,7 @@ const MwlMicroCredentialsDomainTrainingLesson = () => {
             >
               {location.state?.isLastLesson?.isLastLesson
                 ? "Finish Lesson"
-                : "Next Lesson"}{" "}
+                : "Finish Lesson"}{" "}
               <i className="fa-regular fa-arrow-right"></i>
             </span>
           ) : (
@@ -400,7 +376,7 @@ const MwlMicroCredentialsDomainTrainingLesson = () => {
             >
               {location.state?.isLastLesson?.isLastLesson
                 ? "Finish Lesson"
-                : "Next Lesson"}{" "}
+                : "Finish Lesson"}{" "}
               <i className="fa-regular fa-arrow-right"></i>
             </Link>
           )}

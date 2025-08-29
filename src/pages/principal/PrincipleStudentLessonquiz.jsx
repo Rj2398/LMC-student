@@ -121,39 +121,37 @@
 // 				</div> --> */}
 // 			</div>
 //     </>
-			
-		
+
 //   )
 // }
 
 // export default PrincipleStudentLessonquiz
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import React, { useEffect, useState, useCallback, useMemo, useRef, } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
 import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 
-import { completeLesson, getLessionDetailSlice, getLessionSlice, lessionSubmit, retriveLesson, } from "../../redux/slices/student/lessionSlice";
+import {
+  completeLesson,
+  getLessionDetailSlice,
+  getLessionSlice,
+  lessionSubmit,
+  retriveLesson,
+} from "../../redux/slices/student/lessionSlice";
 import PdfViewer from "../student/PdfViewer";
-import { getLessonQuizAnswers, setLessonQuizName, } from "../../redux/slices/teacher/dashboardSlice";
+import {
+  getLessonQuizAnswers,
+  setPrincipalLessonQuizName,
+} from "../../redux/slices/principal/principalDashboardSlice";
 
 // --- Utility function to cyclically shift an array ---
 function cyclicallyShiftArray(array) {
@@ -166,11 +164,14 @@ function cyclicallyShiftArray(array) {
 }
 
 const MatchingLeftOption = ({
-  pair, quizId, isCurrentlySelected,
+  pair,
+  quizId,
+  isCurrentlySelected,
   isRecolored, // New prop for correct match final color
   isCorrect, // New prop for temporary correct feedback
   isIncorrect, // New prop for temporary incorrect feedback
-  handleMatchingLeftRadioChange, isAlreadySelected,
+  handleMatchingLeftRadioChange,
+  isAlreadySelected,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -186,7 +187,14 @@ const MatchingLeftOption = ({
 
   const getColor = () => {
     if (isIncorrect) return "#fff";
-    if ( isHovered || isCurrentlySelected || isCorrect || isRecolored || isAlreadySelected ) return "#fff";
+    if (
+      isHovered ||
+      isCurrentlySelected ||
+      isCorrect ||
+      isRecolored ||
+      isAlreadySelected
+    )
+      return "#fff";
     return "#333";
   };
 
@@ -498,7 +506,7 @@ const StudentLessonQuiz = () => {
   const handleClosePopup = () => setShowModal(false);
 
   useEffect(() => {
-    dispatch(setLessonQuizName(lessonQuizAnswer?.lesson?.title));
+    dispatch(setPrincipalLessonQuizName(lessonQuizAnswer?.lesson?.title));
   }, [lessonQuizAnswer]);
 
   // useEffect(() => {
@@ -527,9 +535,7 @@ const StudentLessonQuiz = () => {
   }, [lessonId]);
 
   useEffect(() => {
-    dispatch(
-      getLessonQuizAnswers({ lesson_id: 10, student_id: 2 })
-    );
+    dispatch(getLessonQuizAnswers({ lesson_id: 10, student_id: 2 }));
   }, [lessonId]);
 
   const sortedContents = useMemo(() => {
@@ -540,7 +546,8 @@ const StudentLessonQuiz = () => {
     return [...contents].sort(
       (a, b) => (a?.order ?? Infinity) - (b?.order ?? Infinity)
     );
-  }, [lessionWiseDetails?.lesson?.contents]);
+  }, [lessonQuizAnswer?.lesson?.contents]);
+  // }, [lessionWiseDetails?.lesson?.contents]);
 
   // const sortedContents = useMemo(() => {
   //   const rawContents = simulateMatchingQuizAnswered
@@ -1183,11 +1190,7 @@ const StudentLessonQuiz = () => {
                                           handleSingleChoiceQuizChange={
                                             handleSingleChoiceQuizChange
                                           }
-                                          isAlreadySelected={
-                                            simulateMatchingQuizAnswered
-                                              ? true
-                                              : false
-                                          }
+                                          isAlreadySelected={true}
                                         />
                                       );
                                     }
@@ -1223,7 +1226,7 @@ const StudentLessonQuiz = () => {
             //   navigate(-1)
             // }
           >
-            Next Lesson <i className="fa-regular fa-arrow-right"></i>
+            Finish Lesson <i className="fa-regular fa-arrow-right"></i>
           </Link>
 
           {/* <div className="bottom-cta justify-content-end">
@@ -1241,5 +1244,3 @@ const StudentLessonQuiz = () => {
 };
 
 export default React.memo(StudentLessonQuiz);
-
-

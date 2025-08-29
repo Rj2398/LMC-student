@@ -1,14 +1,21 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import { getSubjectLevel, getSubjectsByLevel, getTeacherSubDashboard } from "../../redux/slices/teacher/dashboardSlice";
+import {
+  getSubjectLevel,
+  getSubjectsByLevel,
+  getTeacherSubDashboard,
+} from "../../redux/slices/teacher/dashboardSlice";
 import Loading from "../common/Loading";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
-  const { classLevels, allSubjects, subDashboard } = useSelector((state) => state.dashboard);
+  const { classLevels, allSubjects, subDashboard, allSubjectsData } =
+    useSelector((state) => state.dashboard);
 
-  const [selectedLevel, setSelectedLevel] = useState(() => {return localStorage.getItem("classLevel") || null;});
+  const [selectedLevel, setSelectedLevel] = useState(() => {
+    return localStorage.getItem("classLevel") || null;
+  });
 
   useEffect(() => {
     dispatch(getSubjectLevel());
@@ -39,13 +46,19 @@ const Dashboard = () => {
     <>
       <div className="top-head">
         <div className="top-head-in">
-          <h1>Welcome, Sarah Johnson</h1>
-          <p>Ready to inspire your students today?</p>
+          <h1>Welcome, {allSubjectsData?.username}</h1>
+          <p>Your Progress</p>
         </div>
-        <select value={selectedLevel || ""} name="level" onChange={handleLevelChange}>
+        <select
+          value={selectedLevel || ""}
+          name="level"
+          onChange={handleLevelChange}
+        >
           {classLevels?.map((level, index) => (
-            <option key={index} value={level?.id} >{level?.name}</option>
-            ))}
+            <option key={index} value={level?.id}>
+              {level?.name}
+            </option>
+          ))}
         </select>
       </div>
       <div className="progress-grid">
@@ -58,7 +71,7 @@ const Dashboard = () => {
               </h2>
               <h3>{subDashboard?.baseline_assessments?.percentage}%</h3>
               {/* <!-- <a href="#">See details <i className="fa-regular fa-arrow-right"></i></a> --> */}
-              <p className="text-white">{subDashboard?.baseline_assessments?.completed}/{subDashboard?.baseline_assessments?.total} completed</p>
+              {/* <p className="text-white">{subDashboard?.baseline_assessments?.completed}/{subDashboard?.baseline_assessments?.total} completed</p> */}
             </div>
           </div>
           <div className="col-lg-3">
@@ -69,7 +82,10 @@ const Dashboard = () => {
               </h2>
               <h3>{subDashboard?.lesson_quiz_progress?.percentage}%</h3>
               {/* <!-- <a href="#">See details <i className="fa-regular fa-arrow-right"></i></a> --> */}
-              <p className="text-black">{subDashboard?.lesson_quiz_progress?.completed}/{subDashboard?.lesson_quiz_progress?.total} completed</p>
+              {/* <p className="text-black">
+                {subDashboard?.lesson_quiz_progress?.completed}/
+                {subDashboard?.lesson_quiz_progress?.total} completed
+              </p> */}
             </div>
           </div>
           <div className="col-lg-3">
@@ -80,7 +96,10 @@ const Dashboard = () => {
               </h2>
               <h3>{subDashboard?.summative_assessments?.percentage}%</h3>
               {/* <!-- <a href="#">See details <i className="fa-regular fa-arrow-right"></i></a> --> */}
-              <p className="text-black">{subDashboard?.summative_assessments?.completed}/{subDashboard?.summative_assessments?.total} completed</p>
+              {/* <p className="text-black">
+                {subDashboard?.summative_assessments?.completed}/
+                {subDashboard?.summative_assessments?.total} completed
+              </p> */}
             </div>
           </div>
           <div className="col-lg-3">
@@ -90,19 +109,24 @@ const Dashboard = () => {
                 Progress
               </h2>
               <h3>{subDashboard?.mwl_progress?.percentage}%</h3>
-              <p className="text-black"> {subDashboard?.mwl_progress?.completed} of {subDashboard?.mwl_progress?.total}  lessons completed</p>
+              {/* <p className="text-black">
+                {" "}
+                {subDashboard?.mwl_progress?.completed} of{" "}
+                {subDashboard?.mwl_progress?.total} lessons completed
+              </p> */}
             </div>
           </div>
         </div>
       </div>
-	  
+
       <div className="subjects-lesson-progress">
         <div className="row">
           <div className="col-lg-12">
             <div className="my-subjects">
               <div className="my-subjects-head">
                 <h3>
-                  <img src="../images/dashboard/book-icon.svg" alt="icon" /> Your Classes
+                  <img src="../images/dashboard/book-icon.svg" alt="icon" />{" "}
+                  Your Classes
                 </h3>
               </div>
               <div className="my-subjects-grid">
@@ -110,7 +134,8 @@ const Dashboard = () => {
                   <div className="my-subjects-itm" key={index}>
                     <div className="my-subjects-itm-head">
                       <h4>
-                        {subject?.subject_name} <br /> <b> {subject?.total_lesson} lessons</b>
+                        {subject?.subject_name} <br />{" "}
+                        <b> {subject?.total_lesson} lessons</b>
                       </h4>
                       <span>
                         <img src="../images/student-count.svg" alt="" />
@@ -119,37 +144,68 @@ const Dashboard = () => {
                     </div>
                     <div className="subject-rate green">
                       <h5>
-                        <i className="fa-solid fa-circle"></i>&nbsp; Completion Rate
+                        <i className="fa-solid fa-circle"></i>&nbsp; Completion
+                        Rate
                       </h5>
                       <span>
                         ({subject?.completion_rate}%) &nbsp;
-                        {subject?.total_completion}/{subject?.complete_completion}
+                        {subject?.total_completion}/
+                        {subject?.complete_completion}
                       </span>
                     </div>
                     <div className="progress">
-                      <div className="progress-bar" style={{ width: `${subject?.completion_rate}%` }} ></div>
+                      <div
+                        className="progress-bar"
+                        style={{ width: `${subject?.completion_rate}%` }}
+                      ></div>
                     </div>
                     <div className="subject-rate">
                       <h5>
-                        <i className="fa-solid fa-circle"></i>&nbsp; Average Quiz Score
+                        <i className="fa-solid fa-circle"></i>&nbsp; Average
+                        Quiz Score
                       </h5>
                       <span>{subject?.avg_quiz_score}%</span>
                     </div>
                     <ul>
                       <li>
-                        <p> <img src="../images/dashboard/subjects/circle-tick.svg" alt="tick" /> Baseline Assessment </p>
-                        <span>{subject?.baseline_assessments?.completed}/{subject?.baseline_assessments?.total}</span>
+                        <p>
+                          {" "}
+                          <img
+                            src="../images/dashboard/subjects/circle-tick.svg"
+                            alt="tick"
+                          />{" "}
+                          Baseline Assessment{" "}
+                        </p>
+                        <span>
+                          {subject?.baseline_assessments?.completed}/
+                          {subject?.baseline_assessments?.total}
+                        </span>
                       </li>
                       <li>
-                        <p> <img src="../images/dashboard/subjects/circle-tick.svg" alt="tick" /> Summative Assessment </p>
-                        <span>{subject?.summative_assessments?.completed}/{subject?.summative_assessments?.total}</span>
+                        <p>
+                          {" "}
+                          <img
+                            src="../images/dashboard/subjects/circle-tick.svg"
+                            alt="tick"
+                          />{" "}
+                          Summative Assessment{" "}
+                        </p>
+                        <span>
+                          {subject?.summative_assessments?.completed}/
+                          {subject?.summative_assessments?.total}
+                        </span>
                       </li>
                     </ul>
                     <div className="last-active">
                       <img src="../images/time.svg" alt="time" />
-                      <p>Last activity: {subject?.last_activity + " hours ago"}</p>
+                      <p>
+                        Last activity: {subject?.last_activity + " hours ago"}
+                      </p>
                     </div>
-                    <Link to={`/teacher/class-detail/${subject?.subject_id}`} state={{ subjectId: subject?.subject_id }}>
+                    <Link
+                      to={`/teacher/class-detail/${subject?.subject_id}`}
+                      state={{ subjectId: subject?.subject_id }}
+                    >
                       View Subject Details
                       <i className="fa-solid fa-angle-right"></i>
                     </Link>

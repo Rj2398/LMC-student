@@ -15,7 +15,7 @@ const WelcomeDashboard = () => {
       <div className="top-head">
         <div className="top-head-in">
           <h1>Welcome, {dashboardData?.username}!</h1>
-          <p>Ready to continue your learning journey?</p>
+          <p>Your Progress</p>
         </div>
       </div>
 

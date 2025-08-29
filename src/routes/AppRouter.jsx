@@ -57,6 +57,7 @@ import SubjectLessondetail from "../pages/principal/SubjectLessondetail";
 
 import PrincipalTeacherProfile from "../pages/principal/PrincipalTeacherProfile";
 import PrincipleSummative from "../pages/principal/PrincipleSummative";
+import PrincipalProgressAndScore from "../pages/principal/PrincipalProgressAndScore";
 
 const AppRouter = () => (
   <Router>
@@ -103,11 +104,11 @@ const AppRouter = () => (
           <Route path="/teacher/student-lesson-quiz" element={<TeacherStudentLessonQuiz />} />
           <Route path="/teacher/student-baseline-assessment" element={<TeacherStudentBaselineAssessment />} />
           <Route path="/teacher/student-summative-assessment" element={<TeacherStudentSummativeAssessment />} />
-          
+
           <Route path="/teacher/progress-student-baseline-assessment" element={<TeacherStudentBaselineAssessment />} />
           <Route path="/teacher/progress-student-lesson-quiz" element={<TeacherStudentLessonQuiz />} />
           <Route path="/teacher/progress-student-summative-assessment" element={<TeacherStudentSummativeAssessment />} />
-          
+
           <Route path="/teacher/mwl-micro-credentials-domain-training-lesson" element={<TeacherMwlMicroCredentialsDomainTrainingLesson />} />
           <Route path="/teacher/onboarding" element={<TeacherMwlParentTraining />} />
         </Route>
@@ -121,15 +122,37 @@ const AppRouter = () => (
           <Route path="/principal/profile" element={<PrincipalProfile />} />
           <Route path="/principal/class-detail/:subjectId" element={<Classdetails />} />
           <Route path="/principal/student-profile" element={<PricipalStudentprofile />} />
-          <Route path="/principal/student-baseline-assesment/:subjectId" element={<PrincipleStudentbaseline />} />
+          <Route path="/principal/student-baseline-assesment" element={<PrincipleStudentbaseline />} />
           <Route path="/principal/student-lesson-quiz/:studentId" element={<PrincipleStudentLessonquiz />} />
           <Route path="/principal/student-subject-summative/:subjectId" element={<PrincipleSubjectSummativedetails />} />
-          <Route path="/principal/student-subject-detail/:subjectId" element={<PrincipleSubjectDetails/>} />
-          <Route path="/principal/subject-baseline-detail/:subjectId" element={<SubjectBaselinedetails/>} />
-          <Route path="/principal/subject-lesson-detail/:subjectId/:lessonId" element={<SubjectLessondetail/>} />
+          <Route path="/principal/student-subject-detail/:subjectId" element={<PrincipleSubjectDetails />} />
+          <Route path="/principal/subject-baseline-detail/:subjectId" element={<SubjectBaselinedetails />} />
+          <Route path="/principal/subject-lesson-detail/:subjectId/:lessonId" element={<SubjectLessondetail />} />
 
-          <Route path="/principal/teacher-profile" element={<PrincipalTeacherProfile/>} />
-          <Route path="/principal/student-summative" element={<PrincipleSummative/>} />
+          <Route path="/principal/teacher-profile" element={<PrincipalTeacherProfile />} />
+          <Route path="/principal/student-summative" element={<PrincipleSummative />} />
+          <Route path="/principal/progress-and-score" element={<PrincipalProgressAndScore />} />
+          <Route path="/principal/progress-student-baseline-assessment" element={<PrincipleStudentbaseline />} />
+          <Route path="/principal/progress-student-summative-assessment" element={<PrincipleSummative />} />
+          <Route path="/principal/progress-student-lesson-quiz" element={<PrincipleStudentLessonquiz />} />
+
+
+          {/* //same components with different path for navbar : Teachers & students tab*/}
+          <Route path="/principal/student/profile" element={<PricipalStudentprofile />} />
+          <Route path="/principal/students/profile" element={<PricipalStudentprofile />} />
+          <Route path="/principal-student-profiles" element={<PricipalStudentprofile />} />
+          <Route path="/principal/class/detail/:subjectId" element={<Classdetails />} />
+          <Route path="/principal/student/subject/detail/:subjectId" element={<PrincipleSubjectDetails />} />
+          <Route path="/principal/student/baseline/assesment" element={<PrincipleStudentbaseline />} />
+          <Route path="/principal/student/summative" element={<PrincipleSummative />} />
+          <Route path="/principal/student/lesson/quiz/:studentId" element={<PrincipleStudentLessonquiz />} />
+          <Route path="/principal/student-baseline/assesment" element={<PrincipleStudentbaseline />} />
+          <Route path="/principal/students-summative" element={<PrincipleSummative />} />
+          <Route path="/principal/student-lesson/quiz/:studentId" element={<PrincipleStudentLessonquiz />} />
+          
+          <Route path="/principal-student-baseline/assesment" element={<PrincipleStudentbaseline />} />
+          <Route path="/principal-student-summative" element={<PrincipleSummative />} />
+          <Route path="/principal-student-lesson/quiz/:studentId" element={<PrincipleStudentLessonquiz />} />
 
         </Route>
       </Route>

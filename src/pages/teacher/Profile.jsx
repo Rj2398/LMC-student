@@ -42,9 +42,16 @@ const Profile = () => {
     });
   };
 
+  // const handleLogout = () => {
+  //   dispatch(logout());
+  // };
+
   const handleLogout = () => {
-    dispatch(logout());
-  };
+  dispatch(logout());
+  localStorage.clear();
+  sessionStorage.clear();
+  window.location.assign("https://clever.com/oauth/logout?redirect_uri=https://pmsc-lms.vercel.app");
+};
 
   return (
     <>
