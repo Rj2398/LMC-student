@@ -1,3 +1,368 @@
+import React, { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate, useParams } from "react-router";
+import { getClassDetailBySubject, getSubjectList, setPrincipalCurrentSubject, } from "../../redux/slices/principal/principalDashboardSlice";
+import { useDispatch, useSelector } from "react-redux";
+
+const Classdetails = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const paramData = useParams();
+
+  const subjectId = location?.state?.subjectId ? location?.state?.subjectId : paramData?.subjectId;
+  const teachercoming = location?.state?.teachercoming;
+
+  const currentLevel = localStorage.getItem("classLevel");
+
+  const { classDetails, subjectList } = useSelector((state) => state.principalDashboard);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCourses, setSelectedCourses] = useState([]);
+  const [activeDropdown, setActiveDropdown] = useState(null);
+
+  const filteredStudent = classDetails?.students?.filter((student) =>
+    student.student_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    student.student_email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    student?.status?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  useEffect(() => {
+    if (subjectId) {
+      dispatch(getClassDetailBySubject({ subject_id: subjectId }));
+    }
+    if (currentLevel) {
+      dispatch(getSubjectList({ level_id: currentLevel }));
+    }
+  }, [subjectId, currentLevel]);
+
+  useEffect(() => {
+    if (selectedCourses?.length > 0) {
+      dispatch(getClassDetailBySubject({ subject_id: selectedCourses?.[0] }));
+    }
+  }, [selectedCourses?.length > 0, selectedCourses]);
+
+  useEffect(() => {
+    if (classDetails) {
+      dispatch(setPrincipalCurrentSubject(classDetails?.subject_name));
+    }
+  }, [classDetails]);
+
+  const handleToggle = (id, list, setList) => {
+    if (list.includes(id)) {
+      setList(list.filter((item) => item !== id)); // Uncheck
+    } else {
+      setList([...list, id]); // Check
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const dropdowns = document.querySelectorAll(".influ-dropdown");
+      let clickedInsideDropdown = false;
+
+      dropdowns.forEach((dropdown) => {
+        if (dropdown.contains(event.target)) {
+          clickedInsideDropdown = true;
+        }
+      });
+
+      if (!clickedInsideDropdown) {
+        setActiveDropdown(null);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
+  //pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentStudents = filteredStudent?.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+
+  //pagination
+
+  return (
+    <>
+      <div className="top-head align-items-start">
+        <div className="top-head-in">
+          <h1>{classDetails?.subject_name || "Not Available"}</h1>
+          <p>{classDetails?.subject_desc}</p>
+          <ul>
+            <li>
+              <img src="/images/subject-detail/lessons.svg" alt="" />{" "}
+              {classDetails?.total_lesson + " lessons"}
+            </li>
+          </ul>
+        </div>
+        <div className="back-btn ms-auto">
+          {!teachercoming ? (
+            <Link
+              to={`/principal/student-subject-detail/${subjectId}`}
+              state={{ subjectId: subjectId }}
+            >
+              <img src="/images/view-icon.svg" alt="View Subject Info" /> View Subject Info
+            </Link>
+          ) : (
+            <Link
+              to={`/principal/student/subject/detail/${subjectId}`}
+              state={{ subjectId: subjectId }}
+            >
+              <img src="/images/view-icon.svg" alt="View Subject Info" /> View Subject Info
+            </Link>
+          )}
+        </div>
+        <div className="influ-btns mx-3">
+          {/* Dropdown */}
+          <div className="influ-dropdown">
+            <button
+              className="influ-btn influ-drop-btn"
+              type="button"
+              onClick={() =>
+                setActiveDropdown(activeDropdown === "courseDropdown" ? null : "courseDropdown")
+              }>
+              All Subjects{" "}
+              <i
+                className={`fa-regular ${
+                  activeDropdown === "courseDropdown"
+                    ? "fa-angle-up"
+                    : "fa-angle-down"
+                }`}
+              ></i>
+            </button>
+
+            <div
+              className="influ-drop-list"
+              style={{
+                display: activeDropdown === "courseDropdown" ? "block" : "none",
+              }}
+            >
+              <div className="influ-drop-list-inner">
+                {subjectList?.map((item) => (
+                  <div key={item.id} className="influ-drop-list-item">
+                    <input
+                      type="checkbox"
+                      checked={selectedCourses.includes(item.id)}
+                      onChange={() => {
+                        if (selectedCourses.includes(item.id)) {
+                          setSelectedCourses([]);
+                        } else {
+                          setSelectedCourses([item.id]);
+                        }
+                      }}
+                    />
+                    {item?.name}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="back-btn">
+          <Link onClick={() => navigate(-1)}>
+            <img src="/images/baseline-assessment/back-icon.svg" alt="" /> Back
+          </Link>
+        </div>
+      </div>
+
+      <div className="my-subjects">
+        <div className="top-head">
+          <div className="top-head-in">
+            <h1 className="mb-0">
+              Students({classDetails?.students?.length || 0})
+            </h1>
+          </div>
+
+          <div className="students-src">
+            <input
+              type="text"
+              placeholder="Search emails by subject, sen....."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th style={{ width: "250px" }}>Student Name</th>
+                <th>Status </th>
+                <th style={{ width: "300px" }}>Completion Score </th>
+                <th>Avg. Score</th>
+                <th>Action </th>
+              </tr>
+            </thead>
+            <tbody>
+              {!currentStudents || currentStudents.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan="5"
+                    style={{ paddingTop: "25px", textAlign: "center" }}
+                  >
+                    No Student Available
+                  </td>
+                </tr>
+              ) : (
+                currentStudents.map((student, index) => (
+                  <tr key={index}>
+                    <td>{student?.student_name || "Lorem Ipsum"}</td>
+                    <td>
+                      <div className="status">{student?.status}</div>
+                    </td>
+                    <td>
+                      <div className="prog">
+                        <span> {student?.overall_percentage ?? "0"}% </span>
+                        <div className="progress">
+                          <div
+                            className="progress-bar"
+                            style={{
+                              width: `${student?.overall_percentage ?? 0}%`,
+                            }}
+                            role="progressbar"
+                            aria-valuenow={student?.overall_percentage ?? 0}
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                          ></div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div style={{ color: "#16A34A" }}>
+                        {`${student?.overall_percentage ?? 0}%`}
+                      </div>
+                    </td>
+                    <td>
+                      {teachercoming ? (
+                        <Link
+                          to="/principal-student-profiles"
+                          state={{
+                            studentId: student?.student_id,
+                            subjectId:
+                              selectedCourses?.length > 0
+                                ? selectedCourses[0]
+                                : subjectId,
+                            principalstudentBaseline:
+                              "principalstudentBaseline",
+                          }}
+                        >
+                          <i className="fa-light fa-eye"></i> View Details
+                        </Link>
+                      ) : (
+                        <Link
+                          to="/principal/student-profile"
+                          state={{
+                            studentId: student?.student_id,
+                            subjectId:
+                              selectedCourses?.length > 0
+                                ? selectedCourses[0]
+                                : subjectId,
+                          }}
+                        >
+                          <i className="fa-light fa-eye"></i> View Details
+                        </Link>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+
+          {/* Pagination Section */}
+          <div className="panel-pagination" style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    marginTop: "20px",
+                    alignItems: "center",
+                  }}>
+            {/* Left Side: Showing Info */}
+            <div>
+              {filteredStudent?.length > 0 && (
+                <span>
+                  Showing {indexOfFirstItem + 1} to{" "}
+                  {Math.min(indexOfLastItem, filteredStudent.length)} of{" "}
+                  {filteredStudent.length} entries
+                </span>
+              )}
+            </div>
+
+            {/* Right Side: Pagination Controls */}
+            <div className="pagination d-flex align-items-center gap-1">
+              {/* Previous Button */}
+              <button
+                className="page-btn"
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                style={{ padding: "0px 9px" }}
+              >
+                Prev
+              </button>
+
+              {/* Page Numbers */}
+              {Array.from(
+                { length: Math.ceil(filteredStudent?.length / itemsPerPage) },
+                (_, i) => {
+                  const isActive = currentPage === i + 1;
+                  return (
+                    <button
+                      key={i}
+                      className="page-btn"
+                      onClick={() => setCurrentPage(i + 1)}
+                      style={{
+                        width: "40px",
+                        color: isActive ? "#fff" : "#000", // White text for active, black for inactive
+                        backgroundColor: isActive ? "#4126A8" : "white", // Color for active, white for inactive
+                        border: "1px solid #ccc",
+                        // borderRadius: "5px",
+                        padding: "2px",
+                      }}
+                    >
+                      {i + 1}
+                    </button>
+                  );
+                }
+              )}
+
+              {/* Next Button */}
+              <button
+                className="page-btn"
+                onClick={() =>
+                  setCurrentPage((prev) =>
+                    Math.min(
+                      prev + 1,
+                      Math.ceil(filteredStudent?.length / itemsPerPage)
+                    )
+                  )
+                }
+                disabled={
+                  currentPage ===
+                  Math.ceil(filteredStudent?.length / itemsPerPage)
+                }
+                style={{ padding: "0px 9px" }}
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default Classdetails;
+
 // import React, { useState, useEffect } from "react";
 // import data from "../../assets/principal.json";
 // import { Link, useLocation, useNavigate, useParams } from "react-router";
@@ -13,12 +378,9 @@
 //   const subjectId = location?.state?.subjectId ? location?.state?.subjectId : paramData?.subjectId;
 //   const teachercoming = location?.state?.teachercoming;
 
-//   console.log(teachercoming, "teachercoming#########")
-
 //   const currentLevel = localStorage.getItem("classLevel");
 
 //   const { classDetails, subjectList, } = useSelector((state) => state.principalDashboard)
-//   console.log(classDetails)
 
 //   const [searchQuery, setSearchQuery] = useState("");
 //   const [selectedCourses, setSelectedCourses] = useState([]);
@@ -30,19 +392,16 @@
 //     if (subjectId) {
 
 //       dispatch(getClassDetailBySubject({ subject_id: subjectId }))
-//       console.log(subjectId);
 
 //     }
 //     if (currentLevel) {
 //       dispatch(getSubjectList({ level_id: currentLevel }))
-//       console.log({ level_id: currentLevel });
 //     }
 //   }, [subjectId, currentLevel]);
 
 //   useEffect(() => {
 //     if (selectedCourses?.length > 0) {
 //       dispatch(getClassDetailBySubject({ subject_id: selectedCourses?.[0] }))
-//       console.log({ subject_id: selectedCourses?.[0] });
 //     }
 //   }, [selectedCourses?.length > 0, selectedCourses]);
 
@@ -50,7 +409,6 @@
 //     if (classDetails) {
 //       dispatch(setPrincipalCurrentSubject(classDetails?.subject_name))
 
-//       // console.log(classDetails?.courseData?.title);
 //     }
 //   }, [classDetails]);
 
@@ -447,376 +805,3 @@
 // };
 
 // export default Classdetails;
-
-import React, { useState, useEffect } from "react";
-import data from "../../assets/principal.json";
-import { Link, useLocation, useNavigate, useParams } from "react-router";
-import {
-  getClassDetailBySubject,
-  getSubjectList,
-  setPrincipalCurrentSubject,
-} from "../../redux/slices/principal/principalDashboardSlice";
-import { useDispatch, useSelector } from "react-redux";
-
-const Classdetails = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const paramData = useParams();
-
-  const subjectId = location?.state?.subjectId
-    ? location?.state?.subjectId
-    : paramData?.subjectId;
-  const teachercoming = location?.state?.teachercoming;
-
-  const currentLevel = localStorage.getItem("classLevel");
-
-  const { classDetails, subjectList } = useSelector(
-    (state) => state.principalDashboard
-  );
-
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCourses, setSelectedCourses] = useState([]);
-  const [activeDropdown, setActiveDropdown] = useState(null);
-
-  const filteredStudent = classDetails?.students?.filter(
-    (student) =>
-      student.student_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      student.student_email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      student?.status?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  useEffect(() => {
-    if (subjectId) {
-      dispatch(getClassDetailBySubject({ subject_id: subjectId }));
-    }
-    if (currentLevel) {
-      dispatch(getSubjectList({ level_id: currentLevel }));
-    }
-  }, [subjectId, currentLevel]);
-
-  useEffect(() => {
-    if (selectedCourses?.length > 0) {
-      dispatch(getClassDetailBySubject({ subject_id: selectedCourses?.[0] }));
-    }
-  }, [selectedCourses?.length > 0, selectedCourses]);
-
-  useEffect(() => {
-    if (classDetails) {
-      dispatch(setPrincipalCurrentSubject(classDetails?.subject_name));
-    }
-  }, [classDetails]);
-
-  const handleToggle = (id, list, setList) => {
-    if (list.includes(id)) {
-      setList(list.filter((item) => item !== id)); // Uncheck
-    } else {
-      setList([...list, id]); // Check
-    }
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      const dropdowns = document.querySelectorAll(".influ-dropdown");
-      let clickedInsideDropdown = false;
-
-      dropdowns.forEach((dropdown) => {
-        if (dropdown.contains(event.target)) {
-          clickedInsideDropdown = true;
-        }
-      });
-
-      if (!clickedInsideDropdown) {
-        setActiveDropdown(null);
-      }
-    };
-
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
-
-  //pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentStudents = filteredStudent?.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
-
-  //pagination
-
-  return (
-    <>
-      <div className="top-head align-items-start">
-        <div className="top-head-in">
-          <h1>{classDetails?.subject_name || "Not Available"}</h1>
-          <p>{classDetails?.subject_desc || "Not Available"}</p>
-          <ul>
-            <li>
-              <img src="/images/subject-detail/lessons.svg" alt="" />{" "}
-              {classDetails?.total_lesson + " lessons"}
-            </li>
-          </ul>
-        </div>
-        <div className="back-btn ms-auto">
-          {!teachercoming ? (
-            <Link
-              to={`/principal/student-subject-detail/${subjectId}`}
-              state={{ subjectId: subjectId }}
-            >
-              <img src="/images/view-icon.svg" alt="" /> View Subject Info
-            </Link>
-          ) : (
-            <Link
-              to={`/principal/student/subject/detail/${subjectId}`}
-              state={{ subjectId: subjectId }}
-            >
-              <img src="/images/view-icon.svg" alt="" /> View Subject Info
-            </Link>
-          )}
-        </div>
-        <div className="influ-btns mx-3">
-          {/* Dropdown */}
-          <div className="influ-dropdown">
-            <button
-              className="influ-btn influ-drop-btn"
-              type="button"
-              onClick={() =>
-                setActiveDropdown(
-                  activeDropdown === "courseDropdown" ? null : "courseDropdown"
-                )
-              }
-            >
-              All Subjects{" "}
-              <i
-                className={`fa-regular ${
-                  activeDropdown === "courseDropdown"
-                    ? "fa-angle-up"
-                    : "fa-angle-down"
-                }`}
-              ></i>
-            </button>
-
-            <div
-              className="influ-drop-list"
-              style={{
-                display: activeDropdown === "courseDropdown" ? "block" : "none",
-              }}
-            >
-              <div className="influ-drop-list-inner">
-                {subjectList?.map((item) => (
-                  <div key={item.id} className="influ-drop-list-item">
-                    <input
-                      type="checkbox"
-                      checked={selectedCourses.includes(item.id)}
-                      onChange={() => {
-                        if (selectedCourses.includes(item.id)) {
-                          setSelectedCourses([]);
-                        } else {
-                          setSelectedCourses([item.id]);
-                        }
-                      }}
-                    />
-                    {item?.name}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="back-btn">
-          <Link onClick={() => navigate(-1)}>
-            <img src="/images/baseline-assessment/back-icon.svg" alt="" /> Back
-          </Link>
-        </div>
-      </div>
-
-      <div className="my-subjects">
-        <div className="top-head">
-          <div className="top-head-in">
-            <h1 className="mb-0">
-              Students({classDetails?.students?.length || 0})
-            </h1>
-          </div>
-
-          <div className="students-src">
-            <input
-              type="text"
-              placeholder="Search emails by subject, sen....."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-        </div>
-
-        <div className="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th style={{ width: "250px" }}>Student Name</th>
-                <th>Status </th>
-                <th style={{ width: "300px" }}>Completion Score </th>
-                <th>Avg. Score</th>
-                <th>Action </th>
-              </tr>
-            </thead>
-            <tbody>
-              {!currentStudents || currentStudents.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan="5"
-                    style={{ paddingTop: "25px", textAlign: "center" }}
-                  >
-                    No Student Available
-                  </td>
-                </tr>
-              ) : (
-                currentStudents.map((student, index) => (
-                  <tr key={index}>
-                    <td>{student?.student_name || "Lorem Ipsum"}</td>
-                    <td>
-                      <div className="status">{student?.status}</div>
-                    </td>
-                    <td>
-                      <div className="prog">
-                        {student?.overall_percentage ?? "0"}%
-                        <div className="progress">
-                          <div
-                            className="progress-bar"
-                            style={{
-                              width: `${student?.overall_percentage ?? 0}%`,
-                            }}
-                            role="progressbar"
-                            aria-valuenow={student?.overall_percentage ?? 0}
-                            aria-valuemin="0"
-                            aria-valuemax="100"
-                          ></div>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <div style={{ color: "#16A34A" }}>
-                        {`${student?.overall_percentage ?? 0}%`}
-                      </div>
-                    </td>
-                    <td>
-                      {teachercoming ? (
-                        <Link
-                          to="/principal-student-profiles"
-                          state={{
-                            studentId: student?.student_id,
-                            subjectId:
-                              selectedCourses?.length > 0
-                                ? selectedCourses[0]
-                                : subjectId,
-                            principalstudentBaseline:
-                              "principalstudentBaseline",
-                          }}
-                        >
-                          <i className="fa-light fa-eye"></i> View Details
-                        </Link>
-                      ) : (
-                        <Link
-                          to="/principal/student-profile"
-                          state={{
-                            studentId: student?.student_id,
-                            subjectId:
-                              selectedCourses?.length > 0
-                                ? selectedCourses[0]
-                                : subjectId,
-                          }}
-                        >
-                          <i className="fa-light fa-eye"></i> View Details
-                        </Link>
-                      )}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-
-          {/* Pagination Section */}
-          <div className="d-flex justify-content-between align-items-center mt-3">
-            {/* Left Side: Showing Info */}
-            <div>
-              {filteredStudent?.length > 0 && (
-                <span>
-                  Showing {indexOfFirstItem + 1} to{" "}
-                  {Math.min(indexOfLastItem, filteredStudent.length)} of{" "}
-                  {filteredStudent.length} entries
-                </span>
-              )}
-            </div>
-
-            {/* Right Side: Pagination Controls */}
-            <div className="pagination d-flex align-items-center">
-              {/* Previous Button */}
-              <button
-                className="page-btn"
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-                style={{ padding: "0px 9px" }}
-              >
-                Prev
-              </button>
-
-              {/* Page Numbers */}
-              {Array.from(
-                { length: Math.ceil(filteredStudent?.length / itemsPerPage) },
-                (_, i) => {
-                  const isActive = currentPage === i + 1;
-                  return (
-                    <button
-                      key={i}
-                      className="page-btn"
-                      onClick={() => setCurrentPage(i + 1)}
-                      style={{
-                        width: "40px",
-                        color: isActive ? "#fff" : "#000", // White text for active, black for inactive
-                        backgroundColor: isActive ? "#4126A8" : "white", // Color for active, white for inactive
-                        border: "1px solid #ccc",
-                        // borderRadius: "5px",
-                        padding: "2px",
-                      }}
-                    >
-                      {i + 1}
-                    </button>
-                  );
-                }
-              )}
-
-              {/* Next Button */}
-              <button
-                className="page-btn"
-                onClick={() =>
-                  setCurrentPage((prev) =>
-                    Math.min(
-                      prev + 1,
-                      Math.ceil(filteredStudent.length / itemsPerPage)
-                    )
-                  )
-                }
-                disabled={
-                  currentPage ===
-                  Math.ceil(filteredStudent?.length / itemsPerPage)
-                }
-                style={{ padding: "0px 9px" }}
-              >
-                Next
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
-  );
-};
-
-export default Classdetails;

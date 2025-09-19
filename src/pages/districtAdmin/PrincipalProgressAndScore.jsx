@@ -1,0 +1,603 @@
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {getClassList, getStudentList, getSubjectList, } from "../../redux/slices/teacher/dashboardSlice";
+import data from "../../assets/principal.json"
+import PrincipalProgressSubjectWise from "../../components/districtAdmin/PrincipalProgressSubjectWise";
+import PrincipalTrainingCompletion from "../../components/districtAdmin/PrincipalTrainingCompletion";
+import { getPrincipalProgressScore, getPrincipalSubjectGraph, } from "../../redux/slices/principal/principalProgressSlice";
+import { ReportDownload } from "../../components/teacher/ReportPdfDowload";
+import { getReportDownloadData } from "../../redux/slices/authSlice";
+import Select from "react-select";
+import { getAllSchoolList } from "../../redux/slices/districtAdmin/districtSlice";
+
+const PrincipalProgressAndScore = () => {
+  const dispatch = useDispatch();
+  const currentLevel = localStorage.getItem("classLevel");
+  const { reportData, reportLoading } = useSelector((state) => state.auth);
+  const { subjectList, classList, studentList } = useSelector((state) => state.dashboard);
+  const { progressAndScoreData, progressGraphData } = useSelector((state) => state.principalProgress);
+  const { allSchoolList } = useSelector((state) => state.districtDashboard);
+
+  const [activeDropdown, setActiveDropdown] = useState(null); 
+  const [selectedSchool, setSelectedSchool] = useState(() => {
+    return localStorage.getItem("schoolID") || null;
+  });
+  const [selectedClasses, setSelectedClasses] = useState([]);
+  const [selectedStudents, setSelectedStudents] = useState([]);
+
+  const [selectedCourses, setSelectedCourses] = useState([]);
+
+  useEffect(() => {
+    if (currentLevel) {
+      dispatch(getClassList({ level_id: currentLevel }));
+      dispatch(getSubjectList({ level_id: currentLevel }));
+    }
+  }, [currentLevel]);
+
+  useEffect(() => {
+    if (selectedClasses) {
+      dispatch(getStudentList({class: selectedStudents?.includes("all") ? ["all"] : selectedClasses,}));
+    }
+  }, [selectedClasses]);
+
+  useEffect(() => {
+    dispatch(getAllSchoolList());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (selectedSchool == null && allSchoolList?.length > 0) {
+      const defaultLevel = allSchoolList?.[0].id;
+      setSelectedSchool(defaultLevel);
+      localStorage.setItem("schoolID", defaultLevel);
+    }
+  }, [selectedSchool, allSchoolList]);
+
+  useEffect(() => {
+    const payload = { level_id: currentLevel, school_id: selectedSchool };
+
+    if (!selectedClasses.includes("all")) {
+      payload.class_id = selectedClasses;
+    }
+
+    if (!selectedStudents.includes("all")) {
+      payload.student_id = selectedStudents;
+    }
+
+    if (!selectedCourses.includes("all")) {
+      payload.subject_id = selectedCourses;
+    }
+    
+    dispatch(getPrincipalProgressScore(payload));
+    dispatch(getPrincipalSubjectGraph(payload));
+    dispatch(getReportDownloadData(payload));
+    
+  }, [selectedClasses, selectedStudents, selectedCourses, selectedSchool]);
+  // }, [subjectList, classList, studentList]);
+
+  const [classSearch, setClassSearch] = useState("");
+  const [studentSearch, setStudentSearch] = useState("");
+
+  const handleToggle = (id, list, setList) => {
+    if (list.includes(id)) {
+      setList(list.filter((item) => item !== id)); // Uncheck
+    } else {
+      setList([...list, id]); // Check
+    }
+  };
+
+  const filteredClasses = classList?.filter((item) =>
+    item?.name?.toLowerCase()?.includes(classSearch?.toLowerCase())
+  );
+
+  const filteredStudents = studentList?.filter((item) =>
+    item.name.toLowerCase().includes(studentSearch.toLowerCase())
+  );
+
+  const colors = [
+    {
+      base: "#C951E7",
+      lesson: "#D573ED",
+      summative: "#F1B7FF",
+      label: "Life Dream",
+    },
+    {
+      base: "#6466E9",
+      lesson: "#888AF3",
+      summative: "#B4B5FC",
+      label: "Self-Awareness",
+    },
+    {
+      base: "#55E6C1",
+      lesson: "#82EBD0",
+      summative: "#BDEFE2",
+      label: "Cognitive Construction",
+    },
+    {
+      base: "#FFC312",
+      lesson: "#FEDB74",
+      summative: "#FAE9B7",
+      label: "Interpersonal Relationships",
+    },
+    {
+      base: "#ED4C67",
+      lesson: "#EC6F84",
+      summative: "#F5ABB7",
+      label: "Coping",
+    },
+  ];
+
+  const handleSchoolChange = (event) => {
+    const newLevel = event.target.value;
+    setSelectedSchool(newLevel);
+    localStorage.setItem("schoolID", newLevel);
+  };
+  
+  const schoolOptions = allSchoolList?.map(level => ({
+    value: level?.id,
+    label: level?.school,
+  }));
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const dropdowns = document.querySelectorAll(".influ-dropdown");
+      let clickedInsideDropdown = false;
+
+      dropdowns.forEach((dropdown) => {
+        if (dropdown.contains(event.target)) {
+          clickedInsideDropdown = true;
+        }
+      });
+
+      if (!clickedInsideDropdown) {
+        setActiveDropdown(null);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
+  return (
+    <>
+      <div className="top-head prog-sco-wrp">
+        <div className="top-head-in">
+          <h1>Progress & Score</h1>
+          {/* <p>Your Progress</p> */}
+        </div>
+
+        <div className="influ-btns ms-auto">
+          <Select isSearchable={false} styles={{
+              control: (base) => ({
+                ...base,
+                minHeight: '44px',
+                width:'180px',
+                fontSize:"16px",
+                borderRadius:"10px",
+                borderColor:"#4126A8",
+                boxShadow: 'none',
+                '&:hover': {
+                  borderColor: '#4126A8'
+                }
+              }),
+              option: (base, state) => ({
+                ...base,
+                backgroundColor: state.isFocused ? '#4126A8' : 'white',
+                color: state.isFocused ? 'white' : '#333',
+                '&:active': {
+                    backgroundColor: '#4126A8'
+                }
+              }),
+            }} options={schoolOptions} value={schoolOptions?.find(opt => opt.value == selectedSchool)}
+            onChange={selected => handleSchoolChange({ target: { name: 'level', value: selected.value }})}/>
+
+          {/* Classes Dropdown */}
+          <div className="influ-dropdown">
+            <button className="influ-btn influ-drop-btn" type="button"
+              onClick={() => setActiveDropdown(activeDropdown === "studentDropdown" ? null : "studentDropdown")}>
+              All Classes{" "}
+              <i className={`fa-regular ${ activeDropdown === "studentDropdown" ? "fa-angle-up": "fa-angle-down"}`}
+              ></i>
+            </button>
+            <div className="influ-drop-list" style={{ display: activeDropdown === "studentDropdown" ? "block" : "none",}}>
+              <div className="influ-drop-list-search">
+                <button type="submit">
+                  <img src="images/search-icon.svg" alt="" />
+                </button>
+                <input
+                  type="text"
+                  placeholder="Search"
+                  value={classSearch}
+                  onChange={(e) => setClassSearch(e.target.value)}
+                />
+              </div>
+              <div className="influ-drop-list-inner">
+                <div className="influ-drop-list-item">
+                  <input
+                    type="checkbox"
+                    checked={selectedClasses.includes("all")}
+                    onChange={() => {
+                      if (selectedClasses.includes("all")) {
+                        setSelectedClasses([]);
+                      } else {
+                        setSelectedClasses(["all"]);
+                      }
+                    }}
+                  />
+                  All Classes
+                </div>
+
+                {/* Individual Class Checkboxes */}
+                {filteredClasses?.map((item) => (
+                  <div key={item.id} className="influ-drop-list-item">
+                    <input
+                      type="checkbox"
+                      checked={selectedClasses.includes(item.name)}
+                      onChange={() => {
+                        if (selectedClasses.includes(item.name)) {
+                          setSelectedClasses(
+                            selectedClasses.filter((name) => name !== item.name)
+                          );
+                        } else {
+                          setSelectedClasses([...selectedClasses, item.name]);
+                        }
+                      }}
+                    />
+                    {item.name}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Students Dropdown */}
+          <div className="influ-dropdown">
+            <button
+              className="influ-btn influ-drop-btn"
+              type="button"
+              onClick={() =>
+                setActiveDropdown(
+                  activeDropdown === "studentDropdown2"
+                    ? null
+                    : "studentDropdown2"
+                )
+              }
+            >
+              All Students{" "}
+              <i
+                className={`fa-regular ${
+                  activeDropdown === "studentDropdown2"
+                    ? "fa-angle-up"
+                    : "fa-angle-down"
+                }`}
+              ></i>
+            </button>
+            <div
+              className="influ-drop-list"
+              style={{
+                display:
+                  activeDropdown === "studentDropdown2" ? "block" : "none",
+              }}
+            >
+              <div className="influ-drop-list-inner">
+                <div className="influ-drop-list-item">
+                  <input
+                    type="checkbox"
+                    checked={selectedStudents.includes("all")}
+                    onChange={() =>
+                      handleToggle("all", selectedStudents, setSelectedStudents)
+                    }
+                  />
+                  All Students
+                </div>
+                {filteredStudents?.map((item) => (
+                  <div key={item.id} className="influ-drop-list-item">
+                    <input
+                      type="checkbox"
+                      checked={
+                        selectedStudents.includes("all") ||
+                        selectedStudents.includes(item.id)
+                      }
+                      disabled={selectedStudents.includes("all")}
+                      // onChange={() => handleToggle( item.id, selectedStudents, setSelectedStudents )}
+                      onChange={() => {
+                        if (selectedStudents.includes(item.id)) {
+                          setSelectedStudents([]);
+                        } else {
+                          setSelectedStudents([item.id]);
+                        }}}
+                    />
+                    {item.name}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Subjects Dropdown */}
+          <div className="influ-dropdown">
+            <button
+              className="influ-btn influ-drop-btn"
+              type="button"
+              onClick={() =>
+                setActiveDropdown(
+                  activeDropdown === "courseDropdown" ? null : "courseDropdown"
+                )
+              }
+            >
+              All Subjects{" "}
+              <i
+                className={`fa-regular ${
+                  activeDropdown === "courseDropdown"
+                    ? "fa-angle-up"
+                    : "fa-angle-down"
+                }`}
+              ></i>
+            </button>
+            <div
+              className="influ-drop-list"
+              style={{
+                display: activeDropdown === "courseDropdown" ? "block" : "none",
+              }}
+            >
+              <div className="influ-drop-list-inner">
+                <div className="influ-drop-list-item">
+                  <input
+                    type="checkbox"
+                    checked={selectedCourses.includes("all")}
+                    onChange={() =>
+                      handleToggle("all", selectedCourses, setSelectedCourses)
+                    }
+                  />
+                  All Subjects
+                </div>
+                {subjectList?.map((item) => (
+                  <div key={item.id} className="influ-drop-list-item">
+                    <input
+                      type="checkbox"
+                      checked={
+                        selectedCourses.includes("all") ||
+                        selectedCourses.includes(item.id)
+                      }
+                      disabled={selectedCourses.includes("all")}
+                      onChange={() =>
+                        handleToggle(
+                          item.id,
+                          selectedCourses,
+                          setSelectedCourses
+                        )
+                      }
+                    />
+                    {item.name}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          {/* <ReportDownload data={reportData} />          */}
+          {
+            reportLoading ? <button className="download-cta active" disabled> PDF Loading... </button> : <ReportDownload key={JSON.stringify(reportData)} data={reportData}/>
+          }
+        </div>
+      </div>
+
+      <div className="progress-grid">
+        <div className="row g-0">
+          <div className="col-lg-3">
+            <div className="progress-grid-in ms-0">
+              <h2>
+                <img src="/images/Overlay.svg" alt="" />{" "}
+                Baseline <br /> Assessments
+              </h2>
+              <h3>
+                {progressAndScoreData?.baseline_assessments?.percentage || 0}%
+              </h3>
+              {/* <p className="text-white">
+                {progressAndScoreData?.baseline_assessments?.completed || 0}/
+                {progressAndScoreData?.baseline_assessments?.total || 0}{" "}
+                completed
+              </p> */}
+            </div>
+          </div>
+          <div className="col-lg-3">
+            <div className="progress-grid-in">
+              <h2>
+                <img src="../images/dashboard/progress-grid/3.svg" alt="" />{" "}
+                Lesson Quiz Progress
+              </h2>
+              <h3>
+                {progressAndScoreData?.lesson_quiz_progress?.percentage || 0}%
+              </h3>
+              {/* <p className="text-black">
+                {progressAndScoreData?.lesson_quiz_progress?.completed || 0}/
+                {progressAndScoreData?.lesson_quiz_progress?.total || 0}{" "}
+                completed
+              </p> */}
+            </div>
+          </div>
+          <div className="col-lg-3">
+            <div className="progress-grid-in">
+              <h2>
+                <img src="../images/dashboard/progress-grid/2.svg" alt="" />{" "}
+                Summative <br /> Assessments
+              </h2>
+              <h3>
+                {progressAndScoreData?.summative_assessments?.percentage || 0}%
+              </h3>
+              {/* <p className="text-black">
+                {progressAndScoreData?.summative_assessments?.completed || 0}/
+                {progressAndScoreData?.summative_assessments?.total || 0}{" "}
+                completed
+              </p> */}
+            </div>
+          </div>
+          <div className="col-lg-3">
+            <div className="progress-grid-in">
+              <h2>
+                <img src="../images/dashboard/progress-grid/3.svg" alt="" />{" "}
+                Overall Lesson progress
+              </h2>
+              <h3>
+                {progressAndScoreData?.overall_lesson_progress?.percentage || 0}
+                %
+              </h3>
+              {/* <p className="text-black">
+                {progressAndScoreData?.overall_lesson_progress?.completed || 0}{" "}
+                of {progressAndScoreData?.overall_lesson_progress?.total || 0}{" "}
+                lessons completed
+              </p> */}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="subjects-lesson-progress mt-2">
+        <div className="row">
+          <div className="col-lg-12">
+            <div className="my-subjects">
+              <div className="my-subjects-head mb-4">
+                <h3>
+                  <img
+                    src="/images/dashboard/chart-icon.svg"
+                    alt="chart-icon"
+                  />{" "}
+                  Subject Performance
+                </h3>
+              </div>
+              <div className="chart-wrap">
+                <div className="chart-in">
+                  <p className="performance-text">Subject Performance</p>
+                  <div className="chart-in-percent-grp">
+                    {[100, 80, 60, 40, 20, 0].map((val, idx) => (
+                      <div
+                        className={`chart-in-percent ${
+                          val === 0 ? "align-items-end" : ""
+                        }`}
+                        key={idx}
+                      >
+                        <span>{val}</span>
+                        <hr
+                          style={val === 0 ? { width: "95%" } : {}}
+                          className={val === 0 ? "ms-auto" : ""}
+                        />
+                      </div>
+                    ))}
+
+                    <div className="chart-bar-grp">
+                      {progressGraphData?.map((subject, idx) => {
+                        const subjectColor = colors[idx % colors.length];
+                        const baseline = parseFloat(
+                          subject?.scores?.baseline_score || 0
+                        );
+                        const lesson = parseFloat(
+                          subject?.scores?.lesson_score || 0
+                        );
+                        const summative = parseFloat(
+                          subject?.scores?.summative_score || 0
+                        );
+
+                        return (
+                          <div
+                            className="chart-bar-in"
+                            key={subject?.subject_id}
+                          >
+                            <div className="hover-data">
+                              <div className="hover-data-in">
+                                <p>
+                                  <span
+                                    style={{
+                                      backgroundColor: subjectColor.base,
+                                    }}
+                                  ></span>{" "}
+                                  Baseline Assessments, {baseline}%
+                                </p>
+                                <p>
+                                  <span
+                                    style={{
+                                      backgroundColor: subjectColor.lesson,
+                                    }}
+                                  ></span>{" "}
+                                  Lesson Quiz, {lesson}%
+                                </p>
+                                <p>
+                                  <span
+                                    style={{
+                                      backgroundColor: subjectColor.summative,
+                                    }}
+                                  ></span>{" "}
+                                  Summative Assessments, {summative}%
+                                </p>
+                              </div>
+                            </div>
+                            <div className="bar-wrp">
+                              <div
+                                className="bar"
+                                style={{
+                                  backgroundColor: subjectColor.base,
+                                  height: `${baseline}%`,
+                                }}
+                              ></div>
+                              <span>B</span>
+                            </div>
+                            <div className="bar-wrp">
+                              <div
+                                className="bar"
+                                style={{
+                                  backgroundColor: subjectColor.lesson,
+                                  height: `${lesson}%`,
+                                }}
+                              ></div>
+                              <span>L</span>
+                            </div>
+                            <div className="bar-wrp">
+                              <div
+                                className="bar"
+                                style={{
+                                  backgroundColor: subjectColor.summative,
+                                  height: `${summative}%`,
+                                }}
+                              ></div>
+                              <span>S</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                <p className="activity-text">Activity Type</p>
+                <ul>
+                  {progressGraphData?.map((subject, idx) => (
+                    <li key={subject.subject_id}>
+                      <span
+                        style={{
+                          backgroundColor: colors[idx % colors.length].base,
+                        }}
+                      ></span>{" "}
+                      {subject.subject_name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <PrincipalProgressSubjectWise
+        subjectList={subjectList}
+        classList={classList}
+        selectedSchool={selectedSchool}
+      />
+      <PrincipalTrainingCompletion
+        subjectList={subjectList}
+        classList={classList}
+        selectedSchool={selectedSchool}
+      />
+    </>
+  );
+};
+
+export default PrincipalProgressAndScore;

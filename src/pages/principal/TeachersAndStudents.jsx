@@ -10,6 +10,7 @@ import {
   getSubjectLevel,
   getSubjectsByLevel,
 } from "../../redux/slices/principal/principalDashboardSlice";
+import Select from "react-select";
 
 const TeachersAndStudents = () => {
   const dispatch = useDispatch();
@@ -76,11 +77,11 @@ const TeachersAndStudents = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [navigationPage, setNavigationPage] = useState(1);
   const itemsPerPage = 5;
-  const totalPages = Math.ceil(filteredTeacher.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredTeacher?.length / itemsPerPage);
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentItems = filteredTeacher.slice(startIndex, endIndex);
+  const currentItems = filteredTeacher?.slice(startIndex, endIndex);
 
   // This function is for "Previous" and "Next" buttons only
   const handlePageNumberClick = (pageNumber) => {
@@ -147,6 +148,12 @@ const TeachersAndStudents = () => {
   //     return pageNumbers;
   //   };
 
+  
+  const options = classLevels?.map(level => ({
+    value: level?.id,
+    label: level?.name,
+  }));
+
   return (
     <>
       <div className="top-head prog-sco-wrp">
@@ -162,22 +169,33 @@ const TeachersAndStudents = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        {/* <select name="level">
-					<option value="1">Ruby Level</option>
-					<option value="2">Emerald Level</option>
-				</select> */}
-
-        <select
-          value={selectedLevel || ""}
-          name="level"
-          onChange={handleLevelChange}
-        >
+        {/* <select value={selectedLevel || ""} name="level" onChange={handleLevelChange} >
           {classLevels?.map((level, index) => (
-            <option key={index} value={level?.id}>
-              {level?.name}
-            </option>
+            <option key={index} value={level?.id}> {level?.name}</option>
           ))}
-        </select>
+        </select> */}
+        <Select isSearchable={false} styles={{
+            control: (base) => ({
+              ...base,
+              minHeight: '38px',
+              fontSize:"16px",
+              borderColor:"#4126A8",
+              boxShadow: 'none',
+              '&:hover': {
+                borderColor: '#4126A8'
+              }
+            }),
+            option: (base, state) => ({
+              ...base,
+              backgroundColor: state.isFocused ? '#4126A8' : 'white',
+              color: state.isFocused ? 'white' : '#333',
+              '&:active': {
+                  backgroundColor: '#4126A8'
+              }
+            }),
+          }} className="level-dropdown" options={options} value={options?.find(opt => opt.value == selectedLevel)}
+          onChange={selected => handleLevelChange({ target: { name: 'level', value: selected.value }})}/>
+
       </div>
       <div className="subjects-lesson-progress teachers-students-wrp">
         <div className="row">
@@ -186,7 +204,8 @@ const TeachersAndStudents = () => {
               <div className="my-subjects-head">
                 <h3>
                   <img src="../images/teachers-students/user.svg" alt="" />{" "}
-                  Teachers ({teacherDetails.length})
+                  Teachers
+                  {/* Teachers ({teacherDetails.length}) */}
                 </h3>
               </div>
               <div className="teachers-students-list">
@@ -203,7 +222,7 @@ const TeachersAndStudents = () => {
                         <h2>
                           {teacher.name}
                           <span>
-                            {teacher.status === 1 ? "Active" : "In-active"}
+                            {/* {teacher.status === 1 ? "Active" : "In-active"} */}
                           </span>
 
                           <Link
@@ -238,7 +257,7 @@ const TeachersAndStudents = () => {
                   </>
                 )}
 
-                <div
+                <div className="panel-pagination"
                   style={{
                     display: "flex",
                     justifyContent: "flex-end",
@@ -246,17 +265,16 @@ const TeachersAndStudents = () => {
                     alignItems: "center",
                   }}
                 >
-                  <button
+                  <button 
                     className="page-btn"
                     onClick={() => handleNavigate("prev")}
                     disabled={navigationPage === 1}
-                    style={{ padding: "0px 9px" }}
                   >
                     Prev
                   </button>
 
                   {getPageNumbers().map((number) => (
-                    <button
+                    <button  className="page-count"
                       key={number}
                       onClick={() => handlePageNumberClick(number)}
                       // style={{color: "#fff", backgroundColor: "#4126A8", width: "40px"}}
@@ -267,11 +285,9 @@ const TeachersAndStudents = () => {
                         backgroundColor:
                           number === currentPage ? "#4126A8" : "white",
                         color: number === currentPage ? "white" : "black",
-                        border: "1px solid #ccc",
                         // borderRadius: "5px",
                         padding: "2px",
                         cursor: "pointer",
-                        width: "40px",
                       }}
                     >
                       {number}
@@ -281,7 +297,6 @@ const TeachersAndStudents = () => {
                     className="page-btn"
                     onClick={() => handleNavigate("next")}
                     disabled={navigationPage === totalPages}
-                    style={{ padding: "0px 9px" }}
                   >
                     Next
                   </button>
@@ -328,7 +343,7 @@ const TeachersAndStudents = () => {
                           <h2>
                             {student.name}
                             <span>
-                              {student.status === 1 ? "Active" : "In-active"}
+                              {/* {student.status === 1 ? "Active" : "In-active"} */}
                             </span>
                             <Link
                               to="/principal/student/profile"

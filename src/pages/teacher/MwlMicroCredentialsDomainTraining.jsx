@@ -76,13 +76,13 @@ const MwlMicroCredentialsDomainTraining = () => {
                   {/* <a href="javascript:void(0);" className="add-cta">
                     <img src="../images/cta-badge.svg" alt="" /> View Badge
                   </a> */}
-                  {(mwlSubjectDetail?.badge_pdf && name != "Lesson Prep") && <Link to={mwlSubjectDetail?.badge_pdf} className="add-cta" download target="_blank">
+                  {(mwlSubjectDetail?.data?.[0]?.badge_pdf && name != "Lesson Prep") && <Link to={mwlSubjectDetail?.data?.[0]?.badge_pdf} className="add-cta" download target="_blank">
                     <img src="/images/cta-badge.svg" alt="Download Badge" /> View Badge
                   </Link>}
                 </h3>
               </div>
               <div className="manage-sub-grid for-teacher-subjects">
-                {mwlSubjectDetail?.data?.[0].subjects.map((item, index) => {
+                {mwlSubjectDetail?.data?.[0]?.subjects.map((item, index) => {
                   let imageSrc = "";
                   if (item.status === "not_started") {
                     imageSrc =
@@ -148,14 +148,17 @@ const MwlMicroCredentialsDomainTraining = () => {
                 })}
               </div>
             </div>
-            <div className="my-subjects">
+            {mwlSubjectDetail?.data?.[1]?.level_name && <div className="my-subjects">
               <div className="my-subjects-head">
                 <h3>
                   {mwlSubjectDetail?.data?.[1]?.level_name} - Manage Subjects
+                  {(mwlSubjectDetail?.data?.[1]?.badge_pdf && name != "Lesson Prep") && <Link to={mwlSubjectDetail?.data?.[1]?.badge_pdf} className="add-cta" download target="_blank">
+                    <img src="/images/cta-badge.svg" alt="Download Badge" /> View Badge
+                  </Link>}
                 </h3>
               </div>
               <div className="manage-sub-grid  for-teacher-subjects">
-                {mwlSubjectDetail?.data?.[1].subjects.map((item, index) => {
+                {mwlSubjectDetail?.data?.[1]?.subjects.map((item, index) => {
                   let imageSrc = "";
                   if (item.status === "not_started") {
                     imageSrc =
@@ -219,7 +222,7 @@ const MwlMicroCredentialsDomainTraining = () => {
                   );
                 })}
               </div>
-            </div>
+            </div>}
           </div>
         </div>
       </div>

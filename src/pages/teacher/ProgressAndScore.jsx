@@ -1,25 +1,18 @@
 import { useEffect, useState } from "react";
 import ProgressSubjectWise from "../../components/teacher/ProgressSubjectWise";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getClassList,
-  getStudentList,
-  getSubjectList,
-} from "../../redux/slices/teacher/dashboardSlice";
-import {
-  getTeacherProgressScore,
-  getTeacherSubjectGraph,
-} from "../../redux/slices/teacher/progressSlice";
+import { getClassList, getStudentList, getSubjectList } from "../../redux/slices/teacher/dashboardSlice";
+import {getTeacherProgressScore, getTeacherSubjectGraph } from "../../redux/slices/teacher/progressSlice";
+import { getReportDownloadData } from "../../redux/slices/authSlice";
+import { ReportDownload } from "../../components/teacher/ReportPdfDowload";
 
 const ProgressAndScore = () => {
   const dispatch = useDispatch();
   const currentLevel = localStorage.getItem("classLevel");
-  const { subjectList, classList, studentList } = useSelector(
-    (state) => state.dashboard
-  );
-  const { progressAndScoreData, progressGraphData } = useSelector(
-    (state) => state.progress
-  );
+  const { reportData, reportLoading } = useSelector((state) => state.auth);
+
+  const { subjectList, classList, studentList } = useSelector((state) => state.dashboard);
+  const { progressAndScoreData, progressGraphData } = useSelector((state) => state.progress);
 
   const [activeDropdown, setActiveDropdown] = useState(null);
 
@@ -36,11 +29,7 @@ const ProgressAndScore = () => {
 
   useEffect(() => {
     if (selectedClasses) {
-      dispatch(
-        getStudentList({
-          class: selectedClasses?.includes("all") ? ["all"] : selectedClasses,
-        })
-      );
+      dispatch(getStudentList({class: selectedClasses?.includes("all") ? ["all"] : selectedClasses}));
     }
   }, [selectedClasses]);
 
@@ -61,6 +50,8 @@ const ProgressAndScore = () => {
 
     dispatch(getTeacherProgressScore(payload));
     dispatch(getTeacherSubjectGraph(payload));
+    dispatch(getReportDownloadData(payload));
+    
   }, [selectedClasses, selectedStudents, selectedCourses]);
 
   const [classSearch, setClassSearch] = useState("");
@@ -141,8 +132,8 @@ const ProgressAndScore = () => {
     <>
       <div className="top-head prog-sco-wrp">
         <div className="top-head-in">
-          <h1>Progress & Score</h1>
-          <p>Your Progress</p>
+          <h1> Student Completion </h1>
+          {/* <p>Your Progress</p> */}
         </div>
 
         <div className="influ-btns ms-auto">
@@ -357,6 +348,11 @@ const ProgressAndScore = () => {
               </div>
             </div>
           </div>
+          {
+            reportLoading ? <button className="download-cta active" disabled> PDF Loading... </button> : <ReportDownload key={JSON.stringify(reportData)} data={reportData}/>
+          }
+          
+          
         </div>
       </div>
       <div className="progress-grid">
@@ -364,7 +360,7 @@ const ProgressAndScore = () => {
           <div className="col-lg-3">
             <div className="progress-grid-in ms-0">
               <h2>
-                <img src="../images/dashboard/progress-grid/1.svg" alt="" />{" "}
+                <img src="/images/Overlay.svg" alt="" />{" "}
                 Baseline <br /> Assessments
               </h2>
               <h3>
@@ -376,9 +372,8 @@ const ProgressAndScore = () => {
           <div className="col-lg-3">
             <div className="progress-grid-in">
               <h2>
-                <img src="../images/dashboard/progress-grid/3.svg" alt="" />{" "}
-                Lesson-Wise Quiz <br />
-                Progress
+                <img src="/images/dashboard/progress-grid/3.svg" alt="Lesson Quizzes" />{" "}
+                Lesson Quizzes
               </h2>
               <h3>{progressAndScoreData?.lesson_progress?.percentage || 0}%</h3>
               {/* <p className="text-black">
@@ -390,7 +385,7 @@ const ProgressAndScore = () => {
           <div className="col-lg-3">
             <div className="progress-grid-in">
               <h2>
-                <img src="../images/dashboard/progress-grid/2.svg" alt="" />{" "}
+                <img src="/images/dashboard/progress-grid/2.svg" alt="Summative Assessments" />{" "}
                 Summative <br /> Assessments
               </h2>
               <h3>
@@ -406,8 +401,8 @@ const ProgressAndScore = () => {
           <div className="col-lg-3">
             <div className="progress-grid-in">
               <h2>
-                <img src="../images/dashboard/progress-grid/3.svg" alt="" />{" "}
-                Overall Lesson progress
+                <img src="/images/dashboard/progress-grid/3.svg" alt="Overall Lesson" />{" "}
+                Overall Lesson
               </h2>
               <h3>{progressAndScoreData?.avg_quiz_score || 0}%</h3>
               {/* <p className="text-black">
@@ -430,14 +425,14 @@ const ProgressAndScore = () => {
                     src="/images/dashboard/chart-icon.svg"
                     alt="chart-icon"
                   />{" "}
-                  Subject-wise Performance
+                  Subject Performance
                 </h3>
               </div>
               <div className="chart-wrap">
                 <div className="chart-in">
-                  <p className="performance-text">Subject-wise Performance</p>
+                  <p className="performance-text"> Scores </p>
                   <div className="chart-in-percent-grp">
-                    {[100, 80, 60, 40, 20, 0].map((val, idx) => (
+                    {["100%", "80%", "60%", "40%", "20%", 0].map((val, idx) => (
                       <div
                         className={`chart-in-percent ${
                           val === 0 ? "align-items-end" : ""
@@ -476,7 +471,7 @@ const ProgressAndScore = () => {
                                       backgroundColor: subjectColor.base,
                                     }}
                                   ></span>{" "}
-                                  Baseline Assessments, {baseline}%
+                                  Baseline Assessment, {baseline}%
                                 </p>
                                 <p>
                                   <span
@@ -484,7 +479,7 @@ const ProgressAndScore = () => {
                                       backgroundColor: subjectColor.lesson,
                                     }}
                                   ></span>{" "}
-                                  Lesson Quiz, {lesson}%
+                                  Lesson Quizzes, {lesson}%
                                 </p>
                                 <p>
                                   <span
@@ -492,7 +487,7 @@ const ProgressAndScore = () => {
                                       backgroundColor: subjectColor.summative,
                                     }}
                                   ></span>{" "}
-                                  Summative Assessments, {summative}%
+                                  Summative Assessment, {summative}%
                                 </p>
                               </div>
                             </div>
@@ -533,7 +528,7 @@ const ProgressAndScore = () => {
                   </div>
                 </div>
 
-                <p className="activity-text">Activity Type</p>
+                <p className="activity-text"> Measurement Type </p>
                 <ul>
                   {progressGraphData?.map((subject, idx) => (
                     <li key={subject.subject_id}>

@@ -24,7 +24,6 @@ function PrincipalTeacherProfile() {
   const navigate = useNavigate();
 
   const teacherId = location?.state?.teacherId;
-  console.log(teacherId, "teacherId@@@@@@@#####");
 
   // const [showAllSubject, setShowAllSubject] = useState(false);
   const [expandedLevels, setExpandedLevels] = useState({});
@@ -41,7 +40,6 @@ function PrincipalTeacherProfile() {
     dispatch(teacherProfile({ level_id: level, teacher_id: teacherId }));
   }, [dispatch, currentLevel, teacherId]);
 
-  console.log(teacherData, "teacherData%%%%%%%%");
 
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [selectedCourses, setSelectedCourses] = useState([]);
@@ -145,28 +143,29 @@ function PrincipalTeacherProfile() {
         </div>
       </div>
 
-      <div className="student-short-info">
+      <div className="student-short-info for-principal">
         <h3>
-          {teacherData?.name} <span>Overall Score</span>
+          {teacherData?.name} 
+          {/* <span>Overall Score</span> */}
         </h3>
         <p>
           {teacherData?.email}
-          <b>{teacherData.overall_completion}%</b>
+          {/* <b>{teacherData.overall_completion}%</b> */}
         </p>
       </div>
       <div className="my-subjects">
         <div className="top-head">
           <div className="top-head-in">
-            <h1 className="mb-0">classes Performance</h1>
+            <h1 className="mb-0">Classes Performance</h1>
           </div>
-          <div className="students-src ms-auto">
+          {/* <div className="students-src ms-auto">
             <input
               type="text"
               placeholder="Search emails by subject, send..."
               value={searchQuery1}
               onChange={(e) => setSearchQuery1(e.target.value)}
             />
-          </div>
+          </div> */}
           {/* <div className="back-btn ms-3">
             <a href="">
               <img src="../images/download-certif.svg" alt="" style={{ filter: "brightness(0) invert(1)" }} />
@@ -178,10 +177,10 @@ function PrincipalTeacherProfile() {
           <table>
             <tbody>
               <tr>
-                <th style={{ width: "250px" }}>Subject</th>
+                <th style={{ width: "300px" }}>Subject</th>
                 <th>Students</th>
                 <th style={{ width: "400px" }}>Completion % </th>
-                <th>Avg. Score</th>
+                {/* <th>Avg. Score</th> */}
                 <th>Action </th>
               </tr>
               {filterClassesPerformance.length === 0 ? (
@@ -200,7 +199,7 @@ function PrincipalTeacherProfile() {
                       <td>{item?.students}</td>
                       <td>
                         <div className="prog">
-                          {item?.completion}%
+                          <span> {item?.completion}% </span>
                           <div className="progress">
                             <div
                               className="progress-bar"
@@ -214,11 +213,11 @@ function PrincipalTeacherProfile() {
                           </div>
                         </div>
                       </td>
-                      <td>
+                      {/* <td>
                         <div style={{ color: "#16A34A" }}>
                           {item?.avg_score}%
                         </div>
-                      </td>
+                      </td> */}
                       <td>
                         <Link
                           to={`/principal/class/detail/${item?.subject_id}`}
@@ -241,7 +240,8 @@ function PrincipalTeacherProfile() {
       <div className="my-subjects">
         <div className="top-head">
           <div className="top-head-in">
-            <h1 className="mb-0">Students({filterPrincipalStudent?.length})</h1>
+            <h1 className="mb-0">Students</h1>
+            {/* <h1 className="mb-0">Students({filterPrincipalStudent?.length})</h1> */}
           </div>
           <div className="students-src ms-auto">
             <input
@@ -250,7 +250,6 @@ function PrincipalTeacherProfile() {
               value={searchQuery2}
               onChange={(e) => setSearchQuery2(e.target.value)}
             />
-            {/* {console.log(searchQuery2, "searchQuery211111")} */}
           </div>
           {/* <div className="influ-btns ms-3">
             <div className="influ-dropdown">
@@ -268,7 +267,6 @@ function PrincipalTeacherProfile() {
                           setSelectedCourses([]);
                         } else {
                           setSelectedCourses([item.id]);
-                          // console.log(item.title, "item.title11111111111");
                         }
 
                       }}
@@ -295,7 +293,7 @@ function PrincipalTeacherProfile() {
                 <th style={{ width: "250px" }}>Student Name</th>
                 <th>Status </th>
                 <th style={{ width: "350px" }}>Completion Score </th>
-                <th>Avg. Score</th>
+                {/* <th>Avg. Score</th> */}
                 <th>Action </th>
               </tr>
               {filterPrincipalStudent.length === 0 ? (
@@ -329,7 +327,7 @@ function PrincipalTeacherProfile() {
                               item.status === "locked" ||
                               item.status === "undefined" ||
                               !item.status
-                                ? "#9CA3AF"
+                                ? "#4b5563"
                                 : "",
                           }}
                         >
@@ -341,7 +339,7 @@ function PrincipalTeacherProfile() {
                       </td>
                       <td>
                         <div className="prog">
-                          {item.completion_score}%
+                          <span> {item.completion_score}% </span>
                           <div className="progress">
                             <div
                               className="progress-bar"
@@ -355,9 +353,9 @@ function PrincipalTeacherProfile() {
                           </div>
                         </div>
                       </td>
-                      <td>
+                      {/* <td>
                         <div style={{ color: "#16A34A" }}>{item.avg_score}</div>
-                      </td>
+                      </td> */}
                       <td>
                         <Link
                           to="/principal/students/profile"
@@ -383,12 +381,12 @@ function PrincipalTeacherProfile() {
             <h1 className="mb-0">Teacher Training Completion</h1>
           </div>
           <div className="students-src ms-auto">
-            <input
+            {/* <input
               type="text"
               placeholder="Search by teacher name....."
               value={searchQuery3}
               onChange={(e) => setSearchQuery3(e.target.value)}
-            />
+            /> */}
           </div>
           {/* <div className="back-btn ms-3">
             <a href="">
@@ -401,10 +399,10 @@ function PrincipalTeacherProfile() {
           <table>
             <thead>
               <tr>
-                <th style={{ width: "400px" }}>Level</th>
-                <th>Subject</th>
-                <th>Completion</th>
-                <th>Badges Status</th>
+                <th style={{ width: "300px" }}>Level</th>
+                <th style={{ minWidth: "300px" }}>Subject</th>
+                {/* <th>Completion</th> */}
+                <th>Badge Completion Status</th>
               </tr>
             </thead>
 
@@ -421,24 +419,16 @@ function PrincipalTeacherProfile() {
                     {/* Level Row */}
                     <tr>
                       <td>{item.level_name}</td>
-                      <td
-                        onClick={() => toggleLevel(item.level_id)}
-                        style={{ cursor: "pointer" }}
-                      >
+                      <td onClick={() => toggleLevel(item.level_id)} style={{ cursor: "pointer" }} >
                         All Subject
                         <button type="button" className="lessons-btn">
-                          <i
-                            className={`fa-solid ${
-                              expandedLevels[item.level_id]
-                                ? "fa-angle-up"
-                                : "fa-angle-down"
-                            }`}
-                          ></i>
+                          <i className={`fa-solid ${ expandedLevels[item.level_id] 
+                                ? "fa-angle-up" : "fa-angle-down" }`} ></i>
                         </button>
                       </td>
-                      <td>
+                      {/* <td>
                         <div className="prog">
-                          {item.percentage}%
+                          <span>{item.percentage}% </span>
                           <div className="progress">
                             <div
                               className="progress-bar"
@@ -450,15 +440,13 @@ function PrincipalTeacherProfile() {
                             ></div>
                           </div>
                         </div>
-                      </td>
+                      </td> */}
                       <td>
                         <div
                           className={`status  ${
                             item.status == "in_progress"
                               ? "review"
                               : item.status == "review"
-                              ? "review"
-                              : item.status == "in_progress"
                               ? "review"
                               : item.status == "retake"
                               ? "review"
@@ -470,7 +458,7 @@ function PrincipalTeacherProfile() {
                               item.status === "locked" ||
                               item.status === "undefined" ||
                               !item.status
-                                ? "#9CA3AF"
+                                ? "#4b5563"
                                 : "",
                           }}
                         >
@@ -487,10 +475,13 @@ function PrincipalTeacherProfile() {
                       item?.subjects?.map((subject) => (
                         <tr key={subject.id} className="lessons-list">
                           <td>&nbsp;</td>
-                          <td>{subject?.name}</td>
                           <td>
+                            {subject?.name} 
+                            {subject?.badge && <img src="/images/badge-icon.svg" alt="badge"></img>}
+                          </td>
+                          {/* <td>
                             <div className="prog">
-                              {subject?.percentage}%
+                              <span>{subject?.percentage}% </span>
                               <div className="progress">
                                 <div
                                   className="progress-bar"
@@ -508,9 +499,24 @@ function PrincipalTeacherProfile() {
                                 ></div>
                               </div>
                             </div>
-                          </td>
+                          </td> */}
                           <td>
-                            <div className="status">{subject.status}</div>
+                           <div className={`status  ${
+                                subject?.status == "in_progress" ? "review"
+                                  : subject?.status == "review" ? "review"
+                                  : subject?.status == "retake" ? "review"
+                                  : ""
+                              }`} 
+                              style={{ backgroundColor: subject?.status === "not_started" ||
+                              !subject?.status ? "#4b5563" : "", }}
+                            >
+                              {subject?.status
+                                .replace(/_/g, " ")
+                                .replace(/\b\w/g, (char) =>
+                                  char.toUpperCase()
+                                ) || "Not Started"}
+                            </div>
+ 
                           </td>
                         </tr>
                       ))}

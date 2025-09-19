@@ -102,6 +102,9 @@ const ShowContents = ({ data, type }) => {
       {/* VIDEO */}
       {type === "video" && (
         <div className="lesson-content-item video-content">
+          {data?.desc && (
+            <p dangerouslySetInnerHTML={{ __html: data?.desc }}></p>
+          )}
           {data?.video_link ? (
             <iframe
               src={data?.video_link.replace("/view", "/preview")}
@@ -115,9 +118,7 @@ const ShowContents = ({ data, type }) => {
           ) : (
             <p> Video content available but no video link provided. </p>
           )}
-          {data?.desc && (
-            <p dangerouslySetInnerHTML={{ __html: data?.desc }}></p>
-          )}
+          
         </div>
       )}
       {/* {type === 'video' && (

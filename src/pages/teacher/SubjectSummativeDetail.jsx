@@ -27,7 +27,7 @@ const SubjectSummativeDetail = () => {
         <form>
             {baslineSummitiveInfo?.summative_test?.answers?.map((item, index) => (
                 <div className="less-details-in" key={index}>
-                    <h2> {item?.type == "standard" ? "Multiple Choice Question with one correct answer" : item?.type == "fill_points" ? "Fill in the Blank with Points" : item?.type == "fill_blank" ? "Fill in the Blank" : "Multiple Choice Question with one correct answer"} </h2>
+                    {/* <h2> {item?.type == "standard" ? "Multiple Choice Question with one correct answer" : item?.type == "fill_points" ? "Fill in the Blank with Points" : item?.type == "fill_blank" ? "Fill in the Blank" : "Multiple Choice Question with one correct answer"} </h2> */}
                     <h4>Question</h4>
                     <input readOnly type="text" className="q-fiel" value={item?.question}/>
                     <h4>Options</h4>

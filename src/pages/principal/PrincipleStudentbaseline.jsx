@@ -1,21 +1,14 @@
-import React, { useEffect } from 'react';
+import  { useEffect } from 'react';
 import {Link, useLocation, useNavigate} from 'react-router';
-import assesment from '../../assets/assesment.json';
 import { useDispatch, useSelector } from 'react-redux';
 import { getStudentAnswers } from '../../redux/slices/principal/principalDashboardSlice';
 
 const PrincipleStudentbaseline = () => {
 	const navigate = useNavigate();
-
-	// const baslineTest = assesment?.baseline_test || {};
-	// const answer = baslineTest?.answers || [];
-	// const subject = assesment?.subject || {};
-
     const dispatch = useDispatch();
     const location = useLocation();
     const subjectId = location.state?.subjectId;
     const studentId = location.state?.studentId;
-	console.log(subjectId,studentId)
 
     const { allQuestionAnswer } = useSelector((state) => state.principalDashboard)
 

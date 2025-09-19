@@ -25,14 +25,58 @@ export const logout = createAsyncThunk("/student/logout",async (_, { rejectWithV
     }
   }
 );
- 
- 
- 
-export const getMyDetails = createAsyncThunk(
-  "/anything/clever",
-  async (formData, { rejectWithValue }) => {
+  
+export const getMyDetails = createAsyncThunk("/anything/clever",async (formData, { rejectWithValue }) => {
     try {
       const response = await api.getMyDetails(formData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || { message: error.message }
+      );
+    }
+  }
+);
+
+export const getTermsCondition = createAsyncThunk("/anything/getTermsCondition",async (formData, { rejectWithValue }) => {
+    try {
+      const response = await api.getTermsCondition(formData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || { message: error.message }
+      );
+    }
+  }
+);
+
+export const getPrivacyPolicy = createAsyncThunk("/anything/getPrivacyPolicy",async (formData, { rejectWithValue }) => {
+    try {
+      const response = await api.getPrivacyPolicy(formData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || { message: error.message }
+      );
+    }
+  }
+);
+
+export const getReportDownloadData = createAsyncThunk("/anything/getReportDownloadData",async (formData, { rejectWithValue }) => {
+    try {
+      const response = await api.getReportDownloadData(formData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || { message: error.message }
+      );
+    }
+  }
+);
+
+export const getEarnedCertificate = createAsyncThunk("/anything/getEarnedCertificate",async (formData, { rejectWithValue }) => {
+    try {
+      const response = await api.getEarnedCertificate(formData);
       return response.data;
     } catch (error) {
       return rejectWithValue(
@@ -47,7 +91,12 @@ const authSlice = createSlice({
   initialState: {
     isAuthenticated: !!storedUser,
     user: storedUser || null,
+    termsData: null,
+    privacyData: null,
+    reportData: null,
+    earnCertificateData: null,
     loading: false,
+    reportLoading: false,
     error: null,
   },
   reducers: {
@@ -101,7 +150,9 @@ const authSlice = createSlice({
         setTimeout(() => {
           window.location.href = "/";
         }, 1000);
-      }) .addCase(getMyDetails.pending, (state) => {
+      }) 
+
+      .addCase(getMyDetails.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
@@ -118,7 +169,55 @@ const authSlice = createSlice({
           action.payload?.message || "Login failed. Please try again."
         );
         state.error = action.payload?.message || "Failed to sign in.";
-      });
+      })
+
+      .addCase(getTermsCondition.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getTermsCondition.fulfilled, (state, action) => {
+        state.loading = false;
+        state.termsData = action.payload?.data
+      })
+      .addCase(getTermsCondition.rejected, (state, action) => {
+        state.loading = false;
+      })
+
+      .addCase(getPrivacyPolicy.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getPrivacyPolicy.fulfilled, (state, action) => {
+        state.loading = false;
+        state.privacyData = action.payload?.data
+      })
+      .addCase(getPrivacyPolicy.rejected, (state, action) => {
+        state.loading = false;
+      })
+
+      .addCase(getReportDownloadData.pending, (state) => {
+        state.reportLoading = true;
+        state.error = null;
+      })
+      .addCase(getReportDownloadData.fulfilled, (state, action) => {
+        state.reportLoading = false;
+        state.reportData = action.payload?.data;
+      })
+      .addCase(getReportDownloadData.rejected, (state, action) => {
+        state.reportLoading = false;
+      })
+
+      .addCase(getEarnedCertificate.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getEarnedCertificate.fulfilled, (state, action) => {
+        state.loading = false;
+        state.earnCertificateData = action.payload?.certificates;
+      })
+      .addCase(getEarnedCertificate.rejected, (state, action) => {
+        state.loading = false;
+      })
   },
 });
  

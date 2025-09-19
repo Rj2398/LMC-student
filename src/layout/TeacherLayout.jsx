@@ -2,19 +2,12 @@ import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "../components/teacher/Sidebar";
 import Navbar from "../components/teacher/Navbar";
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import Loading from "../pages/common/Loading";
 
 const TeacherLayout = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const [hideNavSidebar, setHideNavSidebar] = useState(false);
 
   const location = useLocation();
-  const dashboardLoading = useSelector((state) => state.dashboard?.loading);
-  const progressLoading = useSelector((state) => state.progress?.loading);
-  const mwlLoading = useSelector((state) => state.mwl?.loading);
-  const loading = dashboardLoading || progressLoading || mwlLoading;
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location?.pathname]);
@@ -42,8 +35,6 @@ const TeacherLayout = () => {
   return (
     hideNavSidebar ? ( <main> <Outlet /> </main> ) : (
     <>
-      {(loading) && <Loading />}
-
       <Sidebar showSidebar={showSidebar} />
       <section id="content">
         <Navbar setShowSidebar={setShowSidebar} />

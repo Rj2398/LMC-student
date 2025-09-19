@@ -15,6 +15,9 @@ import principaDashboardSlice from './slices/principal/principalDashboardSlice';
 import teacherAndStudentsSlice from './slices/principal/teacherAndStudentsSlice';
 import principalProgressSlice from './slices/principal/principalProgressSlice'
 
+// principal Panel
+import districtDashboardSlice from './slices/districtAdmin/districtSlice';
+
 
 export const store = configureStore({
   reducer: {
@@ -32,5 +35,8 @@ export const store = configureStore({
     principalDashboard:principaDashboardSlice,
     teacherAndStudents:teacherAndStudentsSlice,
     principalProgress:principalProgressSlice,
+
+    //principal slice 
+    districtDashboard:districtDashboardSlice,
   }
 });

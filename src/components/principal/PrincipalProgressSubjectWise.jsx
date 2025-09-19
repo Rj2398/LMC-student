@@ -21,7 +21,6 @@ const PrincipalProgressSubjectWise = ({ subjectList, classList }) => {
   const { subjectWizeScoreData } = useSelector(
     (state) => state.principalProgress
   );
-  console.log(subjectWizeScoreData);
 
   const [classSearch, setClassSearch] = useState("");
   const [studentSearch, setStudentSearch] = useState("");
@@ -44,15 +43,8 @@ const PrincipalProgressSubjectWise = ({ subjectList, classList }) => {
   }, [subjectList]);
 
   useEffect(() => {
-    if (selectedStudents) {
-      dispatch(
-        getPrincipalSubjectQuizScore({
-          student_id: selectedStudents?.includes("all")
-            ? ["all"]
-            : selectedStudents,
-          subject_id: selectedCourses,
-        })
-      );
+    if (selectedStudents?.length > 0) {
+      dispatch(getPrincipalSubjectQuizScore({student_id: selectedStudents?.includes("all") ? ["all"] : selectedStudents,subject_id: selectedCourses}));
     }
   }, [selectedStudents, selectedCourses]);
 
@@ -98,72 +90,9 @@ const PrincipalProgressSubjectWise = ({ subjectList, classList }) => {
     <div className="my-subjects">
       <div className="top-head">
         <div className="top-head-in">
-          <h1 className="mb-0">Subject Wise Quiz Scores</h1>
+          <h1 className="mb-0">Subject Quiz Scores</h1>
         </div>
         <div className="influ-btns ms-auto">
-          {/* Teachers Dropdown */}
-          {/* <div className="influ-dropdown">
-						<button className="influ-btn influ-drop-btn" type="button" onClick={() =>
-								setActiveDropdown(activeDropdown === "teacherDropdown" ? null : "teacherDropdown")
-							} >
-							All Teachers <i className={`fa-regular ${activeDropdown === "teacherDropdown" ? "fa-angle-up" : "fa-angle-down"}`}></i>
-						</button>
-						<div className="influ-drop-list" style={{ display: activeDropdown === "teacherDropdown" ? "block" : "none" }}>
-							<div className="influ-drop-list-search">
-								<button type="submit"><img src="images/search-icon.svg" alt="" /></button>
-								<input
-									type="text"
-									placeholder="Search"
-									value={classSearch}
-									onChange={e => setClassSearch(e.target.value)}
-								/>
-							</div>
-							<div className="influ-drop-list-inner">
-								<div className="influ-drop-list-item">
-									<input type="checkbox" checked={selectedClasses.includes("all")} onChange={() => handleToggle("all", selectedClasses, setSelectedClasses)} />
-									All Classes
-								</div>
-								{filteredClasses?.map(item => (
-									<div key={item.id} className="influ-drop-list-item">
-										<input type="checkbox" checked={selectedClasses.includes("all") || selectedClasses.includes(item.name)} disabled={selectedClasses.includes("all")} onChange={() => handleToggle(item.name, selectedClasses, setSelectedClasses)} />
-										{item.name}
-									</div>
-								))}
-							</div>
-						</div>
-					</div> */}
-
-          {/* Class Dropdown */}
-          {/* <div className="influ-dropdown">
-						<button className="influ-btn influ-drop-btn" type="button" onClick={() =>
-								setActiveDropdown(activeDropdown === "classDropdown" ? null : "classDropdown")
-							} >
-							All Classes <i className={`fa-regular ${activeDropdown === "classDropdown" ? "fa-angle-up" : "fa-angle-down"}`}></i>
-						</button>
-						<div className="influ-drop-list" style={{ display: activeDropdown === "classDropdown" ? "block" : "none" }}>
-							<div className="influ-drop-list-search">
-								<button type="submit"><img src="images/search-icon.svg" alt="" /></button>
-								<input
-									type="text"
-									placeholder="Search"
-									value={classSearch}
-									onChange={e => setClassSearch(e.target.value)}
-								/>
-							</div>
-							<div className="influ-drop-list-inner">
-								<div className="influ-drop-list-item">
-									<input type="checkbox" checked={selectedClasses.includes("all")} onChange={() => handleToggle("all", selectedClasses, setSelectedClasses)} />
-									All Classes
-								</div>
-								{filteredClasses?.map(item => (
-									<div key={item.id} className="influ-drop-list-item">
-										<input type="checkbox" checked={selectedClasses.includes("all") || selectedClasses.includes(item.name)} disabled={selectedClasses.includes("all")} onChange={() => handleToggle(item.name, selectedClasses, setSelectedClasses)} />
-										{item.name}
-									</div>
-								))}
-							</div>
-						</div>
-					</div> */}
 
           {/* Student Dropdown */}
           <div className="influ-dropdown">
@@ -294,7 +223,9 @@ const PrincipalProgressSubjectWise = ({ subjectList, classList }) => {
                 <td>---</td>
                 <td>
                   <div className="prog">
-                    {subjectWizeScoreData?.[0]?.baseline_score || 0}%
+                    <span>
+                      {subjectWizeScoreData?.[0]?.baseline_score || 0}% 
+                    </span>
                     <div className="progress">
                       <div
                         className="progress-bar"
@@ -314,12 +245,10 @@ const PrincipalProgressSubjectWise = ({ subjectList, classList }) => {
                 </td>
                 <td>
                   <div
-                    className={`status ${
-                      ["not_started", "not_completed", "in_progress"].includes(
-                        subjectWizeScoreData?.[0]?.baseline_status
-                      ) && "review"
+                    className={`status ${subjectWizeScoreData?.[0]?.baseline_status == "not_started" && "inactive"} ${
+                      [ "not_completed", "in_progress"].includes(subjectWizeScoreData?.[0]?.baseline_status) && "review"
                     }`}
-                  >
+                  > 
                     {subjectWizeScoreData?.[0]?.baseline_status
                       ? subjectWizeScoreData?.[0]?.baseline_status
                           .replace(/_/g, " ")
@@ -327,12 +256,12 @@ const PrincipalProgressSubjectWise = ({ subjectList, classList }) => {
                       : "Not Started"}
                   </div>
                 </td>
-                {!["not_started", "not_completed", "in_progress"].includes(
+                {!["not_started", "not_completed", "in_progress", "locked"].includes(
                   subjectWizeScoreData?.[0]?.baseline_status
                 ) && (
                   <td>
                     <Link
-                      to="/principal/progress-student-baseline-assessment"
+                      to="/district-admin/progress-student-baseline-assessment"
                       state={{
                         studentId: selectedStudents?.[0],
                         subjectId: selectedCourses?.[0],
@@ -359,8 +288,8 @@ const PrincipalProgressSubjectWise = ({ subjectList, classList }) => {
                 <td> &nbsp; </td>
                 <td>
                   <div
-                    className={`status inactive ${
-                      ["not_started", "not_completed", "in_progress"].includes(
+                    className={`status ${subjectWizeScoreData?.[0]?.lesson_overall_status == "not_started" && "inactive"} ${
+                      ["not_completed", "in_progress", "locked"].includes(
                         subjectWizeScoreData?.[0]?.lesson_overall_status
                       ) && "review"
                     }`}
@@ -385,7 +314,7 @@ const PrincipalProgressSubjectWise = ({ subjectList, classList }) => {
                   <td>{item?.lesson_name}</td>
                   <td>
                     <div className="prog">
-                      {item?.percentage || 0}%
+                      <span> {item?.percentage || 0}% </span>
                       <div className="progress">
                         <div
                           className="progress-bar"
@@ -405,7 +334,7 @@ const PrincipalProgressSubjectWise = ({ subjectList, classList }) => {
                         ["not_completed", "in_progress"].includes(
                           item?.status
                         ) && "review"
-                      } ${item?.status == "not_started" && "inactive"}`}
+                      } ${(item?.status == "not_started" || item?.status == "locked") && "inactive"}`}
                     >
                       {item?.status
                         ?.replace(/_/g, " ")
@@ -413,12 +342,12 @@ const PrincipalProgressSubjectWise = ({ subjectList, classList }) => {
                         "Not Started"}
                     </div>
                   </td>
-                  {!["not_started", "not_completed", "in_progress"].includes(
+                  {!["not_started", "not_completed", "in_progress", "locked"].includes(
                     item?.status
                   ) && (
                     <td>
                       <Link
-                        to={`/principal/progress-student-lesson-quiz?lessonId=${item?.lesson_id}&studentId=${selectedStudents?.[0]}`}
+                        to={`/district-admin/progress-student-lesson-quiz?lessonId=${item?.lesson_id}&studentId=${selectedStudents?.[0]}`}
                         state={{ param: "/teacher/progress-and-score" }}
                       >
                         <i className="fa-light fa-eye"></i> View Full Details
@@ -432,7 +361,7 @@ const PrincipalProgressSubjectWise = ({ subjectList, classList }) => {
                 <td>---</td>
                 <td>
                   <div className="prog">
-                    {subjectWizeScoreData?.[0]?.summative_score || 0}%
+                    <span> {subjectWizeScoreData?.[0]?.summative_score || 0}% </span>
                     <div className="progress">
                       <div
                         className="progress-bar"
@@ -453,11 +382,11 @@ const PrincipalProgressSubjectWise = ({ subjectList, classList }) => {
                 </td>
                 <td>
                   <div
-                    className={`status ${
-                      ["not_started", "not_completed", "in_progress"].includes(
+                    className={`status ${subjectWizeScoreData?.[0]?.summative_status == "locked" && "inactive"} ${
+                      ["not_started", "not_completed", "in_progress", ].includes(
                         subjectWizeScoreData?.[0]?.summative_status
-                      ) && "review"
-                    }`}
+                      ) && "review" 
+                    }` }
                   >
                     {subjectWizeScoreData?.[0]?.summative_status
                       ? subjectWizeScoreData?.[0]?.summative_status
@@ -466,12 +395,12 @@ const PrincipalProgressSubjectWise = ({ subjectList, classList }) => {
                       : "Not Started"}
                   </div>
                 </td>
-                {!["not_started", "not_completed", "in_progress"].includes(
+                {!["not_started", "not_completed", "in_progress", "locked"].includes(
                   subjectWizeScoreData?.[0]?.summative_status
                 ) && (
                   <td>
                     <Link
-                      to="/principal/progress-student-summative-assessment"
+                      to="/district-admin/progress-student-summative-assessment"
                       state={{
                         studentId: selectedStudents?.[0],
                         subjectId: selectedCourses?.[0],

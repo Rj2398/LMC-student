@@ -6,10 +6,10 @@ import RoleBasedRoute from "./RoleBasedRoute";
 import StudentLayout from "../layout/StudentLayout";
 import TeacherLayout from "../layout/TeacherLayout";
 import PrincipalLayout from "../layout/PrincipalLayout";
+import DistrictAdminLayout from "../layout/DistrictAdminLayout";
 
 // Student Panel Pages
 import StudentDashboard from "../pages/student/Dashboard";
-import PrincipalDashboard from "../pages/principal/Dashboard";
 import NotFound from "../pages/common/NotFound";
 import Login from "../pages/common/Login";
 import StudentProfile from "../pages/student/Profile";
@@ -43,6 +43,7 @@ import TeacherStudentBaselineAssessment from "../pages/teacher/StudentBaselineAs
 import TeacherStudentSummativeAssessment from "../pages/teacher/StudentSummativeAssessment";
 
 //Principal Panel Pages
+import PrincipalDashboard from "../pages/principal/Dashboard";
 import TeachersAndStudents from "../pages/principal/TeachersAndStudents";
 import PrincipalProfile from "../pages/principal/Profile";
 import Classdetails from "../pages/principal/Classdetails";
@@ -58,11 +59,33 @@ import SubjectLessondetail from "../pages/principal/SubjectLessondetail";
 import PrincipalTeacherProfile from "../pages/principal/PrincipalTeacherProfile";
 import PrincipleSummative from "../pages/principal/PrincipleSummative";
 import PrincipalProgressAndScore from "../pages/principal/PrincipalProgressAndScore";
+import TermsCondition from "../pages/common/TermsCondition";
+import PrivacyPolicy from "../pages/common/PrivacyPolicy";
+
+//Principal Panel Pages
+import DistrictAdminDashboard from "../pages/districtAdmin/Dashboard";
+import DistrictAdminTeachersAndStudents from "../pages/districtAdmin/TeachersAndStudents";
+import DistrictAdminProfile from "../pages/districtAdmin/Profile";
+import DistrictAdminClassdetails from "../pages/districtAdmin/Classdetails";
+import DistrictAdminStudentprofile from "../pages/districtAdmin/PricipalStudentprofile";
+import DistrictAdminStudentbaseline from "../pages/districtAdmin/PrincipleStudentbaseline";
+import DistrictAdminStudentLessonquiz from "../pages/districtAdmin/PrincipleStudentLessonquiz";
+import DistrictAdminSubjectSummativedetails from "../pages/districtAdmin/PrincipleSubjectSummativedetails";
+import DistrictAdminSubjectDetails from "../pages/districtAdmin/PrincipleSubjectDetails";
+import DistrictAdminSubjectBaselinedetails from "../pages/districtAdmin/SubjectBaselinedetails";
+import DistrictAdminSubjectLessondetail from "../pages/districtAdmin/SubjectLessondetail";
+
+import DistrictAdminTeacherProfile from "../pages/districtAdmin/PrincipalTeacherProfile";
+import DistrictAdminSummative from "../pages/districtAdmin/PrincipleSummative";
+import DistrictAdminProgressAndScore from "../pages/districtAdmin/PrincipalProgressAndScore";
+import Trial from "../pages/Trial";
 
 const AppRouter = () => (
   <Router>
     <Routes>
       <Route path="/" element={<Login />} />
+      <Route path="/terms-and-conditions" element={<TermsCondition />} />
+      <Route path="/privacy-and-policy" element={<PrivacyPolicy />} />
 
       {/* Student */}
       <Route element={<RoleBasedRoute allowedRoles={[Roles.STUDENT]} />}>
@@ -80,6 +103,7 @@ const AppRouter = () => (
       {/* Teacher */}
       <Route element={<RoleBasedRoute allowedRoles={[Roles.TEACHER]} />}>
         <Route element={<TeacherLayout />}>
+          <Route path="/teacher/trial" element={<Trial />} />
           <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
           <Route path="/teacher/mwl-library" element={<TeacherMwlLibrary />} />
           <Route path="/teacher/progress-and-score" element={<TeacherProgressAndScore />} />
@@ -153,6 +177,49 @@ const AppRouter = () => (
           <Route path="/principal-student-baseline/assesment" element={<PrincipleStudentbaseline />} />
           <Route path="/principal-student-summative" element={<PrincipleSummative />} />
           <Route path="/principal-student-lesson/quiz/:studentId" element={<PrincipleStudentLessonquiz />} />
+
+        </Route>
+      </Route>
+
+
+      <Route element={<RoleBasedRoute allowedRoles={[Roles.ADMIN]} />}>
+        <Route element={<DistrictAdminLayout />}>
+          <Route path="/district-admin/dashboard" element={<DistrictAdminDashboard />} />
+          <Route path="/district-admin/teachers-students" element={<DistrictAdminTeachersAndStudents />} />
+          <Route path="/district-admin/profile" element={<DistrictAdminProfile />} />
+          <Route path="/district-admin/class-detail/:subjectId" element={<DistrictAdminClassdetails />} />
+          <Route path="/district-admin/student-profile" element={<DistrictAdminStudentprofile />} />
+          <Route path="/district-admin/student-baseline-assesment" element={<DistrictAdminStudentbaseline />} />
+          <Route path="/district-admin/student-lesson-quiz/:studentId" element={<DistrictAdminStudentLessonquiz />} />
+          <Route path="/district-admin/student-subject-summative/:subjectId" element={<DistrictAdminSubjectSummativedetails />} />
+          <Route path="/district-admin/student-subject-detail/:subjectId" element={<DistrictAdminSubjectDetails />} />
+          <Route path="/district-admin/subject-baseline-detail/:subjectId" element={<DistrictAdminSubjectBaselinedetails />} />
+          <Route path="/district-admin/subject-lesson-detail/:subjectId/:lessonId" element={<DistrictAdminSubjectLessondetail />} />
+
+          <Route path="/district-admin/teacher-profile" element={<DistrictAdminTeacherProfile />} />
+          <Route path="/district-admin/student-summative" element={<DistrictAdminSummative />} />
+          <Route path="/district-admin/progress-and-score" element={<DistrictAdminProgressAndScore />} />
+          <Route path="/district-admin/progress-student-baseline-assessment" element={<DistrictAdminStudentbaseline />} />
+          <Route path="/district-admin/progress-student-summative-assessment" element={<DistrictAdminSummative />} />
+          <Route path="/district-admin/progress-student-lesson-quiz" element={<DistrictAdminStudentLessonquiz />} />
+
+
+          {/* //same components with different path for navbar : Teachers & students tab*/}
+          <Route path="/district-admin/student/profile" element={<DistrictAdminStudentprofile />} />
+          <Route path="/district-admin/students/profile" element={<DistrictAdminStudentprofile />} />
+          <Route path="/district-admin-student-profiles" element={<DistrictAdminStudentprofile />} />
+          <Route path="/district-admin/class/detail/:subjectId" element={<DistrictAdminClassdetails />} />
+          <Route path="/district-admin/student/subject/detail/:subjectId" element={<DistrictAdminSubjectDetails />} />
+          <Route path="/district-admin/student/baseline/assesment" element={<DistrictAdminStudentbaseline />} />
+          <Route path="/district-admin/student/summative" element={<DistrictAdminSummative />} />
+          <Route path="/district-admin/student/lesson/quiz/:studentId" element={<DistrictAdminStudentLessonquiz />} />
+          <Route path="/district-admin/student-baseline/assesment" element={<DistrictAdminStudentbaseline />} />
+          <Route path="/district-admin/students-summative" element={<DistrictAdminSummative />} />
+          <Route path="/district-admin/student-lesson/quiz/:studentId" element={<DistrictAdminStudentLessonquiz />} />
+          
+          <Route path="/district-admin-student-baseline/assesment" element={<DistrictAdminStudentbaseline />} />
+          <Route path="/district-admin-student-summative" element={<DistrictAdminSummative />} />
+          <Route path="/district-admin-student-lesson/quiz/:studentId" element={<DistrictAdminStudentLessonquiz />} />
 
         </Route>
       </Route>

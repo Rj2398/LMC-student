@@ -1,39 +1,26 @@
 import { useEffect, useState } from "react";
-import ProgressSubjectWise from "../../components/teacher/ProgressSubjectWise";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getClassList,
-  getStudentList,
-  getSubjectList,
-} from "../../redux/slices/teacher/dashboardSlice";
+import {getClassList, getStudentList, getSubjectList, } from "../../redux/slices/teacher/dashboardSlice";
 
 import PrincipalProgressSubjectWise from "../../components/principal/PrincipalProgressSubjectWise";
 import PrincipalTrainingCompletion from "../../components/principal/PrincipalTrainingCompletion";
-import {
-  getPrincipalProgressScore,
-  getPrincipalSubjectGraph,
-} from "../../redux/slices/principal/principalProgressSlice";
+import { getPrincipalProgressScore, getPrincipalSubjectGraph, } from "../../redux/slices/principal/principalProgressSlice";
+import { ReportDownload } from "../../components/teacher/ReportPdfDowload";
+import { getReportDownloadData } from "../../redux/slices/authSlice";
 
 const PrincipalProgressAndScore = () => {
   const dispatch = useDispatch();
   const currentLevel = localStorage.getItem("classLevel");
-  console.log(currentLevel);
-  const { subjectList, classList, studentList } = useSelector(
-    (state) => state.dashboard
-  );
-  const { progressAndScoreData, progressGraphData } = useSelector(
-    (state) => state.principalProgress
-  );
-  console.log(progressGraphData);
+  const { reportData, reportLoading } = useSelector((state) => state.auth);
+  const { subjectList, classList, studentList } = useSelector((state) => state.dashboard);
+  const { progressAndScoreData, progressGraphData } = useSelector((state) => state.principalProgress);
 
   const [activeDropdown, setActiveDropdown] = useState(null);
 
   const [selectedClasses, setSelectedClasses] = useState([]);
   const [selectedStudents, setSelectedStudents] = useState([]);
-  console.log(selectedStudents);
 
   const [selectedCourses, setSelectedCourses] = useState([]);
-  console.log(selectedCourses);
 
   useEffect(() => {
     if (currentLevel) {
@@ -44,11 +31,7 @@ const PrincipalProgressAndScore = () => {
 
   useEffect(() => {
     if (selectedClasses) {
-      dispatch(
-        getStudentList({
-          class: selectedStudents?.includes("all") ? ["all"] : selectedClasses,
-        })
-      );
+      dispatch(getStudentList({class: selectedStudents?.includes("all") ? ["all"] : selectedClasses,}));
     }
   }, [selectedClasses]);
 
@@ -66,10 +49,13 @@ const PrincipalProgressAndScore = () => {
     if (!selectedCourses.includes("all")) {
       payload.subject_id = selectedCourses;
     }
-
+    
     dispatch(getPrincipalProgressScore(payload));
     dispatch(getPrincipalSubjectGraph(payload));
-  }, [subjectList, classList, studentList]);
+    dispatch(getReportDownloadData(payload));
+    
+  }, [selectedClasses, selectedStudents, selectedCourses]);
+  // }, [subjectList, classList, studentList]);
 
   const [classSearch, setClassSearch] = useState("");
   const [studentSearch, setStudentSearch] = useState("");
@@ -150,64 +136,20 @@ const PrincipalProgressAndScore = () => {
       <div className="top-head prog-sco-wrp">
         <div className="top-head-in">
           <h1>Progress & Score</h1>
-          <p>Your Progress</p>
+          {/* <p>Your Progress</p> */}
         </div>
 
         <div className="influ-btns ms-auto">
-          {/* AllTeachers Dropdown */}
-          {/* <div className="influ-dropdown">
-                        <button className="influ-btn influ-drop-btn" type="button" onClick={() => setActiveDropdown(activeDropdown === "classDropdown" ? null : "classDropdown")} >
-                            All Teachers <i className={`fa-regular ${activeDropdown === "classDropdown" ? "fa-angle-up" : "fa-angle-down"}`}></i>
-                        </button>
-                        <div className="influ-drop-list" style={{ display: activeDropdown === "classDropdown" ? "block" : "none" }}>
-                            <div className="influ-drop-list-search">
-                                <button type="submit"><img src="images/search-icon.svg" alt="" /></button>
-                                <input type="text" placeholder="Search" value={classSearch} onChange={e => setClassSearch(e.target.value)} />
-                            </div>
-                            <div className="influ-drop-list-inner">
-                                <div className="influ-drop-list-item">
-                                    <input type="checkbox" checked={selectedClasses.includes("all")} onChange={() => handleToggle("all", selectedClasses, setSelectedClasses)} />
-                                    All Classes
-                                </div>
-                                {filteredClasses?.map(item => (
-                                    <div key={item.id} className="influ-drop-list-item">
-                                        <input type="checkbox" checked={selectedClasses.includes("all") || selectedClasses.includes(item.name)} disabled={selectedClasses.includes("all")} onChange={() => handleToggle(item.name, selectedClasses, setSelectedClasses)} />
-                                        {item.name}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div> */}
 
           {/* Classes Dropdown */}
           <div className="influ-dropdown">
-            <button
-              className="influ-btn influ-drop-btn"
-              type="button"
-              onClick={() =>
-                setActiveDropdown(
-                  activeDropdown === "studentDropdown"
-                    ? null
-                    : "studentDropdown"
-                )
-              }
-            >
+            <button className="influ-btn influ-drop-btn" type="button"
+              onClick={() => setActiveDropdown(activeDropdown === "studentDropdown" ? null : "studentDropdown")}>
               All Classes{" "}
-              <i
-                className={`fa-regular ${
-                  activeDropdown === "studentDropdown"
-                    ? "fa-angle-up"
-                    : "fa-angle-down"
-                }`}
+              <i className={`fa-regular ${ activeDropdown === "studentDropdown" ? "fa-angle-up": "fa-angle-down"}`}
               ></i>
             </button>
-            <div
-              className="influ-drop-list"
-              style={{
-                display:
-                  activeDropdown === "studentDropdown" ? "block" : "none",
-              }}
-            >
+            <div className="influ-drop-list" style={{ display: activeDropdown === "studentDropdown" ? "block" : "none",}}>
               <div className="influ-drop-list-search">
                 <button type="submit">
                   <img src="images/search-icon.svg" alt="" />
@@ -221,16 +163,6 @@ const PrincipalProgressAndScore = () => {
               </div>
               <div className="influ-drop-list-inner">
                 <div className="influ-drop-list-item">
-                  {/* <input type="checkbox" checked={selectedClasses.includes("all")}
-                                        onChange={() => {
-                                            if (selectedClasses.includes("all")) {
-                                                setSelectedClasses([]);
-                                            } else {
-                                                 setSelectedClasses(["all"]); // Select all
-                                            }
-                                        }}
-                                    />
-                                    All Classes */}
                   <input
                     type="checkbox"
                     checked={selectedClasses.includes("all")}
@@ -244,20 +176,6 @@ const PrincipalProgressAndScore = () => {
                   />
                   All Classes
                 </div>
-                {/* {filteredClasses?.map(item => (
-                                    <div key={item.id} className="influ-drop-list-item">
-                                        <input type="checkbox" checked={selectedClasses.includes("all") || selectedStudents.includes(item.id)} disabled={selectedStudents.includes("all")}
-                                            onChange={() => {
-                                                if (selectedClasses.includes(item.id)) {
-                                                     setSelectedClasses([]);
-                                                } else {
-                                                     setSelectedClasses([item.id]);
-                                                }
-                                            }}
-                                        />
-                                        {item.name}
-                                    </div>
-                                ))} */}
 
                 {/* Individual Class Checkboxes */}
                 {filteredClasses?.map((item) => (
@@ -331,13 +249,13 @@ const PrincipalProgressAndScore = () => {
                         selectedStudents.includes(item.id)
                       }
                       disabled={selectedStudents.includes("all")}
-                      onChange={() =>
-                        handleToggle(
-                          item.id,
-                          selectedStudents,
-                          setSelectedStudents
-                        )
-                      }
+                      // onChange={() => handleToggle( item.id, selectedStudents, setSelectedStudents )}
+                      onChange={() => {
+                        if (selectedStudents.includes(item.id)) {
+                          setSelectedStudents([]);
+                        } else {
+                          setSelectedStudents([item.id]);
+                        }}}
                     />
                     {item.name}
                   </div>
@@ -406,14 +324,19 @@ const PrincipalProgressAndScore = () => {
               </div>
             </div>
           </div>
+          {/* <ReportDownload data={reportData} />          */}
+          {
+            reportLoading ? <button className="download-cta active" disabled> PDF Loading... </button> : <ReportDownload key={JSON.stringify(reportData)} data={reportData}/>
+          }
         </div>
       </div>
+
       <div className="progress-grid">
         <div className="row g-0">
           <div className="col-lg-3">
             <div className="progress-grid-in ms-0">
               <h2>
-                <img src="../images/dashboard/progress-grid/1.svg" alt="" />{" "}
+                <img src="/images/Overlay.svg" alt="" />{" "}
                 Baseline <br /> Assessments
               </h2>
               <h3>
@@ -430,8 +353,7 @@ const PrincipalProgressAndScore = () => {
             <div className="progress-grid-in">
               <h2>
                 <img src="../images/dashboard/progress-grid/3.svg" alt="" />{" "}
-                Lesson-Wise Quiz <br />
-                Progress
+                Lesson Quiz Progress
               </h2>
               <h3>
                 {progressAndScoreData?.lesson_quiz_progress?.percentage || 0}%
@@ -489,12 +411,12 @@ const PrincipalProgressAndScore = () => {
                     src="/images/dashboard/chart-icon.svg"
                     alt="chart-icon"
                   />{" "}
-                  Subject-wise Performance
+                  Subject Performance
                 </h3>
               </div>
               <div className="chart-wrap">
                 <div className="chart-in">
-                  <p className="performance-text">Subject-wise Performance</p>
+                  <p className="performance-text">Subject Performance</p>
                   <div className="chart-in-percent-grp">
                     {[100, 80, 60, 40, 20, 0].map((val, idx) => (
                       <div

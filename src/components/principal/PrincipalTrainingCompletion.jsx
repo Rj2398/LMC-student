@@ -18,7 +18,6 @@ const PrincipalTrainingCompletion = ({ subjectList, classList }) => {
   const [selectedTeacher, setSelectedTeacher] = useState([]);
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [selectedStudents, setSelectedStudents] = useState([]);
-  console.log(selectedTeacher);
 
   const { studentList2 } = useSelector((state) => state.dashboard);
   const { teacherTrainingData } = useSelector(
@@ -28,11 +27,11 @@ const PrincipalTrainingCompletion = ({ subjectList, classList }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [navigationPage, setNavigationPage] = useState(1);
   const itemsPerPage = 5;
-  const totalPages = Math.ceil(teacherTrainingData.length / itemsPerPage);
+  const totalPages = Math.ceil(teacherTrainingData?.length / itemsPerPage);
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentItems = teacherTrainingData.slice(startIndex, endIndex);
+  const currentItems = teacherTrainingData?.slice(startIndex, endIndex);
 
   // This function is for "Previous" and "Next" buttons only
   const handlePageNumberClick = (pageNumber) => {
@@ -59,16 +58,9 @@ const PrincipalTrainingCompletion = ({ subjectList, classList }) => {
     return pageNumbers;
   };
   //paginnation
-  console.log(
-    JSON.stringify(teacherTrainingData, null, 2),
-    "teacher traing data "
-  );
 
   const { classLevels } = useSelector((state) => state.principalDashboard);
   const { teacherDetails } = useSelector((state) => state.teacherAndStudents);
-
-  console.log(teacherDetails);
-  console.log(classLevels);
 
   const [teacherSearch, setTeacherSearch] = useState("");
   const [studentSearch, setStudentSearch] = useState("");
@@ -80,7 +72,6 @@ const PrincipalTrainingCompletion = ({ subjectList, classList }) => {
 
   useEffect(() => {
     dispatch(getSubjectLevel());
-    console.log(selectedLevel);
   }, [dispatch]);
 
   useEffect(() => {
@@ -99,19 +90,8 @@ const PrincipalTrainingCompletion = ({ subjectList, classList }) => {
     }
   }, [selectedLevel]);
 
-  // useEffect(() => {
-  //   if (selectedLevel) {
-  //     dispatch(getSubjectsByLevel({ level_id: selectedLevel }));
-  //     dispatch(getPrincipalSubDashboard({ level_id: selectedLevel}));
-
-  //   }
-  // }, [dispatch, selectedLevel]);
-
   const handleLevelChange = (event) => {
     const newLevel = event.target.value;
-
-    console.log(newLevel, "TESt");
-
     setSelectedLevel(newLevel);
     //   localStorage.setItem("classLevel", newLevel);
   };
@@ -156,10 +136,6 @@ const PrincipalTrainingCompletion = ({ subjectList, classList }) => {
     item.name.toLowerCase().includes(teacherSearch?.toLowerCase())
   );
 
-  // const filteredStudents = studentList2?.filter(item =>
-  //     item.name.toLowerCase().includes(studentSearch.toLowerCase())
-  // );
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       const dropdowns = document.querySelectorAll(".influ-dropdown");
@@ -181,7 +157,7 @@ const PrincipalTrainingCompletion = ({ subjectList, classList }) => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, []);
-
+  
   return (
     <div className="my-subjects">
       <div className="top-head">
@@ -264,80 +240,12 @@ const PrincipalTrainingCompletion = ({ subjectList, classList }) => {
             </div>
           </div>
 
-          {/* Class Dropdown */}
-          {/* <div className="influ-dropdown">
-                        <button className="influ-btn influ-drop-btn" type="button" onClick={() =>
-                            setActiveDropdown(activeDropdown === "classDropdown" ? null : "classDropdown")
-                        } >
-                            All Classes <i className={`fa-regular ${activeDropdown === "classDropdown" ? "fa-angle-up" : "fa-angle-down"}`}></i>
-                        </button>
-                        <div className="influ-drop-list" style={{ display: activeDropdown === "classDropdown" ? "block" : "none" }}>
-                            <div className="influ-drop-list-search">
-                                <button type="submit"><img src="images/search-icon.svg" alt="" /></button>
-                                <input
-                                    type="text"
-                                    placeholder="Search"
-                                    value={classSearch}
-                                    onChange={e => setClassSearch(e.target.value)}
-                                />
-                            </div>
-                            <div className="influ-drop-list-inner">
-                                <div className="influ-drop-list-item">
-                                    <input type="checkbox" checked={selectedClasses.includes("all")} onChange={() => handleToggle("all", selectedClasses, setSelectedClasses)} />
-                                    All Classes
-                                </div>
-                                {filteredClasses?.map(item => (
-                                    <div key={item.id} className="influ-drop-list-item">
-                                        <input type="checkbox" checked={selectedClasses.includes("all") || selectedClasses.includes(item.name)} disabled={selectedClasses.includes("all")} onChange={() => handleToggle(item.name, selectedClasses, setSelectedClasses)} />
-                                        {item.name}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div> */}
-
-          {/* lifedream dropdown */}
-
-          {/* <div className="influ-dropdown">
-                        <button className="influ-btn influ-drop-btn" type="button" onClick={() => setActiveDropdown(activeDropdown === "courseDropdown" ? null : "courseDropdown")} >
-                            {subjectList?.find(item => item.id === selectedCourses[0])?.name || "All Subjects"} <i className={`fa-regular ${activeDropdown === "courseDropdown" ? "fa-angle-up" : "fa-angle-down"} `}></i>
-                        </button>
-                        <div className="influ-drop-list" style={{ display: activeDropdown === "courseDropdown" ? "block" : "none" }}>
-                            <div className="influ-drop-list-inner">
-                                {subjectList?.map(item => (
-                                    <div key={item.id} className="influ-drop-list-item">
-                                        <input type="checkbox" checked={selectedCourses.includes(item.id)}
-                                            onChange={() => {
-                                                if (selectedCourses.includes(item.id)) {
-                                                    setSelectedCourses([]);
-                                                } else {
-                                                    setSelectedCourses([item.id]);
-                                                }
-                                            }}
-                                        />
-                                        {item.name}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div> */}
 
           {/* All levels Dropdown */}
           <div className="influ-dropdown">
-            {/* <select value={selectedLevel ||""} name="level" onChange={handleLevelChange}>
-                                <option value={"all level"}>all level</option>
-                                {classLevels?.map((level, index) => (
-                                <option key={index} value={level?.value} >{level?.name}</option>
-                                  ))}
-                           </select> */}
-
-            <select
-              value={selectedLevel || ""}
-              name="level"
-              onChange={handleLevelChange}
-            >
+            <select value={selectedLevel || ""} name="level" onChange={handleLevelChange} >
               <option value={classLevels?.map((l) => l.value).join(",")}>
-                all level
+                All Levels
               </option>
               {classLevels?.map((level, index) => (
                 <option key={index} value={level?.value}>
@@ -451,7 +359,7 @@ const PrincipalTrainingCompletion = ({ subjectList, classList }) => {
                     <td>{trainingData?.class_level}</td>
                     <td>
                       <div className="prog">
-                        {trainingData?.overall_completion || 0}%
+                        <span> {trainingData?.overall_completion || 0}% </span>
                         <div className="progress">
                           <div
                             className="progress-bar"
@@ -472,11 +380,11 @@ const PrincipalTrainingCompletion = ({ subjectList, classList }) => {
                     <td>
                       {(() => {
                         let completionText = "Not Started";
-                        let completionColor = "gray";
+                        let completionColor = "#4B5563";
 
                         if (trainingData?.overall_completion === 0) {
                           completionText = "Not Started";
-                          completionColor = "gray";
+                          completionColor = "#4B5563";
                         } else if (trainingData?.overall_completion < 50) {
                           completionText = "In Progress";
                           completionColor = "#F28100";
@@ -519,7 +427,7 @@ const PrincipalTrainingCompletion = ({ subjectList, classList }) => {
             )}
           </table>
           {/* Pagination Controls */}
-          <div
+          <div  className="panel-pagination"
             style={{
               display: "flex",
               justifyContent: "flex-end",
@@ -531,12 +439,11 @@ const PrincipalTrainingCompletion = ({ subjectList, classList }) => {
               className="page-btn"
               onClick={() => handleNavigate("prev")}
               disabled={navigationPage === 1}
-              style={{ padding: "0px 9px" }}
             >
               Prev
             </button>
             {getPageNumbers().map((number) => (
-              <button
+              <button  className="page-count"
                 key={number}
                 onClick={() => handlePageNumberClick(number)}
                 style={{
@@ -558,7 +465,6 @@ const PrincipalTrainingCompletion = ({ subjectList, classList }) => {
               className="page-btn"
               onClick={() => handleNavigate("next")}
               disabled={navigationPage === totalPages}
-              style={{ padding: "0px 9px" }}
             >
               Next
             </button>

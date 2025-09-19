@@ -7,6 +7,7 @@ import {
   subjectWiseQuizProgress,
 } from "../../redux/slices/student/subjectSlice";
 import { Link, useNavigate } from "react-router";
+import Select from "react-select";
 
 const ProgressAndScore = () => {
   const dispatch = useDispatch();
@@ -88,28 +89,57 @@ const ProgressAndScore = () => {
     <>
       <div className="top-head prog-sco-wrp">
         <div className="top-head-in">
-          <h1>Progress & Score</h1>
-          <p>Your Progress</p>
+          <h1> Completion </h1>
+          {/* <p className="top-head-p">Your Progress</p> */}
         </div>
-        <select
-          name="subject"
-          onChange={(e) => setSelectedSubject(e.target.value)}
-        >
+        {/* <select name="subject" onChange={(e) => setSelectedSubject(e.target.value)} >
           <option value={"all"}>All Subjects</option>
           {allSubject?.map((item, index) => (
             <option key={index} value={item.id}>
               {item.name}
             </option>
           ))}
-        </select>
+        </select> */}
+        <Select  name="subject" placeholder="Select a subject..." isSearchable={false}
+          options={[
+            { value: 'all', label: 'All Subjects' },
+            ...(allSubject?.map(item => ({
+              value: item.id,
+              label: item.name
+            })) || [])
+          ]}
+          onChange={(selectedOption) => setSelectedSubject(selectedOption.value)}
+          defaultValue={{ value: 'all', label: 'All Subjects' }}
+          styles={{
+            control: (base) => ({
+              ...base,
+              minHeight: '38px',
+              fontSize:"16px",
+              width: "260px",
+              borderColor:"#4126A8",
+              boxShadow: 'none',
+              '&:hover': {
+                borderColor: '#4126A8'
+              }
+            }),
+            option: (base, state) => ({
+              ...base,
+              backgroundColor: state.isFocused ? '#4126A8' : 'white',
+              color: state.isFocused ? 'white' : '#333',
+              '&:active': {
+                  backgroundColor: '#4126A8'
+              }
+            }),
+          }}
+        />
       </div>
       <div className="progress-grid">
         <div className="row g-0">
           <div className="col-lg-3">
             <div className="progress-grid-in ms-0">
               <h2>
-                <img src="/images/dashboard/progress-grid/1.svg" alt="" />{" "}
-                Baseline <br /> Assessments
+                <img src="/images/Overlay.svg" alt="" />{" "}
+                Baseline Assessment
               </h2>
               <h3>{progressInfo?.baseline_assessments?.percentage}%</h3>
               {/* <p className="text-white"> {progressInfo?.baseline_assessments?.completed}/{progressInfo?.baseline_assessments?.total} Completed </p> */}
@@ -119,7 +149,7 @@ const ProgressAndScore = () => {
             <div className="progress-grid-in">
               <h2>
                 <img src="/images/dashboard/progress-grid/3.svg" alt="" />{" "}
-                Lesson-Wise Quiz <br /> Progress
+                Lesson Quizzes
               </h2>
               <h3>{progressInfo?.lesson_quiz_progress?.percentage}%</h3>
               {/* <!-- <a href="#">See details <i className="fa-regular fa-arrow-right"></i></a> --> */}
@@ -130,7 +160,7 @@ const ProgressAndScore = () => {
             <div className="progress-grid-in">
               <h2>
                 <img src="/images/dashboard/progress-grid/2.svg" alt="" />{" "}
-                Summative <br /> Assessments
+                Summative Assessments
               </h2>
               <h3>{progressInfo?.summative_assessments?.percentage}%</h3>
               {/* <p className="text-black">{progressInfo?.summative_assessments?.completed}/{progressInfo?.summative_assessments?.total} Completed</p> */}
@@ -140,12 +170,12 @@ const ProgressAndScore = () => {
             <div className="progress-grid-in">
               <h2>
                 <img src="/images/dashboard/progress-grid/3.svg" alt="" />{" "}
-                Overall Lesson progress
+                Overall Lesson
               </h2>
               <h3>{progressInfo?.overall_lesson_progress?.percentage}%</h3>
               {/* <p className="text-black">
                 {progressInfo?.overall_lesson_progress?.completed}/
-                {progressInfo?.overall_lesson_progress?.total} lessons completed
+                {progressInfo?.prog?.total} lessons completed
               </p> */}
             </div>
           </div>
@@ -163,14 +193,14 @@ const ProgressAndScore = () => {
                     src="/images/dashboard/chart-icon.svg"
                     alt="chart-icon"
                   />{" "}
-                  Subject-wise Performance
+                  Subject Performance
                 </h3>
               </div>
               <div className="chart-wrap">
                 <div className="chart-in">
-                  <p className="performance-text">Subject-wise Performance</p>
+                  <p className="performance-text">Scores</p>
                   <div className="chart-in-percent-grp">
-                    {[100, 80, 60, 40, 20, 0].map((val, idx) => (
+                    {["100%", "80%", "60%", "40%", "20%", "0"].map((val, idx) => (
                       <div
                         className={`chart-in-percent ${
                           val === 0 ? "align-items-end" : ""
@@ -209,7 +239,7 @@ const ProgressAndScore = () => {
                                       backgroundColor: subjectColor.base,
                                     }}
                                   ></span>{" "}
-                                  Baseline Assessments, {baseline}%
+                                  Baseline Assessment, {baseline}%
                                 </p>
                                 <p>
                                   <span
@@ -217,7 +247,7 @@ const ProgressAndScore = () => {
                                       backgroundColor: subjectColor.lesson,
                                     }}
                                   ></span>{" "}
-                                  Lesson Quiz, {lesson}%
+                                  Lesson Quizzes, {lesson}%
                                 </p>
                                 <p>
                                   <span
@@ -225,7 +255,7 @@ const ProgressAndScore = () => {
                                       backgroundColor: subjectColor.summative,
                                     }}
                                   ></span>{" "}
-                                  Summative Assessments, {summative}%
+                                  Summative Assessment, {summative}%
                                 </p>
                               </div>
                             </div>
@@ -266,7 +296,7 @@ const ProgressAndScore = () => {
                   </div>
                 </div>
 
-                <p className="activity-text">Activity Type</p>
+                <p className="activity-text"> Measurement type </p>
                 <ul>
                   {subjectWiseInfo?.map((subject, idx) => (
                     <li key={subject.subject_id}>
@@ -290,7 +320,7 @@ const ProgressAndScore = () => {
       <div className="my-subjects">
         <div className="top-head">
           <div className="top-head-in">
-            <h1 className="mb-0">Subject Wise Quiz Scores</h1>
+            <h1 className="mb-0">Subject Quiz Scores</h1>
           </div>
           <select
             name="subject"
@@ -319,17 +349,17 @@ const ProgressAndScore = () => {
         <div className="table-responsive">
           <table>
             <tr>
-              <th style={{ width: "250px" }}>Assessment Type</th>
+              <th style={{ width: "250px" }}> Measurment type </th>
               <th>Lesson </th>
               <th style={{ width: "400px" }}>Score </th>
               <th>Status </th>
             </tr>
             <tr>
-              <td>Baseline</td>
+              <td> Baseline Assessment </td>
               <td>---</td>
               <td>
                 <div className="prog">
-                  {subjectWiseQuizInfo?.[0]?.baseline_score || 0}%
+                  <span> {subjectWiseQuizInfo?.[0]?.baseline_score || 0}% </span>
                   <div className="progress">
                     <div
                       className="progress-bar"
@@ -370,7 +400,7 @@ const ProgressAndScore = () => {
                         "undefined" ||
                       subjectWiseQuizInfo?.[0]?.baseline_status === "locked" ||
                       !subjectWiseQuizInfo?.[0]?.baseline_status
-                        ? "#9CA3AF"
+                        ? "#4b5563"
                         : "",
                   }}
                 >
@@ -382,7 +412,7 @@ const ProgressAndScore = () => {
               </td>
             </tr>
             <tr>
-              <td>Lesson Quiz</td>
+              <td> Lesson Quizzes  </td>
               <td>
                 All Lessons
                 {subjectWiseQuizInfo?.[0]?.lesson_wise?.length > 0 && (
@@ -419,7 +449,7 @@ const ProgressAndScore = () => {
                       subjectWiseQuizInfo?.[0]?.lesson_overall_status ===
                         "undefined" ||
                       !subjectWiseQuizInfo?.[0]?.lesson_overall_status
-                        ? "#9CA3AF"
+                        ? "#4b5563"
                         : "",
                   }}
                 >
@@ -442,7 +472,7 @@ const ProgressAndScore = () => {
                     <td>{item?.lesson_name}</td>
                     <td>
                       <div className="prog">
-                        {item?.percentage}%
+                        <span> {item?.percentage}% </span>
                         <div className="progress">
                           <div
                             className="progress-bar"
@@ -473,7 +503,7 @@ const ProgressAndScore = () => {
                             item?.status === "locked" ||
                             item?.status === "undefined" ||
                             !item?.status
-                              ? "#9CA3AF"
+                              ? "#4b5563"
                               : "",
                         }}
                       >
@@ -489,11 +519,11 @@ const ProgressAndScore = () => {
             )}
 
             <tr>
-              <td>Summative</td>
+              <td> Summative assessment </td>
               <td>---</td>
               <td>
                 <div className="prog">
-                  {subjectWiseQuizInfo?.[0]?.summative_score || 0}%
+                  <span> {subjectWiseQuizInfo?.[0]?.summative_score || 0}% </span>
                   <div className="progress">
                     <div
                       className="progress-bar"
@@ -531,7 +561,7 @@ const ProgressAndScore = () => {
                       subjectWiseQuizInfo?.[0]?.summative_status ===
                         "undefined" ||
                       !subjectWiseQuizInfo?.[0]?.summative_status
-                        ? "#9CA3AF"
+                        ? "#4b5563"
                         : "",
                   }}
                 >

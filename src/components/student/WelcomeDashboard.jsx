@@ -15,7 +15,7 @@ const WelcomeDashboard = () => {
       <div className="top-head">
         <div className="top-head-in">
           <h1>Welcome, {dashboardData?.username}!</h1>
-          <p>Your Progress</p>
+          <p className="top-head-p"> Completion </p>
         </div>
       </div>
 
@@ -24,7 +24,8 @@ const WelcomeDashboard = () => {
           <div className="col-lg-3">
             <div className="progress-grid-in ms-0">
               <h2>
-                <img src="/images/dashboard/progress-grid/1.svg" alt="" />
+                {/* <img src="/images/dashboard/progress-grid/1.svg" alt="" /> */}
+                <img src="/images/Overlay.svg" alt="" />
                 Baseline <br /> Assessments
               </h2>
               <h3>{dashboardData?.baseline_assessments?.percentage}%</h3>
@@ -37,7 +38,7 @@ const WelcomeDashboard = () => {
             <div className="progress-grid-in">
               <h2>
                 <img src="/images/dashboard/progress-grid/3.svg" alt="" />
-                Lesson Wise Quiz Progress
+                Lesson Quizzes
               </h2>
               <h3>{dashboardData?.lesson_quiz_progress?.percentage}%</h3>
               <p className="text-black">
@@ -63,7 +64,7 @@ const WelcomeDashboard = () => {
             <div className="progress-grid-in">
               <h2>
                 <img src="/images/dashboard/progress-grid/3.svg" alt="" />
-                Overall Lesson progress
+                Overall Lesson
               </h2>
               <h3>{dashboardData?.overall_lesson_progress?.percentage}%</h3>
               <p className="text-black">

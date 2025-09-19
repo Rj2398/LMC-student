@@ -1,26 +1,13 @@
 import { Link, useLocation } from "react-router";
-import data from "../../assets/principal.json";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getPrincipalSubDashboard,
-  getSubjectLevel,
-  getSubjectsByLevel,
-} from "../../redux/slices/principal/principalDashboardSlice";
+import { getPrincipalSubDashboard, getSubjectLevel, getSubjectsByLevel, } from "../../redux/slices/principal/principalDashboardSlice";
+import Select from "react-select";
 
 const Dashboard = () => {
   const loaction = useLocation();
   const dispatch = useDispatch();
-  const { classLevels, subDashboard, allSubjects, allDashboardData } =
-    useSelector((state) => state.principalDashboard);
-  console.log(allDashboardData);
-
-  console.log(subDashboard);
-
-  console.log(data);
-  // const principalDashboard=data?.principalDashboard
-  // const subDashboard=principalDashboard?.kpiSummary
-  // const allSubjects=principalDashboard?.classesOverview
+  const { classLevels, subDashboard, allSubjects, allDashboardData } = useSelector((state) => state.principalDashboard);
 
   const [selectedLevel, setSelectedLevel] = useState(() => {
     return localStorage.getItem("classLevel") || null;
@@ -28,16 +15,15 @@ const Dashboard = () => {
 
   useEffect(() => {
     dispatch(getSubjectLevel());
-    console.log(selectedLevel);
   }, [dispatch]);
 
   useEffect(() => {
-    if (!selectedLevel && classLevels?.length > 0) {
+    if (selectedLevel == null && classLevels?.length > 0) {
       const defaultLevel = classLevels[0].id;
       setSelectedLevel(defaultLevel);
       localStorage.setItem("classLevel", defaultLevel);
     }
-  }, [selectedLevel]);
+  }, [selectedLevel, classLevels]);
 
   useEffect(() => {
     dispatch(getSubjectsByLevel({ level_id: selectedLevel || "1" }));
@@ -50,33 +36,47 @@ const Dashboard = () => {
     localStorage.setItem("classLevel", newLevel);
   };
 
+  const options = classLevels?.map(level => ({
+    value: level?.id,
+    label: level?.name,
+  }));
+
   return (
     <>
       <div className="top-head">
-        {/* <div className="top-head-in">
-					<h1>Welcome,{principalDashboard?.principalName}</h1>
-					<p>{principalDashboard?.schoolName}</p>
-				</div> */}
-        {/* <!-- <select name="level">
-					<option value="1">Ruby Level</option>
-					<option value="2">Emerald Level</option>
-				</select> --> */}
 
         <div className="top-head-in">
           <h1>Welcome, {allDashboardData?.username}</h1>
-          <p>Your Progress</p>
+          <p className="top-head-p">Teachers & Students Progress</p>
         </div>
-        <select
-          value={selectedLevel || ""}
-          name="level"
-          onChange={handleLevelChange}
-        >
+        {/* <select value={selectedLevel || ""} name="level" onChange={handleLevelChange} >
           {classLevels?.map((level, index) => (
             <option key={index} value={level?.id}>
               {level?.name}
             </option>
           ))}
-        </select>
+        </select> */}
+        <Select isSearchable={false} styles={{
+            control: (base) => ({
+              ...base,
+              minHeight: '38px',
+              fontSize:"16px",
+              borderColor:"#4126A8",
+              boxShadow: 'none',
+              '&:hover': {
+                borderColor: '#4126A8'
+              }
+            }),
+            option: (base, state) => ({
+              ...base,
+              backgroundColor: state.isFocused ? '#4126A8' : 'white',
+              color: state.isFocused ? 'white' : '#333',
+              '&:active': {
+                  backgroundColor: '#4126A8'
+              }
+            }),
+          }} options={options} value={options?.find(opt => opt.value == selectedLevel)}
+          onChange={selected => handleLevelChange({ target: { name: 'level', value: selected.value }})}/>
       </div>
       {/* </div> */}
       <div className="progress-grid principal-progress">
@@ -92,7 +92,8 @@ const Dashboard = () => {
 
             <div className="progress-grid-in ms-0">
               <h2>
-                <img src="../images/dashboard/progress-grid/1.svg" alt="" />
+                {/* <img src="/images/dashboard/progress-grid/1.svg" alt="" /> */}
+                <img src="/images/Overlay.svg" alt="Baseline" />
                 Baseline <br /> Assessments
               </h2>
               <h3>{subDashboard?.baseline_assessments?.percentage || "0"}%</h3>
@@ -104,7 +105,7 @@ const Dashboard = () => {
             <div className="progress-grid-in">
               <h2>
                 <img src="../images/dashboard/progress-grid/4.svg" alt="" />
-                Lesson Quiz progress
+                Lesson Quiz Progress
               </h2>
               <h3>{subDashboard?.lesson_quiz_progress?.percentage || "0"}%</h3>
               {/* <!-- <a href="#">See details <i className="fa-regular fa-arrow-right"></i></a> --> */}
@@ -173,8 +174,7 @@ const Dashboard = () => {
                       </h5>
                       <span>
                         ({subject?.completion_rate}%) &nbsp;
-                        {subject?.total_completion}/
-                        {subject?.complete_completion}
+                        {subject?.complete_completion} / {subject?.total_completion}
                       </span>
                     </div>
                     <div className="progress">

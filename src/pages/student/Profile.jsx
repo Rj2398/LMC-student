@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { getProfile, updateProfile } from "../../redux/slices/student/studentSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { Spinner } from "react-bootstrap";
+import { Button, Modal, Spinner, Form } from "react-bootstrap";
 import { logout } from "../../redux/slices/authSlice";
 
 const Profile = () => { 
   const dispatch = useDispatch();
   const { profileData, loading } = useSelector((state) => state.student);
+  // const [showModal, setShowModal] = useState(false);
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -47,11 +48,11 @@ const Profile = () => {
   // };
 
  const handleLogout = () => {
-  dispatch(logout());
-  localStorage.clear();
-  sessionStorage.clear();
-  window.location.assign("https://clever.com/oauth/logout?redirect_uri=https://pmsc-lms.vercel.app");
-};
+    dispatch(logout());
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.assign(`https://clever.com/oauth/logout?redirect_uri=https://pmsc.holpentech.com`);
+  };
 
   return (
     <>
@@ -145,6 +146,103 @@ const Profile = () => {
           </div>
         </div>
       </div>
+      {/* <button onClick={() => setShowModal(!showModal)}>show </button>
+      <Modal show={showModal} onHide={() => setShowModal(false)} backdrop="static" size="lg" centered >
+        <Modal.Header closeButton style={{ backgroundColor: "#5a2ecf", color: "white" }} >
+          <Modal.Title style={{fontSize:"18px", fontWeight:"500"}}>
+            ⚠️ Important - Please Read
+          </Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body style={{fontSize:"14px", paddingBottom:"0px"}}>
+          <div style={{ 
+            border: "1px solid #ccc", 
+            padding: "10px", 
+            borderRadius: "5px", 
+            maxHeight: "250px",
+            overflowY: "auto",
+            whiteSpace: "pre-wrap",
+            fontFamily: "Arial, sans-serif",
+            fontSize: "14px",
+            lineHeight: "1.5",
+            color: "#333"
+          }} >
+            <strong>
+              These are NOT the full Terms & Conditions. You must read and accept the
+              complete agreement before using Holpentech's services. Below is a short recap
+              of key rules unique to our platform:
+            </strong>
+            <br />
+            <br />
+            <ul style={{ paddingLeft: "20px", marginTop: 0, marginBottom: "10px" }}>
+              <li>
+                <strong>One account, one person - </strong> Your login is just for you. Sharing access
+                is not allowed.
+              </li>
+              <li>
+                <strong>No external posting or AI use - </strong> Do not upload PMSC® content to Course Hero,
+                Chegg, ChatGPT, CoPilot, or any other third-party site or tool.
+              </li>
+              <li>
+                <strong>No copying or redistribution - </strong> You may not copy, print, paraphrase, or distribute
+                PMSC® content, except as expressly permitted.
+              </li>
+              <li>
+                <strong>Facilitators only - </strong> Teachers may display limited facilitator content in class,
+                but cannot distribute it to students outside the system.
+              </li>
+              <li>
+                <strong>Rule violations may lead to termination - </strong> Breaking these rules may immediately
+                end your license.
+              </li>
+              <li>
+                <strong>Your feedback is sent to Holpentech - </strong> Holpentech may use any suggestions or
+                ideas provided without payment or credit.
+              </li>
+              <li>
+                <strong>“As is” service - </strong> Holpentech does not guarantee the Service will be error-free,
+                and liability is limited to the cost of your seat/license.
+              </li>
+              <li>
+                <strong>Dispute process - </strong> Disputes must first go to mediation. By agreeing, you also waive
+                the right to file or join a class action.
+              </li>
+              <li>
+                <strong>Student data is protected - </strong> PMSC® complies with FERPA and COPPA. We never sell your
+                data.
+              </li>
+            </ul>
+            <p>
+              👉 Please click <strong>“View Full Terms & Conditions”</strong> below to read the entire
+              agreement before accepting.
+            </p>
+            
+          </div>
+
+          <Form.Group controlId="formBasicCheckbox" className="mt-3">
+            <Form.Check type="checkbox" 
+              label={
+                <span>
+                  By checking this box, you agree to our{" "}
+                  <Link to="/terms-and-conditions" target="_blank" rel="noopener noreferrer">
+                    Terms and Conditions
+                  </Link>{" "}
+                  and{" "}
+                  <Link to="/privacy-and-policy" target="_blank" rel="noopener noreferrer">
+                    Privacy Policy
+                  </Link>.
+                </span>
+              }
+            />
+          </Form.Group>
+        </Modal.Body>
+
+        <Modal.Footer className="border-0 pt-0">
+          <Button style={{ backgroundColor: "#5a2ecf", border: "none" }}>
+            Go to website
+          </Button>
+        </Modal.Footer>
+      </Modal> */}
     </>
   );
 };

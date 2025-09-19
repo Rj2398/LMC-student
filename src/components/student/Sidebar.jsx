@@ -26,7 +26,7 @@ const Sidebar = ({showSidebar}) => {
 				{menuItems.map((item, index) => (
 					<li key={index} className={isActive(item.path) ? 'active' : ''}>
 						<Link to={item.path}>
-							<img src={item.icon} alt={item.name} />
+							<img src={item.icon} alt={`${item.name} sidebar`} />
 							<span className="text">{item.name}</span>
 						</Link>
 					</li>

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { getSubjectList, setTeacherStudentName, studentProfilePerformance } from "../../redux/slices/teacher/dashboardSlice";
+import EarnedCertificate from "../../components/student/EarnedCertificate";
 
 const StudentProfile = () => {
   const navigate = useNavigate();
@@ -79,7 +80,7 @@ const StudentProfile = () => {
       <div className="my-subjects">
         <div className="top-head">
           <div className="top-head-in"> 
-            <h1 className="mb-0">Subject Wise Quiz Scores</h1>
+            <h1 className="mb-0">Subject Quiz Scores</h1>
           </div>
 
           <div className="influ-btns ms-auto">
@@ -139,7 +140,7 @@ const StudentProfile = () => {
                 <td>---</td>
                 <td>
                   <div className="prog">
-                    {studentProfileInfo?.baseline_score}%
+                    <span>{studentProfileInfo?.baseline_score}% </span>
                     <div className="progress">
                       <div className="progress-bar" style={{ width: `${studentProfileInfo?.baseline_score}%`}}
                         role="progressbar" aria-label="Basic example" aria-valuenow="75" aria-valuemin="0" 
@@ -183,10 +184,10 @@ const StudentProfile = () => {
                   <td>{lesson?.lesson_name}</td>
                   <td>
                     <div className="prog">
-                      {lesson?.percentage}%
+                      <span>{lesson?.percentage}% </span>
                       <div className="progress">
                         <div className="progress-bar" style={{ width: `${lesson?.percentage}%`, 
-                            backgroundColor: lesson?.percentage < 70 ? "#F28100" : undefined, }}
+                            backgroundColor: ["not_started", "not_completed", "in_progress", "review"].includes(lesson?.status) ? "#F28100" : "#16a34a", }}
                           role="progressbar" aria-label={`Progress for Lesson ${lesson?.lesson_id}`}
                           aria-valuenow={lesson?.percentage} aria-valuemin="0" aria-valuemax="100"
                         ></div>
@@ -194,9 +195,8 @@ const StudentProfile = () => {
                     </div>
                   </td>
                   <td>
-                    <div className={`status ${["not_started", "not_completed", "in_progress"].includes(lesson?.status) && "review"}`} >
-                      { lesson?.status == "completed" && lesson?.percentage < 70
-                        ? "Review" : lesson?.status.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()) || "Not Started"}
+                    <div className={`status ${["not_started", "not_completed", "in_progress", "review"].includes(lesson?.status) && "review"}`} >
+                        {lesson?.status.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())}
                     </div>
                   </td>
 
@@ -215,10 +215,11 @@ const StudentProfile = () => {
                 <td>---</td>
                 <td>
                   <div className="prog">
-                    {studentProfileInfo?.summative_score}%
+                    <span>{studentProfileInfo?.summative_score}% </span>
                     <div className="progress">
-                      <div className="progress-bar" style={{ width: `${studentProfileInfo?.summative_score}%`,
-                          backgroundColor: "#F28100", }}
+                      <div className="progress-bar" style={{ 
+                        width: `${studentProfileInfo?.summative_score}%`,
+                        backgroundColor: ["not_started", "not_completed", "in_progress"].includes(studentProfileInfo?.summative_status) ? "#F28100" : "#16a34a", }}
                         role="progressbar" aria-label="Basic example" aria-valuenow="60" aria-valuemin="0" 
                         aria-valuemax="100" ></div>
                     </div>
@@ -241,6 +242,7 @@ const StudentProfile = () => {
           </table>
         </div>
       </div>
+      {studentId && <EarnedCertificate studentId={studentId}/>}
     </>
   );
 };

@@ -12,7 +12,8 @@ const SummativeAssessment = () => {
   const { subject_id } = useParams();
 
   const subjectId = location.state?.subjectId;
-  const subjectIdbyParams = subject_id
+  const subjectIdbyParams = subject_id;
+  const isRetake = location.state?.isRetake || null;
 
   const { allSubjectQuestion,subjectDetail, attemptId } = useSelector((state) => state.subject);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -21,7 +22,7 @@ const SummativeAssessment = () => {
 
   useEffect(() => {
     dispatch(getAllQuestion({ subject_id: subjectId, type: 'summative' }));
-    dispatch(getAttemptId({ subject_id: subjectId, quiz_type: 'summative' }));
+    dispatch(getAttemptId({ subject_id: subjectId, quiz_type: 'summative', ...(isRetake ? { retake: 1 } : {})  }));
   }, [dispatch]);
 
   // Initialize answers when questions are loaded

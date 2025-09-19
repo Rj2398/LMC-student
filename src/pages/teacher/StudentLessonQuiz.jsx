@@ -638,6 +638,9 @@ const StudentLessonQuiz = () => {
                       case "video":
                         return (
                           <div className="lesson-content-item video-content">
+                            {contentItem.desc && (
+                              <p dangerouslySetInnerHTML={{ __html: contentItem.desc,}} ></p>
+                            )}
                             {contentItem.video_link ? (
                               <iframe
                                 src={contentItem.video_link.replace(
@@ -657,13 +660,7 @@ const StudentLessonQuiz = () => {
                                 provided.
                               </p>
                             )}
-                            {contentItem.desc && (
-                              <p
-                                dangerouslySetInnerHTML={{
-                                  __html: contentItem.desc,
-                                }}
-                              ></p>
-                            )}
+                            
                           </div>
                         );
 
@@ -724,51 +721,51 @@ const StudentLessonQuiz = () => {
                         const quizId = contentItem.id;
                         let quizState;
 
-                         if (contentItem.quiz_subtype === "multiple_select") {
-                        // Render multiple select quiz
-                        const selectedOptionIds = contentItem.user_answer
-                          ? contentItem.user_answer.map(ans => ans.selected_option_id)
-                          : quizAnswers[quizId] || [];
+                        if (contentItem.quiz_subtype === "multiple_select") {
+                          // Render multiple select quiz
+                          const selectedOptionIds = contentItem.user_answer
+                            ? contentItem.user_answer.map(ans => ans.selected_option_id)
+                            : quizAnswers[quizId] || [];
 
-                        return (
-                          <div className="lesson-content-item quiz-content" key={`quiz-${quizId}`}>
-                            {contentItem.question ? (
-                              <h4>{contentItem.question}</h4>
-                            ) : (
-                              <p>Quiz content available but no question provided.</p>
-                            )}
+                          return (
+                            <div className="lesson-content-item quiz-content" key={`quiz-${quizId}`}>
+                              {contentItem.question ? (
+                                <h4>{contentItem.question}</h4>
+                              ) : (
+                                <p>Quiz content available but no question provided.</p>
+                              )}
 
-                            {contentItem.options &&
-                            Array.isArray(contentItem.options) &&
-                            contentItem.options.length > 0 ? (
-                              <div className="quiz-options">
-                                {contentItem.options.map((option, optionIndex) => {
-                                  if (!option || !option.id || !option.option) {
-                                    console.warn(
-                                      `Missing data for a quiz option in quiz ID: ${contentItem.id}. Skipping option.`
+                              {contentItem.options &&
+                              Array.isArray(contentItem.options) &&
+                              contentItem.options.length > 0 ? (
+                                <div className="quiz-options">
+                                  {contentItem.options.map((option, optionIndex) => {
+                                    if (!option || !option.id || !option.option) {
+                                      console.warn(
+                                        `Missing data for a quiz option in quiz ID: ${contentItem.id}. Skipping option.`
+                                      );
+                                      return null;
+                                    }
+                                    const isSelected = selectedOptionIds.includes(option.id);
+                                    return (
+                                      <MultipleSelectOption
+                                        key={`option-${option.id}-${quizId}-${optionIndex}`}
+                                        option={option}
+                                        optionIndex={optionIndex}
+                                        quizId={quizId}
+                                        isSelected={isSelected}
+                                        handleMultipleSelectChange={handleMultipleSelectChange}
+                                        isAlreadySelected={simulateMatchingQuizAnswered}
+                                      />
                                     );
-                                    return null;
-                                  }
-                                  const isSelected = selectedOptionIds.includes(option.id);
-                                  return (
-                                    <MultipleSelectOption
-                                      key={`option-${option.id}-${quizId}-${optionIndex}`}
-                                      option={option}
-                                      optionIndex={optionIndex}
-                                      quizId={quizId}
-                                      isSelected={isSelected}
-                                      handleMultipleSelectChange={handleMultipleSelectChange}
-                                      isAlreadySelected={simulateMatchingQuizAnswered}
-                                    />
-                                  );
-                                })}
-                              </div>
-                            ) : (
-                              <p>No options available for this quiz.</p>
-                            )}
-                          </div>
-                        );
-                      }
+                                  })}
+                                </div>
+                              ) : (
+                                <p>No options available for this quiz.</p>
+                              )}
+                            </div>
+                          );
+                        }
 
                         if (contentItem.quiz_subtype === "matching") {
                           if (simulateMatchingQuizAnswered) {
@@ -921,7 +918,41 @@ const StudentLessonQuiz = () => {
                               </div>
                             </div>
                           );
-                        } else {
+                        }
+
+                        if(contentItem.quiz_subtype == "subjective"){
+                          return (<div className="lesson-content-item quiz-content">
+                              {contentItem.question ? (
+                                <h4>{contentItem.question}</h4>
+                              ) : (
+                                <p>
+                                  Quiz content available but no question
+                                  provided.
+                                </p>
+                              )} 
+
+                              <p dangerouslySetInnerHTML={{__html: contentItem?.subjective_answer?.[0]?.subjective_answer || '', }} className="subjective-p"></p>
+                          </div>)
+                        }
+
+                        if(contentItem.quiz_subtype == "whiteboard"){
+                          return (<div className="lesson-content-item quiz-content">
+                              {contentItem.question ? (
+                                <h4>{contentItem.question}</h4>
+                              ) : (
+                                <p>
+                                  Quiz content available but no question
+                                  provided.
+                                </p>
+                              )} 
+
+                              {contentItem?.whiteboard_answer ? <div className="quiz-option-img">
+                                <img src={contentItem?.whiteboard_answer} alt="drwaing" />
+                                </div> : "No Answer"}
+                          </div>)
+                        }
+                        
+                        else {
                           const selectedOptionId = contentItem.user_answer?.[0]?.selected_option_id
                             ? contentItem.user_answer?.[0]?.selected_option_id
                             : quizAnswers[quizId];

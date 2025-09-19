@@ -3,9 +3,7 @@ import * as api from "../../api.js";
 
 //getlession
 //
-export const getLessionSlice = createAsyncThunk(
-  "/student/getAllLession",
-  async (formData, { rejectWithValue }) => {
+export const getLessionSlice = createAsyncThunk("/student/getAllLession",async (formData, { rejectWithValue }) => {
     try {
       const response = await api.getAllLession(formData);
       return response.data;
@@ -17,9 +15,7 @@ export const getLessionSlice = createAsyncThunk(
 //
 //get details
 
-export const getLessionDetailSlice = createAsyncThunk(
-  "/student/lessons-content",
-  async (formData, { rejectWithValue }) => {
+export const getLessionDetailSlice = createAsyncThunk("/student/lessons-content",async (formData, { rejectWithValue }) => {
     try {
       const response = await api.getLessionDetails(formData);
       return response.data;
@@ -31,9 +27,7 @@ export const getLessionDetailSlice = createAsyncThunk(
 
 //start lession
 
-export const startLession = createAsyncThunk(
-  "/student/start-lesson",
-  async (formData, { rejectWithValue }) => {
+export const startLession = createAsyncThunk("/student/start-lesson",async (formData, { rejectWithValue }) => {
     try {
       const response = await api.startLession(formData);
       return response.data;
@@ -44,9 +38,7 @@ export const startLession = createAsyncThunk(
 );
 
 //start quiz
-export const startQuiz = createAsyncThunk(
-  "/student/startQuiz",
-  async (formData, { rejectWithValue }) => {
+export const startQuiz = createAsyncThunk("/student/startQuiz",async (formData, { rejectWithValue }) => {
     try {
       const response = await api.startQuiz(formData);
       return response.data;
@@ -68,9 +60,7 @@ export const lessionSubmit = createAsyncThunk("/student/complete-lesson",async (
 );
 //complete lession
 
-export const completeLesson = createAsyncThunk(
-  "/start/complete-lesson",
-  async (formData, { rejectWithValue }) => {
+export const completeLesson = createAsyncThunk("/start/complete-lesson",async (formData, { rejectWithValue }) => {
     try {
       const response = await api.completeLesson(formData);
       return response.data;
@@ -81,11 +71,19 @@ export const completeLesson = createAsyncThunk(
 );
 
 //retrive lesson
-export const retriveLesson = createAsyncThunk(
-  "/start/lessons-review",
-  async (formData, { rejectWithValue }) => {
+export const retriveLesson = createAsyncThunk("/start/lessons-review",async (formData, { rejectWithValue }) => {
     try {
       const response = await api.retriveLesson(formData);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+export const getWhiteboard = createAsyncThunk("/student/submit-whiteboard-answer",async (formData, { rejectWithValue }) => {
+    try {
+      const response = await api.getWhiteboard(formData);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -98,6 +96,7 @@ const lessionSlice = createSlice({
   initialState: {
     storeAllLession: null,
     lessionWiseDetails: null,
+    whiteBoard: null,
     loading: false,
     error: null,
     startLessionResponse: null,
@@ -210,7 +209,22 @@ const lessionSlice = createSlice({
         state.loading = false;
         state.error =
           action.payload?.message || "Failed to fetch client information";
+      })
+      
+      .addCase(getWhiteboard.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getWhiteboard.fulfilled, (state, action) => {
+        state.loading = false;
+        state.whiteBoard = action.payload;
+      })
+      .addCase(getWhiteboard.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          action.payload?.message || "Failed to fetch client information";
       });
+      ;
   },
 });
 

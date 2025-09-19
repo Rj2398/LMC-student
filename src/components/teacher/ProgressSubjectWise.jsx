@@ -34,7 +34,7 @@ const ProgressSubjectWise = ({subjectList, classList}) => {
 	},[subjectList])
 
 	useEffect(() => {
-		if(selectedStudents){
+		if(selectedStudents?.length > 0){
 			dispatch(getTeacherSubjectQuizScore({ level_id: currentLevel,student_id:selectedStudents?.includes("all") ? ["all"] : selectedStudents , subject_id: selectedCourses }))
 		}
 	},[selectedStudents, selectedCourses])
@@ -81,7 +81,7 @@ const ProgressSubjectWise = ({subjectList, classList}) => {
 		<div className="my-subjects">
 			<div className="top-head">
 				<div className="top-head-in">
-					<h1 className="mb-0">Subject Wise Quiz Scores</h1>
+					<h1 className="mb-0">Scores by Subject, Lesson & Status</h1>
 				</div>
 				<div className="influ-btns ms-auto">
 					{/* Course Dropdown */}
@@ -113,7 +113,7 @@ const ProgressSubjectWise = ({subjectList, classList}) => {
 						<button className="influ-btn influ-drop-btn" type="button" onClick={() =>
 								setActiveDropdown(activeDropdown === "classDropdown" ? null : "classDropdown")
 							} >
-							All ClassNames <i className={`fa-regular ${activeDropdown === "classDropdown" ? "fa-angle-up" : "fa-angle-down"}`}></i>
+							All Class Names <i className={`fa-regular ${activeDropdown === "classDropdown" ? "fa-angle-up" : "fa-angle-down"}`}></i>
 						</button>
 						<div className="influ-drop-list" style={{ display: activeDropdown === "classDropdown" ? "block" : "none" }}>
 							<div className="influ-drop-list-search">
@@ -178,18 +178,18 @@ const ProgressSubjectWise = ({subjectList, classList}) => {
 					{(selectedStudents?.length > 0 && selectedCourses?.length > 0) ? 
 						(<tbody>
 							<tr>
-							<th style={{ width: "250px" }}>Assessment Type</th>
+							<th style={{ width: "250px" }}>Measurement Type</th>
 							<th>Lesson </th>
 							<th style={{ width: "400px" }}>Score </th>
 							<th>Status </th>
 							<th>Action </th>
 						</tr>
 						<tr>
-							<td>Baseline</td>
+							<td>Baseline Assessment</td>
 							<td>---</td>
 							<td>
-								<div className="prog">
-									{subjectWizeScoreData?.[0]?.baseline_score || 0}%
+								<div className="prog"> 
+									<span> {subjectWizeScoreData?.[0]?.baseline_score || 0}% </span>
 									<div className="progress">
 										<div className="progress-bar" style={{ width: `${subjectWizeScoreData?.[0]?.baseline_score || 0}%`}} role="progressbar"
 											aria-label="Basic example" aria-valuenow="75" aria-valuemin="0"
@@ -198,14 +198,14 @@ const ProgressSubjectWise = ({subjectList, classList}) => {
 								</div>
 							</td>
 							<td>
-								<div className={`status ${["not_started", "not_completed", "in_progress"].includes(subjectWizeScoreData?.[0]?.baseline_status) && "review"}`}>{subjectWizeScoreData?.[0]?.baseline_status ? subjectWizeScoreData?.[0]?.baseline_status.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()) : "Not Started"}</div>
+								<div className={`status ${subjectWizeScoreData?.[0]?.baseline_status == "not_started" && "inactive"} ${["not_completed", "in_progress"].includes(subjectWizeScoreData?.[0]?.baseline_status) && "review"}`}>{subjectWizeScoreData?.[0]?.baseline_status ? subjectWizeScoreData?.[0]?.baseline_status.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()) : "Not Started"}</div>
 							</td>
-							{!["not_started", "not_completed", "in_progress"].includes(subjectWizeScoreData?.[0]?.baseline_status) && <td>
+							{!["not_started", "not_completed", "in_progress", "locked"].includes(subjectWizeScoreData?.[0]?.baseline_status) && <td>
 								<Link to="/teacher/progress-student-baseline-assessment" state={{studentId: selectedStudents?.[0], subjectId: selectedCourses?.[0]}}><i className="fa-light fa-eye"></i> View Full Details</Link>
 							</td>}
 						</tr>
 						<tr>
-							<td>Lesson Quiz</td>
+							<td>Lesson Quizzes</td>
 							<td onClick={()=> setLessonToggle(!lessonToggle)} style={{cursor:"pointer"}}>All Lessons
 								{subjectWizeScoreData?.[0]?.lesson_wise?.length > 0 && <button type="button" className="lessons-btn" >
 									<i className="fa-regular fa-angle-down"></i>
@@ -213,7 +213,7 @@ const ProgressSubjectWise = ({subjectList, classList}) => {
 							</td>
 							<td> &nbsp; </td>
 							<td>
-								<div className={`status inactive ${["not_started", "not_completed", "in_progress"].includes(subjectWizeScoreData?.[0]?.lesson_overall_status) && "review"}`}>{subjectWizeScoreData?.[0]?.lesson_overall_status ? subjectWizeScoreData?.[0]?.lesson_overall_status.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()) : "Not Started"}</div>
+								<div className={`status ${subjectWizeScoreData?.[0]?.lesson_overall_status == "not_started" && "inactive"} ${["not_started", "not_completed", "in_progress"].includes(subjectWizeScoreData?.[0]?.lesson_overall_status) && "review"}`}>{subjectWizeScoreData?.[0]?.lesson_overall_status ? subjectWizeScoreData?.[0]?.lesson_overall_status.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()) : "Not Started"}</div>
 							</td>
 						</tr>
 
@@ -224,7 +224,7 @@ const ProgressSubjectWise = ({subjectList, classList}) => {
 								<td>{item?.lesson_name}</td>
 								<td>
 									<div className="prog">
-										{item?.percentage || 0}%
+										<span> {item?.percentage || 0}% </span>
 										<div className="progress">
 											<div className="progress-bar" style={{ width: `${item?.percentage || 0}%` }} role="progressbar"
 												aria-label="Basic example" aria-valuenow="75" aria-valuemin="0"
@@ -233,29 +233,31 @@ const ProgressSubjectWise = ({subjectList, classList}) => {
 									</div>
 								</td>
 								<td>
-									<div className={`status ${["not_completed", "in_progress"].includes(item?.status) && "review"} ${item?.status == "not_started" && "inactive"}`}>{item?.status?.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()) || "Not Started"}</div>
+									<div className={`status ${item?.status =="locked" && "inactive"} ${["not_completed", "in_progress"].includes(item?.status) && "review"} ${item?.status == "not_started" && "inactive"}`}>{item?.status?.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()) || "Not Started"}</div>
 								</td>
-								{!["not_started", "not_completed", "in_progress"].includes(item?.status) && <td>
+								{!["not_started", "not_completed", "in_progress", "locked"].includes(item?.status) && <td>
 									<Link to={`/teacher/progress-student-lesson-quiz?lessonId=${item?.lesson_id}&studentId=${selectedStudents?.[0]}`} state={{param:"/teacher/progress-and-score"}}><i className="fa-light fa-eye"></i> View Full Details</Link>
 								</td>}
 							</tr>))}
 						<tr>
-							<td>Summative</td>
+							<td>Summative Assessment</td>
 							<td>---</td>
 							<td>
 								<div className="prog">
-									{subjectWizeScoreData?.[0]?.summative_score || 0}%
+									<span> {subjectWizeScoreData?.[0]?.summative_score || 0}% </span>
 									<div className="progress">
-										<div className="progress-bar" style={{ width: `${subjectWizeScoreData?.[0]?.summative_score || 0}%`, backgroundColor: "#F28100" }}
+										<div className="progress-bar" style={{ 
+											width: `${subjectWizeScoreData?.[0]?.summative_score || 0}%`, backgroundColor: ["not_started", "not_completed", "in_progress", "locked"].includes(subjectWizeScoreData?.[0]?.summative_status) ? "#F28100" : "#16a34a"
+										 }}
 											role="progressbar" aria-label="Basic example" aria-valuenow="60"
 											aria-valuemin="0" aria-valuemax="100"></div>
 									</div>
 								</div>
 							</td>
 							<td>
-								<div className={`status ${["not_started", "not_completed", "in_progress"].includes(subjectWizeScoreData?.[0]?.summative_status) && "review"}`}>{subjectWizeScoreData?.[0]?.summative_status ? subjectWizeScoreData?.[0]?.summative_status?.replace(/_/g, " ")?.replace(/\b\w/g, (char) => char?.toUpperCase()) : "Not Started"}</div>
+								<div className={`status ${subjectWizeScoreData?.[0]?.summative_status =="locked" && "inactive"}  ${["not_completed", "in_progress"].includes(subjectWizeScoreData?.[0]?.summative_status) && "review"}`}>{subjectWizeScoreData?.[0]?.summative_status ? subjectWizeScoreData?.[0]?.summative_status?.replace(/_/g, " ")?.replace(/\b\w/g, (char) => char?.toUpperCase()) : "Not Started"}</div>
 							</td>
-							{!["not_started", "not_completed", "in_progress"].includes(subjectWizeScoreData?.[0]?.summative_status) && <td>
+							{!["not_started", "not_completed", "in_progress", "locked"].includes(subjectWizeScoreData?.[0]?.summative_status) && <td>
 								<Link to="/teacher/progress-student-summative-assessment" state={{studentId: selectedStudents?.[0], subjectId: selectedCourses?.[0]}}><i className="fa-light fa-eye"></i> View Full Details</Link>
 							</td>}
 						</tr>

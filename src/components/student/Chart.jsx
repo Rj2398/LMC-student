@@ -70,7 +70,7 @@ const CustomLegend = () => (
 const Chart = () => {
   return (
     <div style={{ width: '100%', height: 600, padding: 40 }}>
-      <h3 style={{ textAlign: 'left', paddingLeft: 20 }}>📊 Subject-wise Performance</h3>
+      <h3 style={{ textAlign: 'left', paddingLeft: 20 }}>📊 Subject Performance</h3>
       <ResponsiveContainer>
         <BarChart
           data={data}
@@ -78,7 +78,7 @@ const Chart = () => {
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="subject" label={{ value: 'Activity Type', position: 'insideBottom', offset: -40 }} />
-          <YAxis domain={[0, 100]} label={{ value: 'Subject-wise Performance', angle: -90, position: 'insideLeft' }} />
+          <YAxis domain={[0, 100]} label={{ value: 'Subject Performance', angle: -90, position: 'insideLeft' }} />
           <Tooltip />
 
           {/* One Bar per Activity Type (B/L/S), colored based on subject */}

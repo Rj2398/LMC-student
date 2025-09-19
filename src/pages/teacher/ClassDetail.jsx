@@ -77,8 +77,8 @@ const ClassDetail = () => {
     <>
       <div className="top-head align-items-start">
         <div className="top-head-in">
-          <h1>{classDetails?.subject_name || "Not Available"}</h1>
-          <p>{classDetails?.subject_desc || "Not Available"}</p>
+          <h1>{classDetails?.subject_name}</h1>
+          <p>{classDetails?.subject_desc}</p>
           <ul>
             <li>
               <img src="/images/subject-detail/lessons.svg" alt="" />{" "}
@@ -155,7 +155,8 @@ const ClassDetail = () => {
       <div className="my-subjects">
         <div className="top-head">
           <div className="top-head-in">
-            <h1 className="mb-0">Students({classDetails?.students?.length})</h1>
+            <h1 className="mb-0">Students </h1>
+            {/* <h1 className="mb-0">Students({classDetails?.students?.length})</h1> */}
           </div>
           <div className="students-src">
             <input
@@ -172,8 +173,8 @@ const ClassDetail = () => {
               <tr style={{ borderBottom: "1px solid #E5E7EB" }}>
                 <th style={{ width: "250px" }}>Student Name</th>
                 <th>Status </th>
-                <th style={{ width: "350px" }}>Completion Score </th>
-                <th>Avg. Score</th>
+                <th style={{ width: "250px" }}>Completion Score </th>
+                <th> Certificate Earned </th>
                 <th>Action </th>
               </tr>
             </thead>
@@ -181,17 +182,14 @@ const ClassDetail = () => {
             <tbody>
               {!filteredStudent || filteredStudent.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan="5"
-                    style={{ paddingTop: "25px", textAlign: "center" }}
-                  >
+                  <td colSpan="5" style={{ paddingTop: "25px", textAlign: "center" }} >
                     No Student Available
                   </td>
                 </tr>
               ) : (
                 filteredStudent.map((item, index) => (
                   <tr key={index}>
-                    <td>{item?.student_name || "Not Available"}</td>
+                    <td>{item?.student_name}</td>
                     <td>
                       <div
                         className="status"
@@ -200,7 +198,7 @@ const ClassDetail = () => {
                             item?.status == "Not Started"
                               ? "#E5E7EB"
                               : item?.status == "In Progress"
-                              ? "#FFC107"
+                              ? "#F28100"
                               : "#28a745",
 
                           color:
@@ -217,12 +215,13 @@ const ClassDetail = () => {
                     </td>
                     <td>
                       <div className="prog">
-                        {item?.overall_percentage ?? "88.5"}%
+                        <span>{item?.overall_percentage}% </span>
                         <div className="progress">
                           <div
                             className="progress-bar"
                             style={{
                               width: `${item?.overall_percentage ?? 0}%`,
+                              backgroundColor: ["not_started", "not_completed", "in_progress", "In Progress", "review"].includes(item?.status) ? "#F28100" : "#16a34a"
                             }}
                             role="progressbar"
                             aria-label="Overall percentage"
@@ -233,10 +232,10 @@ const ClassDetail = () => {
                         </div>
                       </div>
                     </td>
-                    <td>
-                      <div style={{ color: "#16A34A" }}>
-                        {`${item?.overall_percentage ?? 0}%`}
-                      </div>
+                    <td >
+                      <Link >
+                        <i className="fa-light fa-eye"></i> View
+                      </Link>
                     </td>
                     <td>
                       <Link

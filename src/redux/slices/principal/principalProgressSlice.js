@@ -2,9 +2,6 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import * as api from "../../api.js";
 import toast from "react-hot-toast";
 
-
-
-
 //  Get All subject List
 export const getPrincipalProgressScore = createAsyncThunk("/pricipal/getPrincipalProgressScore", async (formData, { rejectWithValue }) => {
   try {
@@ -14,7 +11,6 @@ export const getPrincipalProgressScore = createAsyncThunk("/pricipal/getPrincipa
     return rejectWithValue(error.response?.data || error.message);
   }
 });
-
 
 //  Get Subject Wise Score
 export const getPrincipalSubjectQuizScore = createAsyncThunk("/principal/getPrincipalSubjectQuizScore", async (formData, { rejectWithValue }) => {
@@ -26,9 +22,6 @@ export const getPrincipalSubjectQuizScore = createAsyncThunk("/principal/getPrin
   }
 });
 
-
-
-
 export const getPrincipalSubjectGraph = createAsyncThunk("/principal/getPrincipalSubjectGraph", async (formData, { rejectWithValue }) => {
   try {
     const response = await api.getPrinicpalSubjectGraph(formData);
@@ -38,8 +31,6 @@ export const getPrincipalSubjectGraph = createAsyncThunk("/principal/getPrincipa
   }
 });
 
-
-
 export const getPrincipalTeacherTraining = createAsyncThunk("/principal/getPrincipalTeacherTraining", async (formData, { rejectWithValue }) => {
   try {
     const response = await api.getPrinicipalTeacherTrainingScore(formData);
@@ -48,8 +39,6 @@ export const getPrincipalTeacherTraining = createAsyncThunk("/principal/getPrinc
     return rejectWithValue(error.response?.data || error.message);
   }
 });
-
-
 
 
 const principaleProgressSlice = createSlice({

@@ -242,7 +242,9 @@ const MwlMicroCredentialsDomainTrainingSubject = () => {
                   ? previousName
                   : localStorage.getItem("mwlTraining")) !== "Lesson Prep" && (
                   <div className="sub-lessons-list-in-ryt">
-                    <div className={`status ${lesson.status}`}>
+                    {/* <div className={`status ${lesson.status} `}> */}
+
+                    <div className={`status ${(lesson.status == "not_started" || lesson.status == "locked") && "inactive"} ${["not_started", "not_completed", "in_progress"].includes(lesson.status) && "review"}`} >
                       {lesson.status
                         .replace(/_/g, " ")
                         .split(" ")

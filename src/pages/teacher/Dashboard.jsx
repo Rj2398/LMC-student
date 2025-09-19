@@ -1,12 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getSubjectLevel,
-  getSubjectsByLevel,
-  getTeacherSubDashboard,
-} from "../../redux/slices/teacher/dashboardSlice";
-import Loading from "../common/Loading";
+import { getSubjectLevel, getSubjectsByLevel, getTeacherSubDashboard} from "../../redux/slices/teacher/dashboardSlice";
+import Select from "react-select";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -42,31 +38,56 @@ const Dashboard = () => {
     localStorage.setItem("classLevel", newLevel);
   };
 
+  const options = classLevels?.map(level => ({
+    value: level?.id,
+    label: level?.name,
+  }));
+
   return (
     <>
       <div className="top-head">
         <div className="top-head-in">
           <h1>Welcome, {allSubjectsData?.username}</h1>
-          <p>Your Progress</p>
+          <p className="top-head-p"> Student Completion </p>
         </div>
-        <select
-          value={selectedLevel || ""}
-          name="level"
-          onChange={handleLevelChange}
-        >
+        {/* <select value={selectedLevel || ""} name="level" onChange={handleLevelChange} >
           {classLevels?.map((level, index) => (
             <option key={index} value={level?.id}>
               {level?.name}
             </option>
           ))}
-        </select>
+        </select> */}
+        <Select isSearchable={false}
+          styles={{
+            control: (base) => ({
+              ...base,
+              minHeight: '38px',
+              fontSize:"16px",
+              borderColor:"#4126A8",
+              boxShadow: 'none',
+              '&:hover': {
+                borderColor: '#4126A8'
+              }
+            }),
+            option: (base, state) => ({
+              ...base,
+              backgroundColor: state.isFocused ? '#4126A8' : 'white',
+              color: state.isFocused ? 'white' : '#333',
+              '&:active': {
+                  backgroundColor: '#4126A8'
+              }
+            }),
+          }}
+        options={options} value={options?.find(opt => opt.value == selectedLevel)}
+          onChange={selected => handleLevelChange({ target: { name: 'level', value: selected.value }})}/>
       </div>
       <div className="progress-grid">
         <div className="row g-0">
           <div className="col-lg-3">
             <div className="progress-grid-in ms-0">
               <h2>
-                <img src="../images/dashboard/progress-grid/1.svg" alt="" />
+                {/* <img src="/images/Overlay.svg" alt="" /> */}
+                <img src="/images/Overlay.svg" alt="Baseline" />
                 Baseline <br /> Assessments
               </h2>
               <h3>{subDashboard?.baseline_assessments?.percentage}%</h3>
@@ -77,43 +98,27 @@ const Dashboard = () => {
           <div className="col-lg-3">
             <div className="progress-grid-in">
               <h2>
-                <img src="../images/dashboard/progress-grid/4.svg" alt="" />
-                Completed Lessons
+                <img src="../images/dashboard/progress-grid/4.svg" alt="Lessons" />
+                Lessons
               </h2>
               <h3>{subDashboard?.lesson_quiz_progress?.percentage}%</h3>
-              {/* <!-- <a href="#">See details <i className="fa-regular fa-arrow-right"></i></a> --> */}
-              {/* <p className="text-black">
-                {subDashboard?.lesson_quiz_progress?.completed}/
-                {subDashboard?.lesson_quiz_progress?.total} completed
-              </p> */}
             </div>
           </div>
           <div className="col-lg-3">
             <div className="progress-grid-in">
               <h2>
-                <img src="../images/dashboard/progress-grid/2.svg" alt="" />
+                <img src="../images/dashboard/progress-grid/2.svg" alt="Summative Assessments" />
                 Summative Assessments
               </h2>
               <h3>{subDashboard?.summative_assessments?.percentage}%</h3>
-              {/* <!-- <a href="#">See details <i className="fa-regular fa-arrow-right"></i></a> --> */}
-              {/* <p className="text-black">
-                {subDashboard?.summative_assessments?.completed}/
-                {subDashboard?.summative_assessments?.total} completed
-              </p> */}
             </div>
           </div>
           <div className="col-lg-3">
             <div className="progress-grid-in">
               <h2>
-                <img src="../images/dashboard/progress-grid/3.svg" alt="" /> MWL
-                Progress
+                <img src="../images/dashboard/progress-grid/3.svg" alt="Overall Level" /> Overall Level
               </h2>
               <h3>{subDashboard?.mwl_progress?.percentage}%</h3>
-              {/* <p className="text-black">
-                {" "}
-                {subDashboard?.mwl_progress?.completed} of{" "}
-                {subDashboard?.mwl_progress?.total} lessons completed
-              </p> */}
             </div>
           </div>
         </div>
@@ -126,7 +131,7 @@ const Dashboard = () => {
               <div className="my-subjects-head">
                 <h3>
                   <img src="../images/dashboard/book-icon.svg" alt="icon" />{" "}
-                  Your Classes
+                  Classes
                 </h3>
               </div>
               <div className="my-subjects-grid">
@@ -149,8 +154,7 @@ const Dashboard = () => {
                       </h5>
                       <span>
                         ({subject?.completion_rate}%) &nbsp;
-                        {subject?.total_completion}/
-                        {subject?.complete_completion}
+                        {subject?.complete_completion}/{subject?.total_completion}
                       </span>
                     </div>
                     <div className="progress">
