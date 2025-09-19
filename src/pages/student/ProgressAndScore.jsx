@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getAllSubject,
-  getUserProgress,
-  subjectWiseProgress,
-  subjectWiseQuizProgress,
-} from "../../redux/slices/student/subjectSlice";
+import { getAllSubject, getUserProgress, subjectWiseProgress, subjectWiseQuizProgress, } from "../../redux/slices/student/subjectSlice";
 import { Link, useNavigate } from "react-router";
 import Select from "react-select";
 
@@ -13,8 +8,7 @@ const ProgressAndScore = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { allSubject, progressInfo, subjectWiseInfo, subjectWiseQuizInfo } =
-    useSelector((state) => state.subject);
+  const { allSubject, progressInfo, subjectWiseInfo, subjectWiseQuizInfo } = useSelector((state) => state.subject);
   const [selectedSubject, setSelectedSubject] = useState("all");
   const [selectedProgressSubject, setSelectedProgressSubject] = useState(null);
   const [showLession, setShowLession] = useState(false);
@@ -25,24 +19,14 @@ const ProgressAndScore = () => {
 
   useEffect(() => {
     if (selectedSubject) {
-      dispatch(
-        getUserProgress(
-          selectedSubject === "all" ? {} : { subject_id: selectedSubject }
-        )
-      );
-      dispatch(
-        subjectWiseProgress(
-          selectedSubject === "all" ? {} : { subject_id: selectedSubject }
-        )
-      );
+      dispatch(getUserProgress(selectedSubject === "all" ? {} : { subject_id: selectedSubject }));
+      dispatch(subjectWiseProgress(selectedSubject === "all" ? {} : { subject_id: selectedSubject }));
     }
   }, [selectedSubject]);
 
   useEffect(() => {
     if (selectedProgressSubject) {
-      dispatch(
-        subjectWiseQuizProgress({ subject_id: selectedProgressSubject })
-      );
+      dispatch(subjectWiseQuizProgress({ subject_id: selectedProgressSubject }));
     }
   }, [selectedProgressSubject]);
 
@@ -63,7 +47,7 @@ const ProgressAndScore = () => {
       base: "#6466E9",
       lesson: "#888AF3",
       summative: "#B4B5FC",
-      label: "Self-Awareness",
+      label: "Self Awareness",
     },
     {
       base: "#55E6C1",
@@ -92,15 +76,7 @@ const ProgressAndScore = () => {
           <h1> Completion </h1>
           {/* <p className="top-head-p">Your Progress</p> */}
         </div>
-        {/* <select name="subject" onChange={(e) => setSelectedSubject(e.target.value)} >
-          <option value={"all"}>All Subjects</option>
-          {allSubject?.map((item, index) => (
-            <option key={index} value={item.id}>
-              {item.name}
-            </option>
-          ))}
-        </select> */}
-        <Select  name="subject" placeholder="Select a subject..." isSearchable={false}
+        <Select name="subject" placeholder="Select a subject..." isSearchable={false}
           options={[
             { value: 'all', label: 'All Subjects' },
             ...(allSubject?.map(item => ({
@@ -217,76 +193,45 @@ const ProgressAndScore = () => {
 
                     <div className="chart-bar-grp">
                       {subjectWiseInfo?.map((subject, idx) => {
-                        const subjectColor = colors[idx % colors.length];
-                        const baseline = parseFloat(
-                          subject.baseline_score || 0
-                        );
+                        const defaultColor = colors[idx % colors.length]; // default color if no match found
+                        const subjectColor = colors.find(color => color.label === subject.subject_name);
+                        
+                        const baselineColor = subjectColor ? subjectColor.base : defaultColor.base;
+                        const lessonColor = subjectColor ? subjectColor.lesson : defaultColor.lesson;
+                        const summativeColor = subjectColor ? subjectColor.summative : defaultColor.summative;
+
+                        const baseline = parseFloat(subject.baseline_score || 0);
                         const lesson = parseFloat(subject.lesson_score || 0);
-                        const summative = parseFloat(
-                          subject.summative_score || 0
-                        );
+                        const summative = parseFloat(subject.summative_score || 0);
 
                         return (
-                          <div
-                            className="chart-bar-in"
-                            key={subject.subject_id}
-                          >
+                          <div className="chart-bar-in" key={subject.subject_id} >
                             <div className="hover-data">
                               <div className="hover-data-in">
                                 <p>
-                                  <span
-                                    style={{
-                                      backgroundColor: subjectColor.base,
-                                    }}
-                                  ></span>{" "}
+                                  <span style={{ backgroundColor: baselineColor, }} ></span>{" "}
                                   Baseline Assessment, {baseline}%
                                 </p>
                                 <p>
-                                  <span
-                                    style={{
-                                      backgroundColor: subjectColor.lesson,
-                                    }}
-                                  ></span>{" "}
+                                  <span style={{ backgroundColor: lessonColor, }} ></span>{" "}
                                   Lesson Quizzes, {lesson}%
                                 </p>
                                 <p>
-                                  <span
-                                    style={{
-                                      backgroundColor: subjectColor.summative,
-                                    }}
-                                  ></span>{" "}
+                                  <span style= {{ backgroundColor: summativeColor, }} ></span>{" "}
                                   Summative Assessment, {summative}%
                                 </p>
                               </div>
                             </div>
                             <div className="bar-wrp">
-                              <div
-                                className="bar"
-                                style={{
-                                  backgroundColor: subjectColor.base,
-                                  height: `${baseline}%`,
-                                }}
-                              ></div>
+                              <div className="bar" style={{ backgroundColor: baselineColor, height: `${baseline}%`, }} ></div>
                               <span>B</span>
                             </div>
                             <div className="bar-wrp">
-                              <div
-                                className="bar"
-                                style={{
-                                  backgroundColor: subjectColor.lesson,
-                                  height: `${lesson}%`,
-                                }}
-                              ></div>
+                              <div className="bar" style={{ backgroundColor: lessonColor, height: `${lesson}%`, }} ></div>
                               <span>L</span>
                             </div>
                             <div className="bar-wrp">
-                              <div
-                                className="bar"
-                                style={{
-                                  backgroundColor: subjectColor.summative,
-                                  height: `${summative}%`,
-                                }}
-                              ></div>
+                              <div className="bar" style={{ backgroundColor: summativeColor, height: `${summative}%`, }} ></div>
                               <span>S</span>
                             </div>
                           </div>
@@ -298,16 +243,16 @@ const ProgressAndScore = () => {
 
                 <p className="activity-text"> Measurement type </p>
                 <ul>
-                  {subjectWiseInfo?.map((subject, idx) => (
+                  {subjectWiseInfo?.map((subject, idx) => {
+                    const defaultColor = colors[idx % colors.length]; // default color if no match found
+                    const subjectColor = colors.find(color => color.label === subject.subject_name);
+                    const baselineColor = subjectColor ? subjectColor.base : defaultColor.base;
+                    return(
                     <li key={subject.subject_id}>
-                      <span
-                        style={{
-                          backgroundColor: colors[idx % colors.length].base,
-                        }}
-                      ></span>{" "}
+                      <span style={{ backgroundColor: baselineColor }} ></span>{" "}
                       {subject.subject_name}
                     </li>
-                  ))}
+                  )})}
                 </ul>
               </div>
             </div>

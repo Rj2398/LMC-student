@@ -120,4 +120,6 @@ export const getMyDetails = (formData) => API.post(`/get-my-details`, formData);
 
 export const getAllSchoolList = () => API.get(`/school-list`);
 export const getDistrictSubDashboard = (formData) => API.post(`/district-progress-dashboard`, formData);
+export const getTeacherList = (formData) => API.post(`/teacher-list`, formData);
+export const getDistrictReportDownloadData = (formData) => API.post(`/district-download-report`, formData);
 

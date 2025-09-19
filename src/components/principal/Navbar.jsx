@@ -36,7 +36,7 @@ const Navbar = ({ setShowSidebar }) => {
       setHeaderTitle("Teachers & students");
     }
     else if (pathname == "/principal/progress-and-score") {
-      setHeaderTitle("Progress & Score");
+      setHeaderTitle("Completion & Score");
     }
     else if (pathname == "/principal/profile") {
       setHeaderTitle("Profile");

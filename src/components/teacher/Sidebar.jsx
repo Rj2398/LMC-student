@@ -8,7 +8,7 @@ const Sidebar = ({showSidebar}) => {
 			subPath : ["/teacher/class-detail/", "/teacher/subject-detail/", "/teacher/student-profile", "/teacher/student-baseline-assessment", "/teacher/student-lesson-quiz", "/teacher/student-summative-assessment"], icon: '/images/menu/1.svg' },
 		{ name: 'MWL Library', path: '/teacher/mwl-library', 
 			subPath: ["/teacher/mwl-training", "/teacher/mwl-micro-credentials-domain-training-subject"], icon: '/images/menu/5.svg' },
-		{ name: 'Progress and Score', path: '/teacher/progress-and-score', icon: '/images/menu/3.svg' },
+		{ name: 'Completion & Score', path: '/teacher/progress-and-score', icon: '/images/menu/3.svg' },
 		{ name: 'Profile', path: '/teacher/profile', icon: '/images/menu/4.svg' }
 	];
 

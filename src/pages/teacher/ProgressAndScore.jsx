@@ -84,7 +84,7 @@ const ProgressAndScore = () => {
       base: "#6466E9",
       lesson: "#888AF3",
       summative: "#B4B5FC",
-      label: "Self-Awareness",
+      label: "Self Awareness",
     },
     {
       base: "#55E6C1",
@@ -148,7 +148,7 @@ const ProgressAndScore = () => {
                 )
               }
             >
-              All ClassNames{" "}
+              All Class Names {" "}
               <i
                 className={`fa-regular ${
                   activeDropdown === "classDropdown"
@@ -449,76 +449,45 @@ const ProgressAndScore = () => {
 
                     <div className="chart-bar-grp">
                       {progressGraphData?.map((subject, idx) => {
-                        const subjectColor = colors[idx % colors.length];
-                        const baseline = parseFloat(
-                          subject.baseline_score || 0
-                        );
+                        const defaultColor = colors[idx % colors.length]; // default color by index
+                        const subjectColor = colors.find(color => color.label === subject.subject_name);
+                        
+                        const baselineColor = subjectColor ? subjectColor.base : defaultColor.base;
+                        const lessonColor = subjectColor ? subjectColor.lesson : defaultColor.lesson;
+                        const summativeColor = subjectColor ? subjectColor.summative : defaultColor.summative;
+
+                        const baseline = parseFloat(subject.baseline_score || 0);
                         const lesson = parseFloat(subject.lesson_score || 0);
-                        const summative = parseFloat(
-                          subject.summative_score || 0
-                        );
+                        const summative = parseFloat(subject.summative_score || 0);
 
                         return (
-                          <div
-                            className="chart-bar-in"
-                            key={subject.subject_id}
-                          >
+                          <div className="chart-bar-in" key={subject.subject_id} >
                             <div className="hover-data">
                               <div className="hover-data-in">
                                 <p>
-                                  <span
-                                    style={{
-                                      backgroundColor: subjectColor.base,
-                                    }}
-                                  ></span>{" "}
+                                  <span style={{ backgroundColor: baselineColor }} ></span>{" "}
                                   Baseline Assessment, {baseline}%
                                 </p>
                                 <p>
-                                  <span
-                                    style={{
-                                      backgroundColor: subjectColor.lesson,
-                                    }}
-                                  ></span>{" "}
+                                  <span style={{ backgroundColor: lessonColor }} ></span>{" "}
                                   Lesson Quizzes, {lesson}%
                                 </p>
                                 <p>
-                                  <span
-                                    style={{
-                                      backgroundColor: subjectColor.summative,
-                                    }}
-                                  ></span>{" "}
+                                  <span style={{ backgroundColor: summativeColor }} ></span>{" "}
                                   Summative Assessment, {summative}%
                                 </p>
                               </div>
                             </div>
                             <div className="bar-wrp">
-                              <div
-                                className="bar"
-                                style={{
-                                  backgroundColor: subjectColor.base,
-                                  height: `${baseline}%`,
-                                }}
-                              ></div>
+                              <div className="bar" style={{ backgroundColor: baselineColor, height: `${baseline}%`, }} ></div>
                               <span>B</span>
                             </div>
                             <div className="bar-wrp">
-                              <div
-                                className="bar"
-                                style={{
-                                  backgroundColor: subjectColor.lesson,
-                                  height: `${lesson}%`,
-                                }}
-                              ></div>
+                              <div className="bar" style={{ backgroundColor: lessonColor, height: `${lesson}%`, }} ></div>
                               <span>L</span>
                             </div>
                             <div className="bar-wrp">
-                              <div
-                                className="bar"
-                                style={{
-                                  backgroundColor: subjectColor.summative,
-                                  height: `${summative}%`,
-                                }}
-                              ></div>
+                              <div className="bar" style={{ backgroundColor: summativeColor, height: `${summative}%`, }} ></div>
                               <span>S</span>
                             </div>
                           </div>
@@ -530,16 +499,17 @@ const ProgressAndScore = () => {
 
                 <p className="activity-text"> Measurement Type </p>
                 <ul>
-                  {progressGraphData?.map((subject, idx) => (
-                    <li key={subject.subject_id}>
-                      <span
-                        style={{
-                          backgroundColor: colors[idx % colors.length].base,
-                        }}
-                      ></span>{" "}
-                      {subject.subject_name}
-                    </li>
-                  ))}
+                  {progressGraphData?.map((subject, idx) => {
+                    const defaultColor = colors[idx % colors.length];
+                    const subjectColor = colors.find(color => color.label === subject.subject_name);
+                    const baselineColor = subjectColor ? subjectColor.base : defaultColor.base;
+
+                    return (
+                      <li key={subject.subject_id}>
+                        <span style={{ backgroundColor: baselineColor }} ></span>{" "}
+                        {subject.subject_name}
+                      </li>
+                    )})}
                 </ul>
               </div>
             </div>

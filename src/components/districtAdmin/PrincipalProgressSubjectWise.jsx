@@ -87,7 +87,7 @@ const PrincipalProgressSubjectWise = ({ subjectList, classList, selectedSchool }
     <div className="my-subjects">
       <div className="top-head">
         <div className="top-head-in">
-          <h1 className="mb-0">Subject Quiz Scores</h1>
+          <h1 className="mb-0"> Scores by Student & Subject </h1>
         </div>
         <div className="influ-btns ms-auto">
 
@@ -209,14 +209,14 @@ const PrincipalProgressSubjectWise = ({ subjectList, classList, selectedSchool }
           {selectedStudents?.length > 0 && selectedCourses?.length > 0 ? (
             <tbody>
               <tr>
-                <th style={{ width: "250px" }}>Assessment Type</th>
+                <th style={{ width: "250px" }}> Measurement Type </th>
                 <th>Lesson </th>
                 <th style={{ width: "250px" }}>Score </th>
                 <th>Status </th>
                 <th>Action </th>
               </tr>
               <tr>
-                <td>Baseline</td>
+                <td>Baseline Assessment</td>
                 <td>---</td>
                 <td>
                   <div className="prog">
@@ -270,7 +270,7 @@ const PrincipalProgressSubjectWise = ({ subjectList, classList, selectedSchool }
                 )}
               </tr>
               <tr>
-                <td>Lesson Quiz</td>
+                <td>Lesson Quizzes</td>
                 <td
                   onClick={() => setLessonToggle(!lessonToggle)}
                   style={{ cursor: "pointer" }}
@@ -354,7 +354,7 @@ const PrincipalProgressSubjectWise = ({ subjectList, classList, selectedSchool }
                 </tr>
               ))}
               <tr>
-                <td>Summative</td>
+                <td>Summative Assessment</td>
                 <td>---</td>
                 <td>
                   <div className="prog">

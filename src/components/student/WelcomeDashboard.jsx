@@ -26,7 +26,7 @@ const WelcomeDashboard = () => {
               <h2>
                 {/* <img src="/images/dashboard/progress-grid/1.svg" alt="" /> */}
                 <img src="/images/Overlay.svg" alt="" />
-                Baseline <br /> Assessments
+                Baseline Assessments
               </h2>
               <h3>{dashboardData?.baseline_assessments?.percentage}%</h3>
               <p style={{ color: "white", fontWeight: "400" }}>

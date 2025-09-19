@@ -74,7 +74,7 @@ const PricipalStudentprofile = () => {
 			<div className="top-head prog-sco-wrp">
 				<div className="top-head-in">
 					<h1>Student Profile</h1>
-					<p>Detailed view of student performance and progress</p>
+					{/* <p>Detailed view of student performance and progress</p> */}
 				</div>
 				<div className="back-btn">
 					<Link onClick={() => navigate(-1)}   >
@@ -84,13 +84,13 @@ const PricipalStudentprofile = () => {
 			</div>
 
 			<div className="student-short-info">
-				<h3> {studentProfileInfo?.student_name} <span>Overall Score</span> </h3>
+				<h3> {studentProfileInfo?.student_name} <span style={{width:"52px"}}></span> </h3>
 				<p> {studentProfileInfo?.student_email} <b>{studentProfileInfo?.overall_score}%</b> </p>
 			</div>
 			<div className="my-subjects">
 				<div className="top-head">
 					<div className="top-head-in">
-						<h1 className="mb-0">Subject Quiz Scores</h1>
+						<h1 className="mb-0"> Scores </h1>
 					</div>
 					<div className="influ-btns ms-auto">
 						{/* <!-- INNER-DROPDOWN --> */}
@@ -136,7 +136,7 @@ const PricipalStudentprofile = () => {
 						<table>
 							<thead>
 								<tr>
-									<th style={{ width: ' 250px' }}>Assessment Type</th>
+									<th style={{ width: ' 250px' }}>Measurement Type</th>
 									<th>Lesson </th>
 									<th style={{ width: "300px" }} >Score </th>
 									<th>Status </th>
@@ -145,7 +145,7 @@ const PricipalStudentprofile = () => {
 							</thead>
 							<tbody>
 								<tr>
-									<td>Baseline</td>
+									<td> Baseline Assessment </td>
 									<td>---</td>
 									<td>
 										<div className="prog">
@@ -192,7 +192,7 @@ const PricipalStudentprofile = () => {
 					
 								</tr>
 								<tr>
-									<td>Lesson Quiz</td>
+									<td> Lesson Quizzes </td>
 									<td onClick={() => setShowAllLesson(!showAllLession)} style={{ cursor: "pointer" }}>
 										All Lessons
 										<button type="button" className="lessons-btn">
@@ -257,7 +257,7 @@ const PricipalStudentprofile = () => {
 								))}	
 					
 								<tr>
-									<td>Summative</td>
+									<td> Summative Assessment </td>
 									<td>---</td>
 									<td>
 										<div className="prog">

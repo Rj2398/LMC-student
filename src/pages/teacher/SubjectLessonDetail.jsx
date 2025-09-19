@@ -105,18 +105,15 @@ const ShowContents = ({ data, type }) => {
           {data?.desc && (
             <p dangerouslySetInnerHTML={{ __html: data?.desc }}></p>
           )}
-          {data?.video_link ? (
-            <iframe
-              src={data?.video_link.replace("/view", "/preview")}
-              width="100%"
-              height="554px"
-              frameBorder="0"
-              allowFullScreen
-              style={{ border: 0 }}
-              title="Embedded Google Drive Video Player"
-            ></iframe>
-          ) : (
-            <p> Video content available but no video link provided. </p>
+          {data?.video_link && (
+            // <iframe src={data?.video_link.replace("/view", "/preview")} 
+            //   width="100%" height="554px" frameBorder="0" allowFullScreen
+            //   style={{ border: 0 }} title="Embedded Google Drive Video Player"
+            // ></iframe>
+            <video width="100%" height="554px" controls controlsList="nodownload noremoteplayback" disablePictureInPicture style={{ border: 0 }} title={data?.title || "Lesson Video"}>
+              <source src={data?.video_link} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
           )}
           
         </div>

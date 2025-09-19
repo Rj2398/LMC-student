@@ -47,7 +47,7 @@ const Dashboard = () => {
 
         <div className="top-head-in">
           <h1>Welcome, {allDashboardData?.username}</h1>
-          <p className="top-head-p">Teachers & Students Progress</p>
+          <p className="top-head-p"> Student Completion </p>
         </div>
         {/* <select value={selectedLevel || ""} name="level" onChange={handleLevelChange} >
           {classLevels?.map((level, index) => (
@@ -105,7 +105,7 @@ const Dashboard = () => {
             <div className="progress-grid-in">
               <h2>
                 <img src="../images/dashboard/progress-grid/4.svg" alt="" />
-                Lesson Quiz Progress
+                Lesson Quizzes
               </h2>
               <h3>{subDashboard?.lesson_quiz_progress?.percentage || "0"}%</h3>
               {/* <!-- <a href="#">See details <i className="fa-regular fa-arrow-right"></i></a> --> */}
@@ -127,7 +127,7 @@ const Dashboard = () => {
             <div className="progress-grid-in">
               <h2>
                 <img src="../images/dashboard/progress-grid/3.svg" alt="" />{" "}
-                Overall Lesson Progress
+                Overall Level
               </h2>
               <h3>
                 {subDashboard?.overall_lesson_progress?.percentage || "0"}%
@@ -149,7 +149,7 @@ const Dashboard = () => {
               <div className="my-subjects-head">
                 <h3>
                   <img src="/images/dashboard/book-icon.svg" alt="" />
-                  {allSubjects?.title || "All classes"}
+                  {allSubjects?.title || "All Classes"}
                 </h3>
                 {/* <!-- <a href="#">See details <i className="fa-regular fa-arrow-right"></i></Link> --> */}
               </div>

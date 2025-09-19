@@ -143,13 +143,30 @@ const MwlMicroCredentialsDomainTrainingLesson = () => {
                       <div className="less-details-in">
                         <h2>{item.title.replace(/<[^>]+>/g, "")}</h2>
                         <div style={{ position: "relative" }}>
-                          <iframe id={`video-${item.id}`} src={item.video_link} width="100%" height="400" style={{ border: "none" }}  allow="autoplay; fullscreen" allowFullScreen ></iframe>
+                          {/* <iframe id={`video-${item.id}`} src={item.video_link} width="100%" height="400" style={{ border: "none" }}  allow="autoplay; fullscreen" allowFullScreen ></iframe>
                           {!videoState[item.id] && (
                             <div onClick={() => openVideo(item.id)}
                               style={{ position: "absolute", top: 0, left: 0, width: "100%",
                                 height: "100%", cursor: "pointer", background: "rgba(0,0,0,0.3)", // overlay until play
                               }} />
-                          )}
+                          )} */}
+                          <video id={`video-${item.id}`} style={{ border: 0 }} width="100%" height="400" controls controlsList="nodownload noremoteplayback" disablePictureInPicture
+                          title={`video-${item.id}`} onPlay={() => setVideoState(prevState => ({ ...prevState, [item.id]: true }))} // Mark as playing
+                          >
+                            <source src={item.video_link} type="video/mp4" />
+                            Your browser does not support the video tag.
+                          </video>
+                          {/* Overlay to handle play action */}
+                          {!videoState[item.id] && (
+                            <div onClick={() => { 
+                              const videoElement = document.getElementById(`video-${item.id}`);
+                              videoElement.play();
+                              setVideoState(prevState => ({ ...prevState, [item.id]: true })); // Update state to show that the video is playing 
+                              }}
+                            style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "400px",
+                              cursor: "pointer", background: "rgba(0, 0, 0, 0.3)", borderRadius:"10px", // Overlay until play
+                            }}/>)}
+
                         </div>
                         <hr />
                       </div>

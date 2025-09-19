@@ -6,7 +6,7 @@ const Sidebar = ({showSidebar}) => {
 	const menuItems = [
 		{ name: 'Dashboard', path: '/student/dashboard', icon: '/images/menu/1.svg' },
 		// { name: 'Subjects', path: '/student/subjects', icon: '/images/menu/2.svg' },
-		{ name: 'Progress and Score', path: '/student/progress-and-score', icon: '/images/menu/3.svg' },
+		{ name: 'Completion & Score', path: '/student/progress-and-score', icon: '/images/menu/3.svg' },
 		{ name: 'Profile', path: '/student/profile', icon: '/images/menu/4.svg' }
 	];
 

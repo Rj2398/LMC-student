@@ -15,7 +15,7 @@ const Navbar = ({setShowSidebar}) => {
       
     }
     else if (pathname == "/student/progress-and-score"){
-      setHeaderTitle("Progress & Score")
+      setHeaderTitle("Completion & Score")
     }
     else if (pathname == "/student/profile") {
       setHeaderTitle("Profile")

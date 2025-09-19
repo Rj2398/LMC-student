@@ -43,7 +43,7 @@ const Sidebar = ({ showSidebar }) => {
       icon: "/images/menu/7.svg",
     },
     {
-      name: "Progress and Score",
+      name: "Completion & Score",
       path: "/district-admin/progress-and-score",
       icon: "/images/menu/3.svg",
       subPath: [

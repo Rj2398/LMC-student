@@ -31,7 +31,7 @@ const Navbar = ({ setShowSidebar }) => {
     if (pathname == "/teacher/dashboard") {
       setHeaderTitle("Teacher Dashboard");
     } else if (pathname == "/teacher/progress-and-score") {
-      setHeaderTitle("Progress & Score");
+      setHeaderTitle("Completion & Score");
     } else if (pathname == "/teacher/profile") {
       setHeaderTitle("Profile");
     } else if (pathname == "/teacher/mwl-library") {

@@ -72,7 +72,7 @@ function PrincipalTeacherProfile() {
       <div className="top-head prog-sco-wrp">
         <div className="top-head-in">
           <h1>Teacher Profile</h1>
-          <p>Detailed view of student performance and progress</p>
+          {/* <p>Detailed view of student performance and progress</p> */}
         </div>
         <div className="back-btn">
           <Link to="" onClick={() => navigate(-1)}>
@@ -95,7 +95,7 @@ function PrincipalTeacherProfile() {
       <div className="my-subjects">
         <div className="top-head">
           <div className="top-head-in">
-            <h1 className="mb-0">Classes Performance</h1>
+            <h1 className="mb-0"> Class Completion </h1>
           </div>
           {/* <div className="students-src ms-auto">
             <input
@@ -179,7 +179,7 @@ function PrincipalTeacherProfile() {
       <div className="my-subjects">
         <div className="top-head">
           <div className="top-head-in">
-            <h1 className="mb-0">Students</h1>
+            <h1 className="mb-0"> Student Completion </h1>
             {/* <h1 className="mb-0">Students({filterPrincipalStudent?.length})</h1> */}
           </div>
           <div className="students-src ms-auto">

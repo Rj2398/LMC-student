@@ -140,7 +140,7 @@ const Dashboard = () => {
             <div className="progress-grid-in">
               <h2>
                 <img src="../images/dashboard/progress-grid/4.svg" alt="" />
-                Lesson Quiz Progress
+                Lesson Quizzes
               </h2>
               <h3>{subDashboard?.lesson_quiz_progress?.percentage || "0"}%</h3>
             </div>
@@ -158,7 +158,7 @@ const Dashboard = () => {
             <div className="progress-grid-in">
               <h2>
                 <img src="../images/dashboard/progress-grid/3.svg" alt="" />{" "}
-                Overall Lesson Progress
+                Overall Lesson
               </h2>
               <h3>
                 {subDashboard?.overall_lesson_progress?.percentage || "0"}%
@@ -174,7 +174,7 @@ const Dashboard = () => {
               <div className="my-subjects-head">
                 <h3>
                   <img src="/images/dashboard/book-icon.svg" alt="" />
-                  {allSubjects?.title || "All classes"}
+                  {allSubjects?.title || "All Classes"}
                 </h3>
 
               </div>

@@ -6,8 +6,7 @@ import Select from "react-select";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
-  const { classLevels, allSubjects, subDashboard, allSubjectsData } =
-    useSelector((state) => state.dashboard);
+  const { classLevels, allSubjects, subDashboard, allSubjectsData } = useSelector((state) => state.dashboard);
 
   const [selectedLevel, setSelectedLevel] = useState(() => {
     return localStorage.getItem("classLevel") || null;
@@ -99,7 +98,7 @@ const Dashboard = () => {
             <div className="progress-grid-in">
               <h2>
                 <img src="../images/dashboard/progress-grid/4.svg" alt="Lessons" />
-                Lessons
+                Lesson Quizzes
               </h2>
               <h3>{subDashboard?.lesson_quiz_progress?.percentage}%</h3>
             </div>

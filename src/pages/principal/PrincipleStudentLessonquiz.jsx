@@ -548,21 +548,15 @@ const StudentLessonQuiz = () => {
                             {contentItem.desc && (
                               <p dangerouslySetInnerHTML={{__html: contentItem.desc,}}></p>
                             )}
-                            {contentItem.video_link ? (
-                              <iframe
-                                src={contentItem.video_link.replace(
-                                  "/view",
-                                  "/preview"
-                                )}
-                                width="100%"
-                                height="554px"
-                                frameBorder="0"
-                                allowFullScreen
-                                style={{ border: 0 }}
-                                title="Embedded Google Drive Video Player"
-                              ></iframe>
-                            ) : (
-                              <></>
+                            {contentItem.video_link && (
+                              // <iframe src={contentItem.video_link.replace( "/view","/preview")}
+                              //   width="100%" height="554px" frameBorder="0" allowFullScreen
+                              //   style={{ border: 0 }} title="Embedded Google Drive Video Player"
+                              // ></iframe>
+                              <video width="100%" height="554px" controls controlsList="nodownload noremoteplayback" disablePictureInPicture style={{ border: 0 }} title={contentItem?.title || "Lesson Video"}>
+                                  <source src={contentItem?.video_link} type="video/mp4" />
+                                  Your browser does not support the video tag.
+                              </video>
                             )}
                             
                           </div>

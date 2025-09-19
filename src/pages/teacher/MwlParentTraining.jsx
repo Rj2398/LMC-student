@@ -31,14 +31,12 @@ const MwlParentTraining = () => {
               {item.type === "video" && (
                     <>
                         <h2>{item.title.replace(/<[^>]+>/g, "")}</h2>
-                        <iframe
-                          src={item.video_link}
-                          width="100%"
-                          height="400"
-                          allow="autoplay"
-                          style={{ border: "none" }}
-                          allowFullScreen
-                        ></iframe>
+                        {/* <iframe src={item.video_link} width="100%" height="400" allow="autoplay"
+                          style={{ border: "none" }} allowFullScreen ></iframe> */}
+                        <video width="100%" height="400px" controls controlsList="nodownload noremoteplayback" disablePictureInPicture style={{ border: 0 }} title={item?.title || "Lesson Video"}>
+                          <source src={item?.video_link} type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
                     </>
                   )}
 

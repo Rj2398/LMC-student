@@ -87,7 +87,7 @@ const PrincipalProgressAndScore = () => {
       base: "#6466E9",
       lesson: "#888AF3",
       summative: "#B4B5FC",
-      label: "Self-Awareness",
+      label: "Self Awareness",
     },
     {
       base: "#55E6C1",
@@ -135,7 +135,7 @@ const PrincipalProgressAndScore = () => {
     <>
       <div className="top-head prog-sco-wrp">
         <div className="top-head-in">
-          <h1>Progress & Score</h1>
+          <h1> Student Completion </h1>
           {/* <p>Your Progress</p> */}
         </div>
 
@@ -154,35 +154,25 @@ const PrincipalProgressAndScore = () => {
                 <button type="submit">
                   <img src="images/search-icon.svg" alt="" />
                 </button>
-                <input
-                  type="text"
-                  placeholder="Search"
-                  value={classSearch}
-                  onChange={(e) => setClassSearch(e.target.value)}
-                />
+                <input type="text" placeholder="Search" value={classSearch} onChange={(e) => setClassSearch(e.target.value)} />
               </div>
               <div className="influ-drop-list-inner">
                 <div className="influ-drop-list-item">
-                  <input
-                    type="checkbox"
-                    checked={selectedClasses.includes("all")}
+                  <input type="checkbox" checked={selectedClasses.includes("all")}
                     onChange={() => {
                       if (selectedClasses.includes("all")) {
                         setSelectedClasses([]);
                       } else {
                         setSelectedClasses(["all"]);
                       }
-                    }}
-                  />
+                    }}/>
                   All Classes
                 </div>
 
                 {/* Individual Class Checkboxes */}
                 {filteredClasses?.map((item) => (
                   <div key={item.id} className="influ-drop-list-item">
-                    <input
-                      type="checkbox"
-                      checked={selectedClasses.includes(item.name)}
+                    <input type="checkbox" checked={selectedClasses.includes(item.name)}
                       onChange={() => {
                         if (selectedClasses.includes(item.name)) {
                           setSelectedClasses(
@@ -191,8 +181,7 @@ const PrincipalProgressAndScore = () => {
                         } else {
                           setSelectedClasses([...selectedClasses, item.name]);
                         }
-                      }}
-                    />
+                      }} />
                     {item.name}
                   </div>
                 ))}
@@ -202,52 +191,25 @@ const PrincipalProgressAndScore = () => {
 
           {/* Students Dropdown */}
           <div className="influ-dropdown">
-            <button
-              className="influ-btn influ-drop-btn"
-              type="button"
+            <button className="influ-btn influ-drop-btn" type="button" 
               onClick={() =>
-                setActiveDropdown(
-                  activeDropdown === "studentDropdown2"
-                    ? null
-                    : "studentDropdown2"
-                )
-              }
-            >
+                setActiveDropdown( activeDropdown === "studentDropdown2" ? null : "studentDropdown2" )
+              } >
               All Students{" "}
-              <i
-                className={`fa-regular ${
-                  activeDropdown === "studentDropdown2"
-                    ? "fa-angle-up"
-                    : "fa-angle-down"
-                }`}
-              ></i>
+              <i className={`fa-regular ${ activeDropdown === "studentDropdown2" ? "fa-angle-up" : "fa-angle-down" }`} ></i>
             </button>
-            <div
-              className="influ-drop-list"
-              style={{
-                display:
-                  activeDropdown === "studentDropdown2" ? "block" : "none",
-              }}
-            >
+            <div className="influ-drop-list"  style={{ display: activeDropdown === "studentDropdown2" ? "block" : "none", }} >
               <div className="influ-drop-list-inner">
                 <div className="influ-drop-list-item">
-                  <input
-                    type="checkbox"
-                    checked={selectedStudents.includes("all")}
-                    onChange={() =>
-                      handleToggle("all", selectedStudents, setSelectedStudents)
-                    }
+                  <input type="checkbox" checked={selectedStudents.includes("all")} 
+                    onChange={() => handleToggle("all", selectedStudents, setSelectedStudents) }
                   />
                   All Students
                 </div>
                 {filteredStudents?.map((item) => (
                   <div key={item.id} className="influ-drop-list-item">
-                    <input
-                      type="checkbox"
-                      checked={
-                        selectedStudents.includes("all") ||
-                        selectedStudents.includes(item.id)
-                      }
+                    <input type="checkbox" 
+                      checked={ selectedStudents.includes("all") || selectedStudents.includes(item.id) }
                       disabled={selectedStudents.includes("all")}
                       // onChange={() => handleToggle( item.id, selectedStudents, setSelectedStudents )}
                       onChange={() => {
@@ -266,49 +228,25 @@ const PrincipalProgressAndScore = () => {
 
           {/* Subjects Dropdown */}
           <div className="influ-dropdown">
-            <button
-              className="influ-btn influ-drop-btn"
-              type="button"
-              onClick={() =>
-                setActiveDropdown(
-                  activeDropdown === "courseDropdown" ? null : "courseDropdown"
-                )
-              }
+            <button className="influ-btn influ-drop-btn" type="button"
+              onClick={() => setActiveDropdown( activeDropdown === "courseDropdown" ? null : "courseDropdown" )}
             >
               All Subjects{" "}
-              <i
-                className={`fa-regular ${
-                  activeDropdown === "courseDropdown"
-                    ? "fa-angle-up"
-                    : "fa-angle-down"
-                }`}
+              <i className={`fa-regular ${ activeDropdown === "courseDropdown" ? "fa-angle-up" : "fa-angle-down"}`}
               ></i>
             </button>
-            <div
-              className="influ-drop-list"
-              style={{
-                display: activeDropdown === "courseDropdown" ? "block" : "none",
-              }}
-            >
+            <div className="influ-drop-list" style={{ display: activeDropdown === "courseDropdown" ? "block" : "none", }} >
               <div className="influ-drop-list-inner">
                 <div className="influ-drop-list-item">
-                  <input
-                    type="checkbox"
-                    checked={selectedCourses.includes("all")}
-                    onChange={() =>
-                      handleToggle("all", selectedCourses, setSelectedCourses)
-                    }
-                  />
+                  <input type="checkbox" checked={selectedCourses.includes("all")}
+                    onChange={() => handleToggle("all", selectedCourses, setSelectedCourses)
+                    } />
                   All Subjects
                 </div>
                 {subjectList?.map((item) => (
                   <div key={item.id} className="influ-drop-list-item">
-                    <input
-                      type="checkbox"
-                      checked={
-                        selectedCourses.includes("all") ||
-                        selectedCourses.includes(item.id)
-                      }
+                    <input type="checkbox" 
+                      checked={ selectedCourses.includes("all") || selectedCourses.includes(item.id) }
                       disabled={selectedCourses.includes("all")}
                       onChange={() =>
                         handleToggle(
@@ -342,27 +280,17 @@ const PrincipalProgressAndScore = () => {
               <h3>
                 {progressAndScoreData?.baseline_assessments?.percentage || 0}%
               </h3>
-              {/* <p className="text-white">
-                {progressAndScoreData?.baseline_assessments?.completed || 0}/
-                {progressAndScoreData?.baseline_assessments?.total || 0}{" "}
-                completed
-              </p> */}
             </div>
           </div>
           <div className="col-lg-3">
             <div className="progress-grid-in">
               <h2>
                 <img src="../images/dashboard/progress-grid/3.svg" alt="" />{" "}
-                Lesson Quiz Progress
+                Lesson Quizzes
               </h2>
               <h3>
                 {progressAndScoreData?.lesson_quiz_progress?.percentage || 0}%
               </h3>
-              {/* <p className="text-black">
-                {progressAndScoreData?.lesson_quiz_progress?.completed || 0}/
-                {progressAndScoreData?.lesson_quiz_progress?.total || 0}{" "}
-                completed
-              </p> */}
             </div>
           </div>
           <div className="col-lg-3">
@@ -374,28 +302,18 @@ const PrincipalProgressAndScore = () => {
               <h3>
                 {progressAndScoreData?.summative_assessments?.percentage || 0}%
               </h3>
-              {/* <p className="text-black">
-                {progressAndScoreData?.summative_assessments?.completed || 0}/
-                {progressAndScoreData?.summative_assessments?.total || 0}{" "}
-                completed
-              </p> */}
             </div>
           </div>
           <div className="col-lg-3">
             <div className="progress-grid-in">
               <h2>
                 <img src="../images/dashboard/progress-grid/3.svg" alt="" />{" "}
-                Overall Lesson progress
+                Overall Lesson
               </h2>
               <h3>
                 {progressAndScoreData?.overall_lesson_progress?.percentage || 0}
                 %
               </h3>
-              {/* <p className="text-black">
-                {progressAndScoreData?.overall_lesson_progress?.completed || 0}{" "}
-                of {progressAndScoreData?.overall_lesson_progress?.total || 0}{" "}
-                lessons completed
-              </p> */}
             </div>
           </div>
         </div>
@@ -407,106 +325,62 @@ const PrincipalProgressAndScore = () => {
             <div className="my-subjects">
               <div className="my-subjects-head mb-4">
                 <h3>
-                  <img
-                    src="/images/dashboard/chart-icon.svg"
-                    alt="chart-icon"
-                  />{" "}
+                  <img src="/images/dashboard/chart-icon.svg" alt="chart-icon" />{" "}
                   Subject Performance
                 </h3>
               </div>
               <div className="chart-wrap">
                 <div className="chart-in">
-                  <p className="performance-text">Subject Performance</p>
+                  <p className="performance-text">Scores</p>
                   <div className="chart-in-percent-grp">
-                    {[100, 80, 60, 40, 20, 0].map((val, idx) => (
-                      <div
-                        className={`chart-in-percent ${
-                          val === 0 ? "align-items-end" : ""
-                        }`}
-                        key={idx}
-                      >
+                    {["100%", "80%", "60%", "40%", "20%", 0].map((val, idx) => (
+                      <div className={`chart-in-percent ${val === 0 ? "align-items-end" : "" }`} key={idx}>
                         <span>{val}</span>
-                        <hr
-                          style={val === 0 ? { width: "95%" } : {}}
-                          className={val === 0 ? "ms-auto" : ""}
-                        />
+                        <hr style={val === 0 ? { width: "95%" } : {}} className={val === 0 ? "ms-auto" : ""}/>
                       </div>
                     ))}
 
                     <div className="chart-bar-grp">
                       {progressGraphData?.map((subject, idx) => {
-                        const subjectColor = colors[idx % colors.length];
-                        const baseline = parseFloat(
-                          subject?.scores?.baseline_score || 0
-                        );
-                        const lesson = parseFloat(
-                          subject?.scores?.lesson_score || 0
-                        );
-                        const summative = parseFloat(
-                          subject?.scores?.summative_score || 0
-                        );
+                        const defaultColor = colors[idx % colors.length]; // default color by index
+                        const subjectColor = colors.find(color => color.label === subject.subject_name);
+                        
+                        const baselineColor = subjectColor ? subjectColor.base : defaultColor.base;
+                        const lessonColor = subjectColor ? subjectColor.lesson : defaultColor.lesson;
+                        const summativeColor = subjectColor ? subjectColor.summative : defaultColor.summative;
+
+                        const baseline = parseFloat(subject?.scores?.baseline_score || 0);
+                        const lesson = parseFloat(subject?.scores?.lesson_score || 0);
+                        const summative = parseFloat(subject?.scores?.summative_score || 0);
 
                         return (
-                          <div
-                            className="chart-bar-in"
-                            key={subject?.subject_id}
-                          >
+                          <div className="chart-bar-in" key={subject?.subject_id}>
                             <div className="hover-data">
                               <div className="hover-data-in">
                                 <p>
-                                  <span
-                                    style={{
-                                      backgroundColor: subjectColor.base,
-                                    }}
-                                  ></span>{" "}
-                                  Baseline Assessments, {baseline}%
+                                  <span style={{backgroundColor: baselineColor,}}></span>{" "}
+                                  Baseline Assessment, {baseline}%
                                 </p>
                                 <p>
-                                  <span
-                                    style={{
-                                      backgroundColor: subjectColor.lesson,
-                                    }}
-                                  ></span>{" "}
-                                  Lesson Quiz, {lesson}%
+                                  <span style={{ backgroundColor: lessonColor, }} ></span>{" "}
+                                  Lesson Quizzes, {lesson}%
                                 </p>
                                 <p>
-                                  <span
-                                    style={{
-                                      backgroundColor: subjectColor.summative,
-                                    }}
-                                  ></span>{" "}
-                                  Summative Assessments, {summative}%
+                                  <span style={{ backgroundColor: summativeColor, }} ></span>{" "}
+                                  Summative Assessment, {summative}%
                                 </p>
                               </div>
                             </div>
                             <div className="bar-wrp">
-                              <div
-                                className="bar"
-                                style={{
-                                  backgroundColor: subjectColor.base,
-                                  height: `${baseline}%`,
-                                }}
-                              ></div>
+                              <div className="bar" style={{ backgroundColor: baselineColor, height: `${baseline}%` }} ></div>
                               <span>B</span>
                             </div>
                             <div className="bar-wrp">
-                              <div
-                                className="bar"
-                                style={{
-                                  backgroundColor: subjectColor.lesson,
-                                  height: `${lesson}%`,
-                                }}
-                              ></div>
+                              <div className="bar" style={{ backgroundColor: lessonColor, height: `${lesson}%` }} ></div>
                               <span>L</span>
                             </div>
                             <div className="bar-wrp">
-                              <div
-                                className="bar"
-                                style={{
-                                  backgroundColor: subjectColor.summative,
-                                  height: `${summative}%`,
-                                }}
-                              ></div>
+                              <div className="bar" style={{ backgroundColor: summativeColor, height: `${summative}%` }} ></div>
                               <span>S</span>
                             </div>
                           </div>
@@ -516,18 +390,18 @@ const PrincipalProgressAndScore = () => {
                   </div>
                 </div>
 
-                <p className="activity-text">Activity Type</p>
+                <p className="activity-text"> Measurement Type </p>
                 <ul>
-                  {progressGraphData?.map((subject, idx) => (
-                    <li key={subject.subject_id}>
-                      <span
-                        style={{
-                          backgroundColor: colors[idx % colors.length].base,
-                        }}
-                      ></span>{" "}
-                      {subject.subject_name}
-                    </li>
-                  ))}
+                  {progressGraphData?.map((subject, idx) => {
+                    const defaultColor = colors[idx % colors.length]; // default color by index
+                    const subjectColor = colors.find(color => color.label === subject.subject_name);
+                    const baselineColor = subjectColor ? subjectColor.base : defaultColor.base;
+                    return(
+                      <li key={subject.subject_id}>
+                        <span style={{ backgroundColor: baselineColor, }} ></span>{" "}
+                        {subject.subject_name}
+                      </li>
+                    )})}
                 </ul>
               </div>
             </div>
